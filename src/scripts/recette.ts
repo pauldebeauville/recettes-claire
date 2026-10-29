@@ -1,8 +1,7 @@
-// Fiche recette : portions, versions, favoris, partage, minuteurs et mode cuisine.
+// Fiche recette : portions, versions, partage, copie, minuteurs et mode cuisine.
 import '../styles/cuisine.css';
-import { basculerFavori, lireFavoris, toast } from './favoris';
+import { toast } from './toast';
 import { creerMinuteur } from './minuteurs';
-import { momentDe } from './repas';
 import { MULTIPLES, ajusterQuantites, enFraction, lignesAffichees, type Portions } from './quantites';
 import { dateCourte, definirCourses, ecrireRepas, lireCourses, lireCuisinees, lireRepas, marquerCuisinee } from './perso';
 
@@ -147,17 +146,6 @@ function initialiserOnglets() {
 
 function initialiserActions(article: HTMLElement) {
   const slug = article.dataset.slug!;
-  const favori = document.getElementById('favori')!;
-  const majFavori = () => {
-    const oui = lireFavoris().includes(slug);
-    favori.setAttribute('aria-pressed', String(oui));
-    favori.querySelector('span')!.textContent = 'Favori';
-  };
-  majFavori();
-  favori.addEventListener('click', () => {
-    toast(basculerFavori(slug) ? 'Ajoutée à vos favoris' : 'Retirée de vos favoris');
-    majFavori();
-  });
   // déjà cuisinée, liste de courses, repas : un petit récapitulatif sous les boutons
   const cuisinee = document.getElementById('cuisinee')!;
   const courses = document.getElementById('courses')!;
@@ -202,10 +190,11 @@ function initialiserActions(article: HTMLElement) {
       });
     else toast('Tous les ingrédients sont dans votre liste de courses');
   });
-  document.getElementById('repas')!.addEventListener('click', () => {
+  // les bases (pâte, coulis…) n'ont pas ce bouton : elles ne se servent pas seules
+  document.getElementById('repas')?.addEventListener('click', () => {
     const r = lireRepas();
     if (!r.plats.some((p) => p.slug === slug)) {
-      r.plats.push({ slug, moment: momentDe(article.dataset.categorie ?? 'plat') });
+      r.plats.push({ slug, moment: article.dataset.moment! });
       ecrireRepas(r);
     }
     toast('Ajoutée à votre repas');
@@ -216,11 +205,23 @@ function initialiserActions(article: HTMLElement) {
     if (plus?.open && (!plus.contains(e.target as Node) || (e.target as HTMLElement).closest('.plus-menu button'))) plus.open = false;
   });
 
-  document.getElementById('imprimer')!.addEventListener('click', () => window.print());
-  document.getElementById('imprimer-grand')!.addEventListener('click', () => {
-    document.documentElement.classList.add('impression-grande');
-    window.addEventListener('afterprint', () => document.documentElement.classList.remove('impression-grande'), { once: true });
-    window.print();
+  document.getElementById('copier')!.addEventListener('click', async () => {
+    const texte = texteRecette(article, versionActive());
+    try {
+      await navigator.clipboard.writeText(texte);
+    } catch {
+      // anciens navigateurs : copie par une zone de texte cachée
+      const zone = document.createElement('textarea');
+      zone.value = texte;
+      zone.setAttribute('readonly', '');
+      zone.style.position = 'fixed';
+      zone.style.opacity = '0';
+      document.body.append(zone);
+      zone.select();
+      document.execCommand('copy');
+      zone.remove();
+    }
+    toast('Recette copiée. Vous pouvez la coller dans un message ou une note.');
   });
   document.getElementById('partager')!.addEventListener('click', async () => {
     const donnees = { title: article.dataset.titre, text: `${article.dataset.titre} — une recette de Claire`, url: location.href.split('#')[0] };
@@ -239,6 +240,49 @@ function initialiserActions(article: HTMLElement) {
       toast(donnees.url);
     }
   });
+}
+
+/** La recette en texte simple, avec les quantités affichées (pour la coller dans un message ou une note). */
+function texteRecette(article: HTMLElement, v: HTMLElement): string {
+  const propre = (el: Element) => el.textContent!.replace(/\s+/g, ' ').trim();
+  const lignes: string[] = [article.dataset.titre!.toUpperCase()];
+  const onglet = document.querySelector<HTMLElement>(`[aria-controls="${v.id}"]`);
+  // « Version 1 », sans le nombre de personnes écrit dessous
+  if (onglet) lignes.push(onglet.firstChild!.textContent!.trim());
+  const portions: Portions = JSON.parse(v.dataset.portions!);
+  const nombre = propre(v.querySelector('.portions-valeur output')!);
+  if (portions.mode === 'personnes') lignes.push(`Pour ${nombre} ${propre(v.querySelector('.portions-unite')!)}`);
+  else if (nombre !== '1') lignes.push(`Recette × ${nombre}`);
+
+  lignes.push('', 'INGRÉDIENTS');
+  let groupe: string | undefined;
+  for (const l of lignesAffichees(v)) {
+    if (l.groupe !== groupe) {
+      groupe = l.groupe;
+      if (groupe) lignes.push(groupe);
+    }
+    lignes.push(`- ${l.texte}`);
+  }
+
+  lignes.push('', 'PRÉPARATION');
+  v.querySelectorAll<HTMLElement>('.etapes > li').forEach((li) => {
+    if (li.classList.contains('section')) {
+      lignes.push('', propre(li));
+      return;
+    }
+    const titre = li.querySelector('.etape-titre');
+    const morceaux = [...li.querySelectorAll('.etape-corps > p, .etape-corps > ul > li')].map(propre);
+    lignes.push(`${li.dataset.n}. ${titre ? `${propre(titre)} : ` : ''}${morceaux.join(' ')}`);
+  });
+
+  v.querySelectorAll('.note').forEach((n) => {
+    const titre = n.querySelector('.note-titre');
+    const corps = [...n.querySelectorAll('p:not(.note-titre)')].map(propre).join(' ');
+    lignes.push('', titre ? `${propre(titre)} : ${corps}` : corps);
+  });
+
+  lignes.push('', `Une recette du carnet de Claire : ${location.href.split('#')[0]}`);
+  return lignes.join('\n');
 }
 
 // ---------- minuteurs dans les étapes ----------

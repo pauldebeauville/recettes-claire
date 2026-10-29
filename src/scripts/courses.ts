@@ -1,5 +1,5 @@
 // Liste de courses : ingrédients des recettes ajoutées, regroupés, à cocher au magasin.
-import { toast } from './favoris';
+import { toast } from './toast';
 import { ecrireCourses, idLigne, lireCourses, type Courses } from './perso';
 
 type Ligne = { cle: string; texte: string; recettes: string[]; sources: string[] };

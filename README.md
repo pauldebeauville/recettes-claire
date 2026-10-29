@@ -3,23 +3,24 @@
 Le carnet de recettes de Claire en site web : 155 recettes salées et sucrées, reprises mot pour mot de ses deux carnets (PDF).
 Le site est hébergé gratuitement sur GitHub Pages et masqué des moteurs de recherche.
 
+Le site est pensé pour Claire, sur iPhone et iPad : gros boutons, peu de réglages, chaque chose à un seul endroit.
+
 Sur le site, on peut :
 
+- partir du **sommaire** de l’accueil : les chapitres (apéritifs, entrées, plats…), toutes les recettes, ou la recherche ; le geste « retour » ramène au sommaire ;
 - chercher une recette ou plusieurs ingrédients à la fois (« saumon avocat »), même avec une faute de frappe ;
-- filtrer par salé / sucré, catégorie (apéritif, entrée, plat…), ingrédient vedette, nombre d’ingrédients, temps indiqués, Thermomix, recettes à préparer à l’avance, favoris ;
-- ajuster les quantités au nombre de personnes (fractions, accords « 1 avocat → 2 avocats », quantités « par personne » laissées telles quelles) ;
-- cocher les ingrédients et les étapes, lancer un minuteur en touchant une durée (« 20 minutes ») ;
-- garder un **minuteur** sous la main sur toutes les pages (bouton « Minuteur » en haut) : il continue de tourner quand on change de page, et se met en pause ou s’arrête de partout ;
-- trouver l’inspiration sur l’accueil : **la recette du jour** (la même pour toute la famille ce jour-là) et des sélections : de saison, pour recevoir, en quelques ingrédients, les desserts, au Thermomix ;
+- filtrer par nombre d’ingrédients, Thermomix, recettes à préparer à l’avance, recettes déjà cuisinées ;
 - trouver une recette avec **ce qu’on a dans le frigo** : on tape quelques ingrédients sur l’accueil, le carnet propose la recette qui en utilise le plus ;
-- faire sa **liste de courses** : sur une recette, on coche les ingrédients à acheter (ou « Courses » pour tous) ; ils se rangent sous leur recette, pour le nombre de personnes choisi. On coche au magasin, on peut tout regrouper (les quantités identiques sont additionnées) et l’envoyer par message ;
-- **préparer un repas** : un menu de l’apéritif au dessert, le nombre d’invités, le planning (ce qui se prépare à l’avance) et une carte du menu à imprimer ;
-- cocher les recettes **déjà cuisinées** et suivre sa progression dans le carnet ;
-- **envoyer une sélection** de recettes en un seul lien (ses favoris, le résultat d’une recherche) ;
+- ajuster les quantités au nombre de personnes (fractions, accords « 1 avocat → 2 avocats », quantités « par personne » laissées telles quelles) ;
+- **partager** une recette (le lien, par WhatsApp ou Messages) ou la **copier** en texte, avec les quantités affichées, pour la coller où l’on veut ;
+- lancer un minuteur en touchant une durée (« 20 minutes ») ; le **minuteur** reste sous la main sur toutes les pages, continue de tourner quand on change de page, garde l’écran allumé et sonne même en mode silencieux ;
+- faire sa **liste de courses** : sur une recette, « + Courses » à côté de chaque ingrédient (ou « Courses » pour tous) ; ils se rangent sous leur recette, pour le nombre de personnes choisi. On coche au magasin, on peut tout regrouper (les quantités identiques sont additionnées) et l’envoyer par message ;
+- **préparer un repas** : une liste déroulante par moment (apéritif, entrée, plat, accompagnement, dessert), le nombre d’invités, le planning (ce qui se prépare à l’avance) et toutes les courses d’un coup ;
+- noter les recettes **déjà cuisinées** ;
+- **envoyer une sélection** de recettes en un seul lien (le résultat d’une recherche) ;
 - imprimer **le carnet en livre** (couverture, sommaire, une recette par page) ou l’enregistrer en PDF ;
-- faire **lire les étapes à voix haute** en mode cuisine, et agrandir le texte (A, A+, A++ en bas de page) ;
-- passer en **mode cuisine** : une étape à la fois, en grand, écran qui reste allumé ;
-- imprimer une fiche propre, partager un lien, garder ses favoris ;
+- passer en **mode cuisine** : une étape à la fois, en grand, lue à voix haute si on le souhaite, écran qui reste allumé ; sur iPad en paysage, les ingrédients restent à côté ;
+- agrandir le texte avec le bouton « Aa » en haut de chaque page (le site suit aussi la taille de texte choisie dans les réglages de l’iPhone) ;
 - l’installer sur l’écran d’accueil du téléphone et le consulter sans connexion.
 
 ## Ajouter une recette
@@ -74,6 +75,8 @@ Quelques règles pour que tout fonctionne bien :
 
 Pour **modifier** une recette, ouvrez son fichier dans `src/content/recettes` et cliquez sur le crayon.
 
+Dans « Préparer un repas », une recette apparaît dans la liste de chacune de ses catégories (une soupe va avec les entrées, une sauce avec les accompagnements). Une recette `base` n’y apparaît pas, et la liste des desserts ne prend que les recettes `sucré` (les autres, que le `salé`).
+
 ## Ajouter une photo à une recette
 
 1. Ouvrez le dossier `public/photos` du dépôt, cliquez sur **Add file → Upload files** et déposez la photo (de préférence au format paysage, en `.jpg`, moins de 1 Mo). Donnez-lui un nom simple, par exemple `tarte-aux-pommes.jpg`.
@@ -100,7 +103,7 @@ Le site s’ouvre sur http://localhost:4321.
 
 ## Confidentialité
 
-GitHub Pages est gratuit mais public : toute personne qui a le lien peut voir le site. Les pages demandent aux moteurs de recherche de ne pas les indexer : on ne trouve donc pas le site par Google. Les favoris sont gardés dans le navigateur de chacun.
+GitHub Pages est gratuit mais public : toute personne qui a le lien peut voir le site. Les pages demandent aux moteurs de recherche de ne pas les indexer : on ne trouve donc pas le site par Google. La liste de courses, le repas en préparation et les recettes cuisinées sont gardés dans le navigateur de chacun.
 
 ## Organisation du dépôt
 

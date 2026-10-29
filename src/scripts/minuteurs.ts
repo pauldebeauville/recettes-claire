@@ -2,7 +2,7 @@
 // Ils sont gardés dans le navigateur : ils continuent de tourner quand on change de page,
 // et on peut les mettre en pause, les relancer ou les arrêter depuis n'importe où.
 import '../styles/minuteur.css';
-import { toast } from './favoris';
+import { toast } from './toast';
 
 type Minuteur = {
   id: string;

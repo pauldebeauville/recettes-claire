@@ -346,7 +346,7 @@ svg {
   height: 18px;
 }
 
-.site-nav .nb-favoris {
+.site-nav .compteur {
   min-width: 20px;
   padding: 0 6px;
   border-radius: 999px;
@@ -357,7 +357,7 @@ svg {
   text-align: center;
 }
 
-.site-nav .nb-favoris:empty {
+.site-nav .compteur:empty {
   display: none;
 }
 
@@ -437,34 +437,6 @@ svg {
   text-underline-offset: 3px;
 }
 
-.taille-texte {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.taille-texte span {
-  margin-right: 6px;
-}
-
-.taille-texte button {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0 8px;
-  border: 1px solid var(--trait-2);
-  border-radius: 999px;
-  background: none;
-  color: var(--encre-2);
-  font-family: var(--serif);
-  font-weight: 600;
-}
-
-.taille-texte button[aria-pressed='true'] {
-  background: var(--encre);
-  border-color: var(--encre);
-  color: var(--fond);
-}
-
 .site-pied .signature {
   font-family: var(--serif);
   font-style: italic;
@@ -528,8 +500,28 @@ svg {
 
 /* ---------- en-tête et barre du bas sur téléphone ---------- */
 
+/* « Aa » : la taille du texte, au même endroit sur toutes les pages */
 .taille-entete {
-  display: none;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--trait-2);
+  border-radius: 50%;
+  background: var(--carte);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.taille-entete span {
+  font-size: 0.75em;
+}
+
+.site-nav {
+  margin-left: auto;
 }
 
 .barre-bas {
@@ -539,23 +531,6 @@ svg {
 @media (max-width: 760px) {
   .site-nav {
     display: none;
-  }
-  .taille-entete {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 48px;
-    height: 48px;
-    border: 1px solid var(--trait-2);
-    border-radius: 50%;
-    background: var(--carte);
-    font-family: var(--serif);
-    font-size: 1.125rem;
-    font-weight: 600;
-    line-height: 1;
-  }
-  .taille-entete span {
-    font-size: 0.75em;
   }
   .logo {
     font-size: 1.0625rem;
@@ -571,7 +546,7 @@ svg {
     left: 0;
     z-index: 40;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     padding: 6px 6px max(6px, env(safe-area-inset-bottom));
     border-top: 1px solid var(--trait);
     background: color-mix(in srgb, var(--fond) 94%, transparent);
@@ -602,7 +577,7 @@ svg {
     width: 26px;
     height: 26px;
   }
-  .barre-bas .nb-favoris,
+  .barre-bas .compteur,
   .barre-bas .minuteur-badge {
     position: absolute;
     top: 2px;

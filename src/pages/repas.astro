@@ -2,18 +2,34 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Icone from '../components/Icone.astro';
-import { aLAvance, decouperTitre, estThermomix, lien, lienRecette, versionsDe } from '../lib/recettes';
+import { aLAvance, decouperTitre, estThermomix, lien, lienRecette, momentsRepas, versionsDe } from '../lib/recettes';
 import '../styles/perso.css';
 
-const recettes = (await getCollection('recettes')).map((r) => ({
-  s: r.id,
-  t: decouperTitre(r.data.titre).principal,
-  u: lienRecette(r),
-  c: r.data.categories,
-  avance: aLAvance(r.data) ? 1 : 0,
-  tmx: estThermomix(r.data) ? 1 : 0,
-  p: versionsDe(r.data)[0].portions ?? '',
-}));
+// les plats sont rangés sous des intertitres, d'après le premier ingrédient vedette de la recette
+const GROUPES_PLATS: Record<string, string> = {
+  viande: 'Viande',
+  volaille: 'Volaille',
+  poisson: 'Poisson',
+  saumon: 'Poisson',
+  'fruits de mer': 'Poisson',
+  légumes: 'Légumes',
+  œufs: 'Œufs',
+};
+
+// seules les recettes qui se servent dans un repas : les bases (pâtes, coulis…) n'y sont pas
+const recettes = (await getCollection('recettes'))
+  .filter((r) => momentsRepas(r.data).length)
+  .sort((a, b) => a.data.titre.localeCompare(b.data.titre, 'fr', { sensitivity: 'base' }))
+  .map((r) => ({
+    s: r.id,
+    t: decouperTitre(r.data.titre).principal,
+    u: lienRecette(r),
+    m: momentsRepas(r.data),
+    g: GROUPES_PLATS[(r.data.vedettes ?? []).find((v) => v in GROUPES_PLATS) ?? ''] ?? 'Autres',
+    avance: aLAvance(r.data) ? 1 : 0,
+    tmx: estThermomix(r.data) ? 1 : 0,
+    p: versionsDe(r.data)[0].portions ?? '',
+  }));
 ---
 
 <Base titre="Préparer un repas" description="Composez un menu, choisissez le nombre d’invités : planning et liste de courses.">
@@ -21,14 +37,11 @@ const recettes = (await getCollection('recettes')).map((r) => ({
     <nav class="fil"><a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a></nav>
     <h1>Préparer un repas</h1>
     <p class="chapo">
-      Composez votre menu et dites combien vous serez à table : le site prépare le planning et la liste de courses.
+      Choisissez un plat dans chaque liste et dites combien vous serez à table : le site prépare le planning et la liste
+      de courses.
     </p>
 
     <div class="repas-reglages">
-      <label class="repas-nom">
-        <span>Nom du repas <em>(facultatif)</em></span>
-        <input type="text" id="repas-titre" maxlength="60" placeholder="Ex. : Dîner d’anniversaire" />
-      </label>
       <div class="repas-invites-bloc">
         <span>Nombre de personnes</span>
         <div class="portions">
@@ -59,12 +72,9 @@ const recettes = (await getCollection('recettes')).map((r) => ({
     <div class="repas-actions">
       <button type="button" class="bouton bouton-principal" id="repas-courses"><Icone nom="panier" /> Tout ajouter à la liste de courses</button>
       <a class="bouton" href={lien('courses/')}>Voir la liste de courses</a>
-      <button type="button" class="bouton" id="repas-imprimer"><Icone nom="imprimer" /> Imprimer la carte du menu</button>
       <button type="button" class="bouton" id="repas-vider">Effacer le menu</button>
     </div>
   </section>
-
-  <div class="carte-menu" id="carte-menu" aria-hidden="true"></div>
 
   <script type="application/json" id="donnees-repas" set:html={JSON.stringify(recettes)} />
 </Base>
@@ -76,35 +86,6 @@ const recettes = (await getCollection('recettes')).map((r) => ({
     align-items: flex-end;
     gap: 18px 28px;
     margin-top: 28px;
-  }
-
-  .repas-nom {
-    display: flex;
-    flex: 1 1 260px;
-    flex-direction: column;
-    gap: 6px;
-    font-size: 0.875rem;
-    color: var(--encre-2);
-  }
-
-  .repas-nom em {
-    color: var(--encre-3);
-  }
-
-  .repas-nom input,
-  .repas-ajout input {
-    height: 46px;
-    padding: 0 14px;
-    border: 1px solid var(--trait-2);
-    border-radius: 12px;
-    background: var(--carte);
-    font-size: 1rem;
-    outline: none;
-  }
-
-  .repas-nom input:focus,
-  .repas-ajout input:focus {
-    border-color: var(--accent);
   }
 
   .repas-invites-bloc {
@@ -127,8 +108,8 @@ const recettes = (await getCollection('recettes')).map((r) => ({
   .repas-invites-bloc .pas {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border: 0;
     border-radius: 50%;
     background: var(--carte);
@@ -197,54 +178,54 @@ const recettes = (await getCollection('recettes')).map((r) => ({
   }
 
   .repas-retirer {
+    flex: none;
     margin-left: auto;
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     border: 0;
     border-radius: 50%;
     background: var(--fond-2);
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     line-height: 1;
     color: var(--encre-2);
   }
 
-  .repas-ajout {
-    position: relative;
+  /* le titre, avec le nombre de personnes dessous, et la croix pour retirer */
+  .repas-moment > ul li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
+  .repas-moment > ul li > span {
+    grid-row: 2;
+  }
+
+  .repas-moment > ul li > .repas-retirer {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  /* une liste déroulante par moment : sur iPhone et iPad, elle s'ouvre comme les menus d'Apple */
+  .repas-choix select {
+    width: 100%;
+    min-height: 52px;
     margin-top: 10px;
+    padding: 0 44px 0 16px;
+    border: 1px solid var(--trait-2);
+    border-radius: 14px;
+    background: var(--fond)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2385776a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")
+      no-repeat right 14px center / 20px;
+    appearance: none;
+    color: var(--encre);
+    font-size: 1.0625rem;
   }
 
-  .repas-ajout input {
-    width: 100%;
-    height: 42px;
-  }
-
-  .repas-suggestions {
-    position: absolute;
-    top: calc(100% + 4px);
-    right: 0;
-    left: 0;
-    z-index: 20;
-    margin: 0;
-    padding: 6px;
-    border: 1px solid var(--trait);
-    border-radius: 12px;
-    background: var(--carte);
-    box-shadow: var(--ombre-forte);
-    list-style: none;
-  }
-
-  .repas-suggestions button {
-    width: 100%;
-    padding: 10px 12px;
-    border: 0;
-    border-radius: 8px;
-    background: none;
-    font-size: 0.9375rem;
-    text-align: left;
-  }
-
-  .repas-suggestions button:hover {
-    background: var(--fond-2);
+  .repas-choix select:focus {
+    border-color: var(--accent);
+    outline: none;
   }
 
   .repas-planning {
@@ -325,47 +306,6 @@ const recettes = (await getCollection('recettes')).map((r) => ({
     cursor: default;
   }
 
-  /* la carte du menu n'apparaît qu'à l'impression */
-  .carte-menu {
-    display: none;
-  }
-
-  @media print {
-    body > *:not(.carte-menu) {
-      display: none !important;
-    }
-    .carte-menu {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 18pt;
-      min-height: 90vh;
-      padding: 40pt;
-      font-family: var(--serif);
-      text-align: center;
-      color: #2b231d;
-    }
-    .carte-kicker {
-      font-size: 30pt;
-      font-style: italic;
-      color: #a8442a;
-    }
-    .carte-moment p {
-      font-size: 17pt;
-      line-height: 1.5;
-    }
-    .carte-ornement {
-      font-size: 12pt;
-      color: #a8442a;
-    }
-    .carte-signature {
-      margin-top: 24pt;
-      font-size: 11pt;
-      font-style: italic;
-      color: #85776a;
-    }
-  }
 </style>
 
 <script>

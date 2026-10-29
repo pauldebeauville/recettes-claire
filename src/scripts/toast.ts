@@ -1,27 +1,4 @@
-// Favoris gardés dans ce navigateur uniquement.
-const CLE = 'recettes-claire:favoris';
-
-export function lireFavoris(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(CLE) ?? '[]');
-  } catch {
-    return [];
-  }
-}
-
-export function basculerFavori(slug: string): boolean {
-  const favoris = new Set(lireFavoris());
-  const ajoute = !favoris.has(slug);
-  if (ajoute) favoris.add(slug);
-  else favoris.delete(slug);
-  try {
-    localStorage.setItem(CLE, JSON.stringify([...favoris]));
-  } catch {
-    /* navigation privée : les favoris ne sont pas gardés */
-  }
-  window.dispatchEvent(new CustomEvent('favoris'));
-  return ajoute;
-}
+// Petit message en bas de l'écran (« Ajouté à votre liste de courses », « Annuler »…).
 
 let minuterieToast: number | undefined;
 

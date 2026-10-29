@@ -1,68 +1,49 @@
-/* Fiches de recettes (carnet, sélections de l'accueil). Globales : certaines sont créées par le script. */
+/* Le carnet en liste : une ligne par recette, le titre puis quelques repères. Globales : certaines sont créées par le script. */
 
 .fiches {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 40px;
   margin: 0;
   padding: 0;
   list-style: none;
+  border-top: 1px solid var(--trait);
+}
+
+/* sur grand écran et iPad en paysage, deux colonnes */
+@media (min-width: 1000px) {
+  .fiches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .fiche {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--trait);
-  border-radius: var(--rayon);
-  background: var(--carte);
-  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
-}
-
-.fiche::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background: var(--teinte);
-}
-
-.fiche:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--ombre-forte);
-  border-color: color-mix(in srgb, var(--teinte) 40%, var(--trait));
+  border-bottom: 1px solid var(--trait);
 }
 
 .fiche a {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 168px;
-  padding: 20px 56px 16px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 72px;
+  padding: 12px 4px 12px 14px;
+  border-left: 4px solid var(--teinte);
   text-decoration: none;
 }
 
-.fiche-kicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 10px;
-  font-size: 0.875rem;
-  font-weight: 650;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--teinte);
+.fiche a:hover .fiche-titre {
+  color: var(--accent);
 }
 
-.fiche-type {
-  color: var(--encre-3);
+.fiche a:active {
+  background: var(--fond-2);
 }
 
 .fiche-titre {
-  margin: 10px 0 18px;
-  font-size: 1.3125rem;
+  font-size: 1.1875rem;
   font-weight: 560;
-  line-height: 1.22;
+  line-height: 1.25;
 }
 
 .precision {
@@ -76,300 +57,20 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 12px;
-  margin-top: auto;
-  font-size: 0.9375rem;
-  color: var(--encre-3);
-}
-
-.fav {
-  position: absolute;
-  top: 12px;
-  right: 10px;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--encre-3);
-}
-
-.fav:hover {
-  background: var(--fond-2);
-  color: var(--accent);
-}
-
-.fav svg {
-  width: 20px;
-  height: 20px;
-}
-
-.fav[aria-pressed='true'] {
-  color: var(--accent);
-}
-
-.fav[aria-pressed='true'] .coeur {
-  fill: currentColor;
-}
-
-@media (max-width: 560px) {
-  .fiche a {
-    min-height: 0;
-    padding: 18px 52px 14px 18px;
-  }
-  .fiche-titre {
-    margin: 8px 0 12px;
-    font-size: 1.25rem;
-  }
-}
-
-.fiche-lettre {
-  position: absolute;
-  right: -4px;
-  bottom: -38px;
-  font-family: var(--serif);
-  font-size: 132px;
-  font-style: italic;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--teinte);
-  opacity: 0.09;
-  pointer-events: none;
-  user-select: none;
-}
-
-
-/* ---------- accueil : recette du jour et sélections ---------- */
-
-.inspirations {
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-  margin: 28px 0 44px;
-}
-
-.titre-carnet {
-  margin-top: 8px;
-  font-size: 1.75rem;
-}
-
-.du-jour {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--trait);
-  border-radius: 22px;
-  background: var(--carte);
-  box-shadow: var(--ombre);
-}
-
-.du-jour::before {
-  content: '';
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 6px;
-  background: var(--teinte);
-}
-
-.du-jour-lien {
-  display: block;
-  padding: clamp(22px, 4vw, 34px) clamp(22px, 4vw, 40px) 76px;
-  text-decoration: none;
-}
-
-.du-jour-kicker {
-  color: var(--teinte);
-}
-
-.du-jour-titre {
-  max-width: 40rem;
-  margin-top: 10px;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 560;
-  letter-spacing: -0.015em;
-}
-
-.du-jour-meta {
-  margin-top: 10px;
-  font-size: 0.9375rem;
-  color: var(--encre-3);
-}
-
-.du-jour-astuce {
-  max-width: 44rem;
-  margin: 18px 0 0;
-  padding: 0 0 0 16px;
-  border-left: 3px solid color-mix(in srgb, var(--teinte) 45%, transparent);
-}
-
-.du-jour-astuce-titre {
-  font-size: 0.875rem;
-  font-weight: 650;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--encre-3);
-}
-
-.du-jour-astuce q {
-  display: block;
   margin-top: 4px;
-  font-family: var(--serif);
-  font-size: 1.125rem;
-  font-style: italic;
-  color: var(--encre-2);
-}
-
-.du-jour-voir {
-  display: inline-block;
-  margin-top: 18px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.du-jour-autre {
-  position: absolute;
-  right: clamp(18px, 4vw, 36px);
-  bottom: 20px;
-}
-
-.du-jour-lien:hover .du-jour-titre {
-  color: var(--accent);
-}
-
-.rangee-tete {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.rangee-tete h2 {
-  font-size: 1.5rem;
-}
-
-.rangee-tete p {
-  margin-top: 2px;
   font-size: 0.9375rem;
   color: var(--encre-3);
 }
 
-.rangee-tout {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
+.fiche-cat {
+  font-weight: 650;
+  color: var(--teinte);
 }
 
-.rangee-tout:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.rangee-liste {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* sur téléphone, trois idées suffisent : pas de défilement de côté */
-@media (max-width: 560px) {
-  .rangee-liste .fiche:nth-child(n + 4) {
-    display: none;
-  }
-}
-
-.plus-idees {
-  border-top: 1px solid var(--trait-2);
-}
-
-.plus-idees summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 12px;
-  min-height: 56px;
-  padding: 16px 0;
-  cursor: pointer;
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.plus-idees summary span {
-  font-family: var(--sans);
-  font-size: 0.9375rem;
-  font-weight: 400;
+.fiche-fleche {
+  width: 22px;
+  height: 22px;
   color: var(--encre-3);
-}
-
-.plus-idees[open] {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  padding-bottom: 8px;
-}
-
-.fiche--compacte a {
-  min-height: 150px;
-}
-
-.fiche--compacte .fiche-titre {
-  font-size: 1.1875rem;
-}
-
-.progression {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border-radius: 16px;
-  background: var(--fond-2);
-  font-size: 0.9375rem;
-  color: var(--encre-2);
-}
-
-.progression strong {
-  color: var(--encre);
-}
-
-.progression-barre {
-  flex: 1;
-  height: 8px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--trait);
-}
-
-.progression-barre span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--accent);
-}
-
-@media (max-width: 560px) {
-  .du-jour-lien {
-    padding-bottom: 24px;
-  }
-  .du-jour-autre {
-    position: static;
-    margin: 0 22px 20px;
-  }
-  .progression {
-    flex-wrap: wrap;
-  }
-  .progression-barre {
-    flex-basis: 100%;
-  }
 }
 
 /* recette déjà cuisinée */
@@ -378,31 +79,17 @@
   color: var(--c-entree);
 }
 
-.progression a {
-  font-weight: 600;
-  color: var(--accent);
-  white-space: nowrap;
+/* photo de famille, quand une recette en a une : une vignette à gauche */
+.fiche:has(.fiche-photo) a {
+  grid-template-columns: 64px minmax(0, 1fr) auto;
 }
 
-/* photo de famille, quand une recette en a une */
 .fiche-photo {
   display: block;
-  width: calc(100% + 76px);
-  max-width: none;
-  margin: -20px -56px 14px -20px;
-  aspect-ratio: 16 / 10;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
   object-fit: cover;
-}
-
-@media (max-width: 560px) {
-  .fiche-photo {
-    width: calc(100% + 70px);
-    margin: -18px -52px 12px -18px;
-  }
-}
-
-.fiche:has(.fiche-photo) .fav {
-  background: rgb(255 253 248 / 88%);
 }
 
 /* ---------- « Dans mon frigo, j'ai… » ---------- */

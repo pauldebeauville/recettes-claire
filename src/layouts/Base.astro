@@ -61,14 +61,11 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
           <button type="button" data-ouvrir-minuteur aria-haspopup="dialog">
             <Icone nom="horloge" /><span class="libelle">Minuteur</span><span class="minuteur-badge" aria-live="off"></span>
           </button>
-          <a href={lien('?favoris=1#carnet')} data-lien-favoris>
-            <Icone nom="coeur" /><span class="libelle">Favoris</span><span class="nb-favoris nb-mes-favoris"></span>
-          </a>
           <a href={lien('courses/')} id="lien-courses">
-            <Icone nom="panier" /><span class="libelle">Courses</span><span class="nb-favoris nb-courses"></span>
+            <Icone nom="panier" /><span class="libelle">Courses</span><span class="compteur nb-courses"></span>
           </a>
         </nav>
-        <button type="button" class="taille-entete" data-taille-suivante aria-label="Agrandir le texte" title="Taille du texte">
+        <button type="button" class="taille-entete" data-taille-suivante aria-label="Changer la taille du texte" title="Taille du texte">
           A<span>A</span>
         </button>
       </div>
@@ -79,11 +76,8 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
       <button type="button" data-ouvrir-minuteur aria-haspopup="dialog">
         <Icone nom="horloge" /><span>Minuteur</span><span class="minuteur-badge" aria-live="off"></span>
       </button>
-      <a href={lien('?favoris=1#carnet')} data-lien-favoris>
-        <Icone nom="coeur" /><span>Favoris</span><span class="nb-favoris nb-mes-favoris"></span>
-      </a>
       <a href={lien('courses/')}>
-        <Icone nom="panier" /><span>Courses</span><span class="nb-favoris nb-courses"></span>
+        <Icone nom="panier" /><span>Courses</span><span class="compteur nb-courses"></span>
       </a>
     </nav>
     <main id="contenu">
@@ -98,28 +92,20 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
           <a href={lien('courses/')}>Ma liste de courses</a>
           <a href={lien('livre/')}>Le carnet en livre</a>
         </nav>
-        <div class="taille-texte" role="group" aria-label="Taille du texte">
-          <span>Taille du texte</span>
-          <button type="button" data-taille="0" aria-label="Taille normale">A</button>
-          <button type="button" data-taille="1" aria-label="Texte plus grand">A+</button>
-          <button type="button" data-taille="2" aria-label="Texte encore plus grand">A++</button>
-        </div>
       </div>
     </footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script>
-      import { lireFavoris } from '../scripts/favoris';
       import { initialiserMinuteurs } from '../scripts/minuteurs';
       import { lireCourses } from '../scripts/perso';
+      import { toast } from '../scripts/toast';
 
       initialiserMinuteurs();
 
-      // taille du texte (A, A+, A++) : gardée dans le navigateur
-      const majTaille = () => {
-        const t = document.documentElement.dataset.taille ?? '0';
-        document.querySelectorAll<HTMLButtonElement>('[data-taille]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.taille === t)));
-      };
-      const choisirTaille = (t: string) => {
+      // taille du texte : le bouton « Aa » passe de normal à grand, puis très grand, puis revient ; gardée dans le navigateur
+      const TAILLES = ['Texte : taille normale', 'Texte : plus grand', 'Texte : encore plus grand'];
+      document.querySelector('[data-taille-suivante]')!.addEventListener('click', () => {
+        const t = String((+(document.documentElement.dataset.taille ?? 0) + 1) % 3);
         if (t === '0') delete document.documentElement.dataset.taille;
         else document.documentElement.dataset.taille = t;
         try {
@@ -127,15 +113,8 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
         } catch {
           /* rien */
         }
-        majTaille();
-      };
-      document.addEventListener('click', (e) => {
-        const b = (e.target as HTMLElement).closest<HTMLElement>('[data-taille], [data-taille-suivante]');
-        if (!b) return;
-        if (b.dataset.taille) choisirTaille(b.dataset.taille);
-        else choisirTaille(String((+(document.documentElement.dataset.taille ?? 0) + 1) % 3));
+        toast(TAILLES[+t]);
       });
-      majTaille();
 
       const hasard = document.getElementById('au-hasard') as HTMLButtonElement;
       hasard.addEventListener('click', () => {
@@ -145,12 +124,6 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
         location.href = `${hasard.dataset.base}${choix[Math.floor(Math.random() * choix.length)]}/`;
       });
 
-      const majFavoris = () => {
-        const n = lireFavoris().length;
-        document.querySelectorAll('.nb-mes-favoris').forEach((b) => (b.textContent = n ? String(n) : ''));
-      };
-      majFavoris();
-      window.addEventListener('favoris', majFavoris);
       const majCourses = () => {
         const n = lireCourses().recettes.length;
         document.querySelectorAll('.nb-courses').forEach((b) => (b.textContent = n ? String(n) : ''));

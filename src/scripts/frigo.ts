@@ -2,7 +2,7 @@
 import { MOTS_VIDES, existe, normaliser, singulier, trouve } from './recherche';
 
 type Entree = { s: string; t: string; i: string };
-type Fiche = { s: string; u: string; t: string; c: string; k: string; p: string; n: number };
+type Fiche = { s: string; u: string; t: string; c: string; k: string; n: number };
 
 const CLE = 'recettes-claire:frigo';
 const echapper = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -28,7 +28,7 @@ export function initialiserFrigo(base: string) {
   if (!zone) return;
   const index: Entree[] = JSON.parse(document.getElementById('index-recherche')!.textContent!);
   const fiches = new Map<string, Fiche>(
-    (JSON.parse(document.getElementById('donnees-inspirations')!.textContent!) as Fiche[]).map((f) => [f.s, f]),
+    (JSON.parse(document.getElementById('donnees-frigo')!.textContent!) as Fiche[]).map((f) => [f.s, f]),
   );
   const mots = index.map((e) => ({ s: e.s, titre: e.t.split(' '), mots: `${e.t} ${e.i}`.split(' ') }));
   const vocabulaire = [...new Set(mots.flatMap((r) => r.mots))];

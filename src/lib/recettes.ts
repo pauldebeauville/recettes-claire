@@ -23,6 +23,21 @@ export function versionsDe(d: Data): Corps[] {
 
 export const typesDe = (d: Data): string[] => (Array.isArray(d.type) ? d.type : [d.type]);
 
+/** Les moments du repas, dans l'ordre où le menu se déroule. */
+export const MOMENTS = ['apéritif', 'entrée', 'plat', 'accompagnement', 'dessert'] as const;
+
+/**
+ * Où une recette peut se servir dans un repas, d'après les catégories de Claire (dans son ordre) :
+ * une soupe en entrée, une sauce sans autre moment en accompagnement, une base (pâte, coulis…) nulle part.
+ * Garde-fou : le dessert n'accepte que du sucré, les autres moments que du salé.
+ */
+export function momentsRepas(d: Data): string[] {
+  const types = typesDe(d);
+  let moments: string[] = d.categories.filter((c) => (MOMENTS as readonly string[]).includes(c));
+  if (!moments.length) moments = d.categories.includes('soupe') ? ['entrée'] : d.categories.includes('sauce') ? ['accompagnement'] : [];
+  return moments.filter((m) => (m === 'dessert' ? types.includes('sucré') && !types.includes('salé') : types.includes('salé') && !types.includes('sucré')));
+}
+
 export const lignesIngredients = (c: Corps): string[] =>
   (c.ingredients ?? []).filter((x): x is string => typeof x === 'string');
 

@@ -1,9 +1,10 @@
 // Préparer un repas : composer un menu, choisir le nombre d'invités, obtenir le planning et la liste de courses.
-import { toast } from './favoris';
+import { toast } from './toast';
 import { ajouterAuxCourses, ecrireRepas, lireRepas } from './perso';
 import { ajusterQuantites, lignesAffichees, type Portions } from './quantites';
 
-type Recette = { s: string; t: string; u: string; c: string[]; avance: number; tmx: number; p: string };
+// m : les moments où la recette peut se servir ; g : l'intertitre des plats (Viande, Poisson…)
+type Recette = { s: string; t: string; u: string; m: string[]; g: string; avance: number; tmx: number; p: string };
 
 const MOMENTS: [string, string, string][] = [
   ['apéritif', 'Apéritif', 'un apéritif'],
@@ -15,12 +16,7 @@ const MOMENTS: [string, string, string][] = [
 
 const echapper = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const normaliser = (s: string) =>
-  s.toLowerCase().replace(/œ/g, 'oe').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
-
-/** Le moment du repas d'une recette ajoutée depuis sa fiche. */
-export const momentDe = (categorie: string) =>
-  MOMENTS.some(([m]) => m === categorie) ? categorie : categorie === 'soupe' ? 'entrée' : categorie === 'sauce' || categorie === 'base' ? 'accompagnement' : 'plat';
+const GROUPES_PLATS = ['Viande', 'Volaille', 'Poisson', 'Légumes', 'Œufs', 'Autres'];
 
 export function initialiserRepas() {
   const toutes: Recette[] = JSON.parse(document.getElementById('donnees-repas')!.textContent!);
@@ -28,11 +24,15 @@ export function initialiserRepas() {
   const menu = document.getElementById('repas-menu')!;
   const planning = document.getElementById('repas-planning')!;
   const invites = document.getElementById('repas-invites')!;
-  const carte = document.getElementById('carte-menu')!;
 
   const dessiner = () => {
     const repas = lireRepas();
-    repas.plats = repas.plats.filter((p) => parSlug.has(p.slug)).map((p) => ({ ...p, moment: momentDe(p.moment) }));
+    // une recette reste au moment où elle peut se servir (les bases, ou un dessert mal rangé, sont écartés)
+    repas.plats = repas.plats
+      .filter((p) => parSlug.has(p.slug))
+      .map((p) => ({ ...p, moment: parSlug.get(p.slug)!.m.includes(p.moment) ? p.moment : parSlug.get(p.slug)!.m[0] }));
+    const auMenu = new Set(repas.plats.map((p) => p.slug));
+    const option = (r: Recette) => `<option value="${r.s}">${echapper(r.t)}</option>`;
     invites.textContent = String(repas.invites);
     menu.innerHTML = MOMENTS.map(([cle, nom, avecArticle]) => {
       const plats = repas.plats.filter((p) => p.moment === cle);
@@ -45,10 +45,13 @@ export function initialiserRepas() {
               return `<li><a href="${r.u}">${echapper(r.t)}</a>${r.p ? `<span>${echapper(r.p)}</span>` : ''}<button type="button" class="repas-retirer" data-retirer="${r.s}" aria-label="Retirer ${echapper(r.t)} du menu">×</button></li>`;
             })
             .join('')}</ul>
-          <div class="repas-ajout">
-            <input type="search" placeholder="Ajouter ${avecArticle}…" autocomplete="off" data-moment="${cle}" aria-label="Ajouter ${avecArticle}" />
-            <ul class="repas-suggestions" hidden></ul>
-          </div>
+          <label class="repas-choix">
+            <span class="visuellement-cache">Choisir ${avecArticle}</span>
+            <select data-moment="${cle}">
+              <option value="">Choisir ${avecArticle}…</option>
+              ${listeDuMoment(cle, auMenu, option)}
+            </select>
+          </label>
         </section>`;
     }).join('');
 
@@ -63,17 +66,17 @@ export function initialiserRepas() {
       ? jourJ.map((r) => `<li><a href="${r.u}">${echapper(r.t)}</a>${r.tmx ? ' <span class="badge">Thermomix</span>' : ''}</li>`).join('')
       : '<li class="vide">Tout est prêt la veille !</li>';
     document.getElementById('repas-courses')!.toggleAttribute('disabled', choisis.length === 0);
-
-    // la carte du menu, pour l'imprimer et la poser sur la table
-    const titre = (document.getElementById('repas-titre') as HTMLInputElement).value.trim();
-    carte.innerHTML = `
-      <p class="carte-kicker">${titre ? echapper(titre) : 'Menu'}</p>
-      ${MOMENTS.map(([cle]) => repas.plats.filter((p) => p.moment === cle))
-        .filter((l) => l.length)
-        .map((l) => `<div class="carte-moment">${l.map((p) => `<p>${echapper(parSlug.get(p.slug)!.t)}</p>`).join('')}</div>`)
-        .join('<span class="carte-ornement" aria-hidden="true">✦</span>')}
-      <p class="carte-signature">Les 1000 et 1 recettes de Claire</p>`;
   };
+
+  /** Les recettes proposées pour un moment, par ordre alphabétique ; les plats sous des intertitres. */
+  function listeDuMoment(moment: string, auMenu: Set<string>, option: (r: Recette) => string): string {
+    const possibles = toutes.filter((r) => r.m.includes(moment) && !auMenu.has(r.s));
+    if (moment !== 'plat') return possibles.map(option).join('');
+    return GROUPES_PLATS.map((g) => {
+      const liste = possibles.filter((r) => r.g === g);
+      return liste.length ? `<optgroup label="${g}">${liste.map(option).join('')}</optgroup>` : '';
+    }).join('');
+  }
 
   const ajouter = (slug: string, moment: string) => {
     const repas = lireRepas();
@@ -81,29 +84,13 @@ export function initialiserRepas() {
     ecrireRepas(repas);
   };
 
-  // recherche d'une recette à ajouter, en commençant par celles du bon moment
-  menu.addEventListener('input', (e) => {
-    const champ = e.target as HTMLInputElement;
-    if (!champ.dataset.moment) return;
-    const liste = champ.nextElementSibling as HTMLElement;
-    const q = normaliser(champ.value);
-    if (q.length < 2) {
-      liste.hidden = true;
-      return;
-    }
-    const mots = q.split(' ');
-    const trouvees = toutes
-      .filter((r) => mots.every((m) => normaliser(r.t).includes(m)))
-      .sort((a, b) => +b.c.includes(champ.dataset.moment!) - +a.c.includes(champ.dataset.moment!))
-      .slice(0, 8);
-    liste.hidden = trouvees.length === 0;
-    liste.innerHTML = trouvees.map((r) => `<li><button type="button" data-ajouter="${r.s}" data-moment="${champ.dataset.moment}">${echapper(r.t)}</button></li>`).join('');
+  // choisir dans la liste suffit : la recette rejoint le menu, la liste revient à « Choisir… »
+  menu.addEventListener('change', (e) => {
+    const liste = e.target as HTMLSelectElement;
+    if (liste.dataset.moment && liste.value) ajouter(liste.value, liste.dataset.moment);
   });
   menu.addEventListener('click', (e) => {
-    const cible = e.target as HTMLElement;
-    const ajout = cible.closest<HTMLElement>('[data-ajouter]');
-    if (ajout) ajouter(ajout.dataset.ajouter!, ajout.dataset.moment!);
-    const retrait = cible.closest<HTMLElement>('[data-retirer]');
+    const retrait = (e.target as HTMLElement).closest<HTMLElement>('[data-retirer]');
     if (retrait) {
       const repas = lireRepas();
       repas.plats = repas.plats.filter((p) => p.slug !== retrait.dataset.retirer);
@@ -117,8 +104,6 @@ export function initialiserRepas() {
       ecrireRepas(repas);
     }),
   );
-  document.getElementById('repas-titre')!.addEventListener('input', dessiner);
-  document.getElementById('repas-imprimer')!.addEventListener('click', () => window.print());
   document.getElementById('repas-vider')!.addEventListener('click', () => {
     if (confirm('Effacer ce menu ?')) ecrireRepas({ invites: lireRepas().invites, plats: [] });
   });
@@ -162,8 +147,5 @@ export function initialiserRepas() {
 
   window.addEventListener('repas', dessiner);
   window.addEventListener('storage', (e) => e.key === 'recettes-claire:repas' && dessiner());
-  document.addEventListener('click', (e) => {
-    if (!(e.target as HTMLElement).closest('.repas-ajout')) document.querySelectorAll<HTMLElement>('.repas-suggestions').forEach((l) => (l.hidden = true));
-  });
   dessiner();
 }

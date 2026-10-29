@@ -38,7 +38,6 @@ const annee = new Date().getFullYear();
       <button type="button" role="radio" class="puce" data-livre="tout" aria-checked="true">Tout le carnet</button>
       <button type="button" role="radio" class="puce" data-livre="salé" aria-checked="false">Le salé</button>
       <button type="button" role="radio" class="puce" data-livre="sucré" aria-checked="false">Le sucré</button>
-      <button type="button" role="radio" class="puce" data-livre="favoris" aria-checked="false">Mes favoris</button>
     </div>
     <p class="livre-compte" aria-live="polite"></p>
     <button type="button" class="bouton bouton-principal" id="livre-imprimer"><Icone nom="imprimer" /> Imprimer ou enregistrer en PDF</button>
@@ -501,16 +500,13 @@ const annee = new Date().getFullYear();
 </style>
 
 <script>
-  import { lireFavoris } from '../scripts/favoris';
-
   const pages = [...document.querySelectorAll<HTMLElement>('.livre-recette')];
   const choisir = (choix: string) => {
-    const favoris = new Set(lireFavoris());
     let n = 0;
     const numeros = new Map<string, number>();
     for (const p of pages) {
       const d = p.dataset;
-      const garde = choix === 'tout' || (choix === 'favoris' ? favoris.has(d.slug!) : d.types!.split('|').includes(choix));
+      const garde = choix === 'tout' || d.types!.split('|').includes(choix);
       p.hidden = !garde;
       if (garde) {
         numeros.set(d.slug!, ++n);
@@ -531,7 +527,7 @@ const annee = new Date().getFullYear();
     document.querySelector('.livre-total')!.textContent = String(n);
     document.querySelector('.livre-compte')!.textContent = n
       ? `${n} recette${n > 1 ? 's' : ''} dans le livre, soit environ ${n + document.querySelectorAll('.livre-chapitre:not([hidden])').length + 3} pages.`
-      : 'Aucune recette : ajoutez d’abord des favoris.';
+      : 'Aucune recette.';
     (document.getElementById('livre-imprimer') as HTMLButtonElement).disabled = n === 0;
     document.querySelectorAll<HTMLButtonElement>('[data-livre]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.livre === choix)));
   };
