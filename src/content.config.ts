@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { existsSync } from 'node:fs';
 import { CATEGORIES, TYPES, VEDETTES } from './lib/libelles';
 
 const ingredient = z.union([z.string(), z.object({ groupe: z.string() })]);
@@ -33,10 +34,15 @@ const recettes = defineCollection({
       categories: z.array(z.enum(Object.keys(CATEGORIES) as [string, ...string[]])).min(1),
       vedettes: z.array(z.enum(Object.keys(VEDETTES) as [string, ...string[]])).optional(),
       ordre: z.number().optional(),
+      // photo de famille, déposée dans public/photos/ (ex. : photo: tarte-aux-pommes.jpg)
+      photo: z.string().optional(),
       ...corps,
       versions: z.array(z.object({ nom: z.string(), titre: z.string().optional(), ...corps })).optional(),
     })
     .superRefine((r, ctx) => {
+      if (r.photo && !existsSync(`public/photos/${r.photo}`)) {
+        ctx.addIssue({ code: 'custom', message: `Photo introuvable : déposez « ${r.photo} » dans le dossier public/photos` });
+      }
       const parts = r.versions ?? [r];
       parts.forEach((v, i) => {
         const ou = r.versions ? ` (version ${i + 1})` : '';

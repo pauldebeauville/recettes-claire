@@ -8,8 +8,9 @@ import { NOM_SITE } from '../lib/libelles';
 interface Props {
   titre?: string;
   description?: string;
+  image?: string; // image d'aperçu (partage)
 }
-const { titre, description = 'Toutes les recettes de Claire, salées et sucrées, réunies dans un carnet.' } = Astro.props;
+const { titre, image, description = 'Toutes les recettes de Claire, salées et sucrées, réunies dans un carnet.' } = Astro.props;
 const titreComplet = titre ? `${titre} · ${NOM_SITE}` : NOM_SITE;
 const slugs = (await getCollection('recettes')).map((r) => r.id);
 const adresse = new URL(Astro.url.pathname, Astro.site);
@@ -19,6 +20,12 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('recettes-claire:taille');
+        if (t) document.documentElement.dataset.taille = t;
+      } catch {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titreComplet}</title>
     <meta name="description" content={description} />
@@ -36,7 +43,7 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={titre ?? NOM_SITE} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={adresse.href} />
-    <meta property="og:image" content={new URL(lien('partage.png'), Astro.site).href} />
+    <meta property="og:image" content={new URL(image ?? lien('partage.png'), Astro.site).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -51,15 +58,34 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
           <button type="button" id="au-hasard" data-slugs={JSON.stringify(slugs)} data-base={lien('recettes/')}>
             <Icone nom="de" /><span class="libelle">Au hasard</span>
           </button>
-          <button type="button" id="ouvrir-minuteur" aria-haspopup="dialog">
+          <button type="button" data-ouvrir-minuteur aria-haspopup="dialog">
             <Icone nom="horloge" /><span class="libelle">Minuteur</span><span class="minuteur-badge" aria-live="off"></span>
           </button>
-          <a href={lien('?favoris=1#carnet')} id="lien-favoris">
-            <Icone nom="coeur" /><span class="libelle">Favoris</span><span class="nb-favoris"></span>
+          <a href={lien('?favoris=1#carnet')} data-lien-favoris>
+            <Icone nom="coeur" /><span class="libelle">Favoris</span><span class="nb-favoris nb-mes-favoris"></span>
+          </a>
+          <a href={lien('courses/')} id="lien-courses">
+            <Icone nom="panier" /><span class="libelle">Courses</span><span class="nb-favoris nb-courses"></span>
           </a>
         </nav>
+        <button type="button" class="taille-entete" data-taille-suivante aria-label="Agrandir le texte" title="Taille du texte">
+          A<span>A</span>
+        </button>
       </div>
     </header>
+    <!-- sur téléphone : les mêmes accès, en bas de l'écran, avec des mots -->
+    <nav class="barre-bas" aria-label="Navigation">
+      <a href={lien()}><Icone nom="livre" /><span>Accueil</span></a>
+      <button type="button" data-ouvrir-minuteur aria-haspopup="dialog">
+        <Icone nom="horloge" /><span>Minuteur</span><span class="minuteur-badge" aria-live="off"></span>
+      </button>
+      <a href={lien('?favoris=1#carnet')} data-lien-favoris>
+        <Icone nom="coeur" /><span>Favoris</span><span class="nb-favoris nb-mes-favoris"></span>
+      </a>
+      <a href={lien('courses/')}>
+        <Icone nom="panier" /><span>Courses</span><span class="nb-favoris nb-courses"></span>
+      </a>
+    </nav>
     <main id="contenu">
       <slot />
     </main>
@@ -67,14 +93,49 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
       <div class="conteneur">
         <p class="signature">{NOM_SITE}</p>
         <p>Carnet de famille · Les recettes sont reproduites telles qu’elle les a écrites.</p>
+        <nav class="pied-liens" aria-label="Outils">
+          <a href={lien('repas/')}>Préparer un repas</a>
+          <a href={lien('courses/')}>Ma liste de courses</a>
+          <a href={lien('livre/')}>Le carnet en livre</a>
+        </nav>
+        <div class="taille-texte" role="group" aria-label="Taille du texte">
+          <span>Taille du texte</span>
+          <button type="button" data-taille="0" aria-label="Taille normale">A</button>
+          <button type="button" data-taille="1" aria-label="Texte plus grand">A+</button>
+          <button type="button" data-taille="2" aria-label="Texte encore plus grand">A++</button>
+        </div>
       </div>
     </footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script>
       import { lireFavoris } from '../scripts/favoris';
       import { initialiserMinuteurs } from '../scripts/minuteurs';
+      import { lireCourses } from '../scripts/perso';
 
       initialiserMinuteurs();
+
+      // taille du texte (A, A+, A++) : gardée dans le navigateur
+      const majTaille = () => {
+        const t = document.documentElement.dataset.taille ?? '0';
+        document.querySelectorAll<HTMLButtonElement>('[data-taille]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.taille === t)));
+      };
+      const choisirTaille = (t: string) => {
+        if (t === '0') delete document.documentElement.dataset.taille;
+        else document.documentElement.dataset.taille = t;
+        try {
+          localStorage.setItem('recettes-claire:taille', t);
+        } catch {
+          /* rien */
+        }
+        majTaille();
+      };
+      document.addEventListener('click', (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLElement>('[data-taille], [data-taille-suivante]');
+        if (!b) return;
+        if (b.dataset.taille) choisirTaille(b.dataset.taille);
+        else choisirTaille(String((+(document.documentElement.dataset.taille ?? 0) + 1) % 3));
+      });
+      majTaille();
 
       const hasard = document.getElementById('au-hasard') as HTMLButtonElement;
       hasard.addEventListener('click', () => {
@@ -86,10 +147,16 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
 
       const majFavoris = () => {
         const n = lireFavoris().length;
-        document.querySelector('.nb-favoris')!.textContent = n ? String(n) : '';
+        document.querySelectorAll('.nb-mes-favoris').forEach((b) => (b.textContent = n ? String(n) : ''));
       };
       majFavoris();
       window.addEventListener('favoris', majFavoris);
+      const majCourses = () => {
+        const n = lireCourses().recettes.length;
+        document.querySelectorAll('.nb-courses').forEach((b) => (b.textContent = n ? String(n) : ''));
+      };
+      majCourses();
+      window.addEventListener('courses', majCourses);
 
       if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
         navigator.serviceWorker.register(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/sw.js`).catch(() => {});

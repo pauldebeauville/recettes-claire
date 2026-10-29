@@ -79,8 +79,8 @@ const proches = toutes
 const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${lignesIngredients(versions[0]).length} ingrédients. Une recette du carnet de Claire.`;
 ---
 
-<Base titre={d.titre} description={description}>
-  <article class="recette conteneur" style={`--teinte:${cat.couleur}`} data-slug={r.id} data-titre={d.titre}>
+<Base titre={d.titre} description={description} image={d.photo ? lien(`photos/${d.photo}`) : lien(`partage/${r.id}.png`)}>
+  <article class="recette conteneur" style={`--teinte:${cat.couleur}`} data-slug={r.id} data-titre={d.titre} data-categorie={d.categories.find((c) => ['apéritif', 'entrée', 'plat', 'dessert'].includes(c)) ?? d.categories[0]}>
     <nav class="fil" aria-label="Fil d’Ariane">
       <a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a>
     </nav>
@@ -121,13 +121,30 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
         <button type="button" class="bouton bouton-principal" id="ouvrir-cuisine">
           <Icone nom="cuisine" /> Mode cuisine
         </button>
-        <button type="button" class="bouton" id="favori" aria-pressed="false">
+        <button type="button" class="bouton" id="favori" aria-pressed="false" title="Ajouter à mes favoris">
           <Icone nom="coeur" /> <span>Favori</span>
         </button>
-        <button type="button" class="bouton" id="imprimer"><Icone nom="imprimer" /> Imprimer</button>
-        <button type="button" class="bouton" id="partager"><Icone nom="partager" /> Partager</button>
+        <button type="button" class="bouton" id="imprimer" title="Imprimer la recette">
+          <Icone nom="imprimer" /> <span>Imprimer</span>
+        </button>
+        <button type="button" class="bouton" id="courses" title="Ajouter tous les ingrédients à ma liste de courses">
+          <Icone nom="panier" /> <span>Courses</span>
+        </button>
+        <details class="plus">
+          <summary class="bouton bouton-icone" aria-label="Plus d’actions" title="Plus d’actions"><Icone nom="points" /></summary>
+          <div class="plus-menu">
+            <button type="button" id="cuisinee" aria-pressed="false"><Icone nom="coche" /> <span>Je l’ai cuisinée</span></button>
+            <button type="button" id="imprimer-grand"><Icone nom="imprimer" /> Imprimer en grands caractères</button>
+            <button type="button" id="repas"><Icone nom="repas" /> Ajouter à un repas</button>
+            <button type="button" id="partager"><Icone nom="partager" /> Partager</button>
+            <button type="button" data-taille-suivante><span class="aa">A<small>A</small></span> Taille du texte</button>
+          </div>
+        </details>
       </div>
+      <p class="etat-perso" id="etat-perso" hidden></p>
     </header>
+
+    {d.photo && <img class="photo-recette" src={lien(`photos/${d.photo}`)} alt={d.titre} />}
 
     {
       versions.length > 1 && (
@@ -199,14 +216,17 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
                     {v.portions ? `Recette d’origine : ${v.portions.charAt(0).toLowerCase()}${v.portions.slice(1)}` : 'Nombre de personnes non précisé'}
                   </p>
                   <h2 id={`titre-ingredients-${i + 1}`}>Ingrédients</h2>
+                  <p class="aide-courses">
+                    Touchez « + Courses » pour ajouter un ingrédient à votre <a href={lien('courses/')}>liste de courses</a>.
+                  </p>
                   <ul class="liste-ingredients">
-                    {(v.ingredients ?? []).map((x) =>
+                    {(v.ingredients ?? []).map((x, k) =>
                       typeof x === 'string' ? (
-                        <li>
-                          <label>
-                            <input type="checkbox" />
-                            <span set:html={ingredientHtml(x)} />
-                          </label>
+                        <li data-i={k}>
+                          <span class="ingredient" set:html={ingredientHtml(x)} />
+                          <button type="button" class="ajout-courses" aria-pressed="false" aria-label={`Ajouter à la liste de courses : ${x}`}>
+                            <span class="ajout-plus">+ Courses</span><span class="ajout-ok">✓ Courses</span>
+                          </button>
                         </li>
                       ) : (
                         <li class="groupe">{x.groupe}</li>
@@ -389,7 +409,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
 
   .meta .badge {
     padding: 4px 11px;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
   }
 
   .meta :global(svg) {
@@ -404,16 +424,115 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     margin-top: 26px;
   }
 
+  .actions .bouton[aria-pressed='true'] {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    background: var(--accent-doux);
+    color: var(--accent-fort);
+  }
+
+  .plus {
+    position: relative;
+  }
+
+  .plus summary {
+    list-style: none;
+  }
+
+  .plus summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .plus-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    min-width: 230px;
+    padding: 6px;
+    border: 1px solid var(--trait);
+    border-radius: 14px;
+    background: var(--carte);
+    box-shadow: var(--ombre-forte);
+  }
+
+  .plus-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: none;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+
+  .plus-menu button:hover {
+    background: var(--fond-2);
+  }
+
+  .plus-menu :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .etat-perso {
+    margin-top: 12px;
+    font-size: 0.875rem;
+    color: var(--encre-3);
+  }
+
+  .etat-perso a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .aa {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .aa small {
+    font-size: 0.7em;
+  }
+
   @media (max-width: 560px) {
+    .actions {
+      gap: 6px;
+    }
     .actions .bouton:not(.bouton-principal) {
-      flex: 1;
+      flex: 1 1 0;
+      min-width: 0;
+      gap: 6px;
       justify-content: center;
-      padding: 0 10px;
+      padding: 0 8px;
+    }
+    .actions .plus {
+      flex: none;
+    }
+    .actions .plus .bouton {
+      width: 42px;
+      padding: 0;
     }
     .actions .bouton-principal {
       flex-basis: 100%;
       justify-content: center;
     }
+  }
+
+  .photo-recette {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    margin: 0 0 32px;
+    border-radius: 20px;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
   }
 
   .onglets {
@@ -441,7 +560,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
 
   .onglets button span {
     font-family: var(--sans);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 500;
   }
 
@@ -495,7 +614,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     align-items: start;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 760px) {
     .corps {
       grid-template-columns: 1fr;
     }
@@ -508,7 +627,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     top: 16px;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 760px) {
     .ingredients {
       position: static;
     }
@@ -534,8 +653,8 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
   .pas {
     display: grid;
     place-items: center;
-    width: 42px;
-    height: 42px;
+    width: 50px;
+    height: 50px;
     border: 0;
     border-radius: 50%;
     background: var(--carte);
@@ -579,7 +698,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
   .portions-origine {
     margin: 8px 0 0;
     text-align: center;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     color: var(--encre-3);
   }
 
@@ -606,27 +725,57 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     border-bottom: 0;
   }
 
-  .liste-ingredients label {
+  .liste-ingredients li:not(.groupe) {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    padding: 9px 0;
-    cursor: pointer;
+    padding: 8px 0;
     line-height: 1.45;
   }
 
-  .liste-ingredients input {
-    flex: none;
-    width: 20px;
-    height: 20px;
-    margin: 1px 0 0;
-    accent-color: var(--accent);
+  .ingredient {
+    flex: 1;
+    min-width: 0;
   }
 
-  .liste-ingredients input:checked + span {
+  .aide-courses {
+    margin: -2px 0 6px;
+    font-size: 0.9375rem;
     color: var(--encre-3);
-    text-decoration: line-through;
-    text-decoration-color: var(--trait-2);
+  }
+
+  .aide-courses a {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* « + Courses » : ajouter cet ingrédient à la liste, en toutes lettres */
+  .ajout-courses {
+    flex: none;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--trait-2);
+    border-radius: 999px;
+    background: var(--carte);
+    color: var(--encre-2);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ajout-courses .ajout-ok,
+  .ajout-courses[aria-pressed='true'] .ajout-plus {
+    display: none;
+  }
+
+  .ajout-courses[aria-pressed='true'] .ajout-ok {
+    display: inline;
+  }
+
+  .ajout-courses[aria-pressed='true'] {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    background: var(--accent-doux);
+    color: var(--accent-fort);
   }
 
   .liste-ingredients .groupe {
@@ -653,7 +802,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     padding: 12px 14px;
     border-radius: 12px;
     background: var(--accent-doux);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     color: var(--encre-2);
   }
 
@@ -668,7 +817,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     border: 0;
     background: none;
     color: var(--accent-fort);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
@@ -781,12 +930,14 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     background: var(--trait-2);
   }
 
+  /* minuteur dans le texte des étapes : assez gros pour un doigt */
   :global(.minuteur) {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    margin: 0 1px;
-    padding: 0 8px 0 6px;
+    gap: 5px;
+    min-height: 40px;
+    margin: 2px 1px;
+    padding: 2px 14px 2px 10px;
     border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
     border-radius: 999px;
     background: var(--accent-doux);
@@ -802,8 +953,8 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
   }
 
   :global(.minuteur svg) {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     stroke-width: 2;
   }
 
@@ -834,7 +985,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
 
   .source {
     margin-top: 28px;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     color: var(--encre-3);
     font-style: italic;
   }
@@ -951,6 +1102,22 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
   /* ---------- impression ---------- */
 
   @media print {
+    :global(.impression-grande) :global(body) {
+      font-size: 15pt;
+    }
+    :global(.impression-grande) .tete h1 {
+      font-size: 30pt;
+    }
+    :global(.impression-grande) .corps {
+      grid-template-columns: 1fr;
+    }
+    :global(.impression-grande) .num {
+      font-size: 20pt;
+    }
+    .ajout-courses,
+    .aide-courses {
+      display: none !important;
+    }
     :global(.site-tete),
     :global(.site-pied),
     :global(.minuteurs),
@@ -960,7 +1127,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
     .portions,
     .avis,
     .suite,
-    .liste-ingredients input {
+    :global(.barre-bas) {
       display: none !important;
     }
     :global(body) {

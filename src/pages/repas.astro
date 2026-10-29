@@ -1,0 +1,374 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { aLAvance, decouperTitre, estThermomix, lien, lienRecette, versionsDe } from '../lib/recettes';
+import '../styles/perso.css';
+
+const recettes = (await getCollection('recettes')).map((r) => ({
+  s: r.id,
+  t: decouperTitre(r.data.titre).principal,
+  u: lienRecette(r),
+  c: r.data.categories,
+  avance: aLAvance(r.data) ? 1 : 0,
+  tmx: estThermomix(r.data) ? 1 : 0,
+  p: versionsDe(r.data)[0].portions ?? '',
+}));
+---
+
+<Base titre="Préparer un repas" description="Composez un menu, choisissez le nombre d’invités : planning et liste de courses.">
+  <section class="conteneur page-perso page-repas">
+    <nav class="fil"><a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a></nav>
+    <h1>Préparer un repas</h1>
+    <p class="chapo">
+      Composez votre menu et dites combien vous serez à table : le site prépare le planning et la liste de courses.
+    </p>
+
+    <div class="repas-reglages">
+      <label class="repas-nom">
+        <span>Nom du repas <em>(facultatif)</em></span>
+        <input type="text" id="repas-titre" maxlength="60" placeholder="Ex. : Dîner d’anniversaire" />
+      </label>
+      <div class="repas-invites-bloc">
+        <span>Nombre de personnes</span>
+        <div class="portions">
+          <button type="button" class="pas" data-invites="-1" aria-label="Une personne de moins"><Icone nom="moins" /></button>
+          <output id="repas-invites" aria-live="polite">6</output>
+          <button type="button" class="pas" data-invites="1" aria-label="Une personne de plus"><Icone nom="plus" /></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="repas-menu" id="repas-menu"></div>
+
+    <section class="repas-planning" id="repas-planning" hidden aria-labelledby="titre-planning">
+      <h2 id="titre-planning">Le planning</h2>
+      <div class="planning-colonnes">
+        <div>
+          <h3><Icone nom="calendrier" /> À préparer à l’avance</h3>
+          <p class="planning-aide">La veille ou plusieurs heures avant, d’après les recettes.</p>
+          <ul class="planning-avance"></ul>
+        </div>
+        <div>
+          <h3><Icone nom="cuisine" /> Le jour même</h3>
+          <ul class="planning-jour"></ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="repas-actions">
+      <button type="button" class="bouton bouton-principal" id="repas-courses"><Icone nom="panier" /> Tout ajouter à la liste de courses</button>
+      <a class="bouton" href={lien('courses/')}>Voir la liste de courses</a>
+      <button type="button" class="bouton" id="repas-imprimer"><Icone nom="imprimer" /> Imprimer la carte du menu</button>
+      <button type="button" class="bouton" id="repas-vider">Effacer le menu</button>
+    </div>
+  </section>
+
+  <div class="carte-menu" id="carte-menu" aria-hidden="true"></div>
+
+  <script type="application/json" id="donnees-repas" set:html={JSON.stringify(recettes)} />
+</Base>
+
+<style is:global>
+  .repas-reglages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 18px 28px;
+    margin-top: 28px;
+  }
+
+  .repas-nom {
+    display: flex;
+    flex: 1 1 260px;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--encre-2);
+  }
+
+  .repas-nom em {
+    color: var(--encre-3);
+  }
+
+  .repas-nom input,
+  .repas-ajout input {
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--trait-2);
+    border-radius: 12px;
+    background: var(--carte);
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .repas-nom input:focus,
+  .repas-ajout input:focus {
+    border-color: var(--accent);
+  }
+
+  .repas-invites-bloc {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--encre-2);
+  }
+
+  .repas-invites-bloc .portions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 5px;
+    border-radius: 999px;
+    background: var(--fond-2);
+  }
+
+  .repas-invites-bloc .pas {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--carte);
+    color: var(--encre);
+    box-shadow: 0 1px 2px rgb(60 40 20 / 12%);
+  }
+
+  .repas-invites-bloc .pas svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+  }
+
+  .repas-invites-bloc output {
+    min-width: 2ch;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--encre);
+  }
+
+  .repas-menu {
+    display: grid;
+    gap: 14px;
+    margin-top: 30px;
+  }
+
+  .repas-moment {
+    padding: 16px 18px;
+    border: 1px solid var(--trait);
+    border-radius: 18px;
+    background: var(--carte);
+  }
+
+  .repas-moment h2 {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .repas-moment > ul {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .repas-moment > ul li {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .repas-moment > ul a {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 560;
+    text-decoration: none;
+  }
+
+  .repas-moment > ul span {
+    font-size: 0.9375rem;
+    color: var(--encre-3);
+  }
+
+  .repas-retirer {
+    margin-left: auto;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--fond-2);
+    font-size: 1.125rem;
+    line-height: 1;
+    color: var(--encre-2);
+  }
+
+  .repas-ajout {
+    position: relative;
+    margin-top: 10px;
+  }
+
+  .repas-ajout input {
+    width: 100%;
+    height: 42px;
+  }
+
+  .repas-suggestions {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 6px;
+    border: 1px solid var(--trait);
+    border-radius: 12px;
+    background: var(--carte);
+    box-shadow: var(--ombre-forte);
+    list-style: none;
+  }
+
+  .repas-suggestions button {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+
+  .repas-suggestions button:hover {
+    background: var(--fond-2);
+  }
+
+  .repas-planning {
+    margin-top: 34px;
+  }
+
+  .repas-planning h2 {
+    font-size: 1.75rem;
+  }
+
+  .planning-colonnes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .planning-colonnes {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .planning-colonnes > div {
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: var(--fond-2);
+  }
+
+  .planning-colonnes h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.125rem;
+  }
+
+  .planning-colonnes h3 svg {
+    width: 20px;
+    height: 20px;
+    color: var(--accent);
+  }
+
+  .planning-aide {
+    margin-top: 2px;
+    font-size: 0.9375rem;
+    color: var(--encre-3);
+  }
+
+  .planning-colonnes ul {
+    margin: 10px 0 0;
+    padding: 0 0 0 18px;
+  }
+
+  .planning-colonnes li + li {
+    margin-top: 6px;
+  }
+
+  .planning-colonnes li.vide {
+    list-style: none;
+    margin-left: -18px;
+    color: var(--encre-3);
+  }
+
+  .planning-colonnes a {
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .repas-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 30px;
+  }
+
+  .repas-actions .bouton[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  /* la carte du menu n'apparaît qu'à l'impression */
+  .carte-menu {
+    display: none;
+  }
+
+  @media print {
+    body > *:not(.carte-menu) {
+      display: none !important;
+    }
+    .carte-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18pt;
+      min-height: 90vh;
+      padding: 40pt;
+      font-family: var(--serif);
+      text-align: center;
+      color: #2b231d;
+    }
+    .carte-kicker {
+      font-size: 30pt;
+      font-style: italic;
+      color: #a8442a;
+    }
+    .carte-moment p {
+      font-size: 17pt;
+      line-height: 1.5;
+    }
+    .carte-ornement {
+      font-size: 12pt;
+      color: #a8442a;
+    }
+    .carte-signature {
+      margin-top: 24pt;
+      font-size: 11pt;
+      font-style: italic;
+      color: #85776a;
+    }
+  }
+</style>
+
+<script>
+  import { initialiserRepas } from '../scripts/repas';
+  initialiserRepas();
+</script>

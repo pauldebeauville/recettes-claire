@@ -15,10 +15,22 @@ ingredients:
 - 'Caramel brisé (pour la décoration) : facultatif'
 - 'Décor : coquerets, julienne de citron vert, morceaux de citron'
 preparation:
-- Préparer le caramel Préchauffer le four à 150°C (th. 4). Mettre le sucre cristallisé et 4 cuillères à soupe d’eau dans une casserole épaisse. Faire fondre à feu doux jusqu’à ébullition. Laisser bouillir sans remuer jusqu’à ce que le caramel devienne brun clair et doré. Enlever du feu et verser rapidement le caramel dans 6 petits ramequins ou des moules ovales.
-- Préparer la crème Mélanger les œufs, le sucre en poudre et l’extrait de vanille dans une grande terrine.
-- Chauffer le lait Faire tiédir le lait à feu doux dans une casserole, puis le verser sur le mélange à base d’œufs en remuant constamment.
-- Cuisson des crèmes Beurrer les ramequins ou moules sur le caramel. Verser la crème dans les ramequins. Placer les ramequins dans un plat allant au four, puis verser de l’eau chaude jusqu’à mi-hauteur des moules pour une cuisson au bain-marie.
-- Cuisson Cuire au four pendant 45 à 60 minutes jusqu’à ce que la crème soit prise. Sortir du four et laisser refroidir, puis mettre au réfrigérateur pendant au moins 12 heures jusqu’à ce que la crème soit bien glacée.
-- Démoulage et finition Juste avant de servir, décoller les crèmes des ramequins à l’aide d’un petit couteau. Démouler délicatement et laisser le sirop couler autour de la crème. Ajouter si désiré un décor avec du caramel brisé, des coquerets ou des morceaux de citron.
+- titre: Préparer le caramel
+  texte:
+  - Préchauffer le four à 150°C (th. 4). Mettre le sucre cristallisé et 4 cuillères à soupe d’eau dans une casserole épaisse. Faire fondre à feu doux jusqu’à ébullition. Laisser bouillir sans remuer jusqu’à ce que le caramel devienne brun clair et doré. Enlever du feu et verser rapidement le caramel dans 6 petits ramequins ou des moules ovales.
+- titre: Préparer la crème
+  texte:
+  - Mélanger les œufs, le sucre en poudre et l’extrait de vanille dans une grande terrine.
+- titre: Chauffer le lait
+  texte:
+  - Faire tiédir le lait à feu doux dans une casserole, puis le verser sur le mélange à base d’œufs en remuant constamment.
+- titre: Cuisson des crèmes
+  texte:
+  - Beurrer les ramequins ou moules sur le caramel. Verser la crème dans les ramequins. Placer les ramequins dans un plat allant au four, puis verser de l’eau chaude jusqu’à mi-hauteur des moules pour une cuisson au bain-marie.
+- titre: Cuisson
+  texte:
+  - Cuire au four pendant 45 à 60 minutes jusqu’à ce que la crème soit prise. Sortir du four et laisser refroidir, puis mettre au réfrigérateur pendant au moins 12 heures jusqu’à ce que la crème soit bien glacée.
+- titre: Démoulage et finition
+  texte:
+  - Juste avant de servir, décoller les crèmes des ramequins à l’aide d’un petit couteau. Démouler délicatement et laisser le sirop couler autour de la crème. Ajouter si désiré un décor avec du caramel brisé, des coquerets ou des morceaux de citron.
 source: Carnet sucré, p. 5

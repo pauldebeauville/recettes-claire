@@ -10,6 +10,14 @@ Sur le site, on peut :
 - ajuster les quantités au nombre de personnes (fractions, accords « 1 avocat → 2 avocats », quantités « par personne » laissées telles quelles) ;
 - cocher les ingrédients et les étapes, lancer un minuteur en touchant une durée (« 20 minutes ») ;
 - garder un **minuteur** sous la main sur toutes les pages (bouton « Minuteur » en haut) : il continue de tourner quand on change de page, et se met en pause ou s’arrête de partout ;
+- trouver l’inspiration sur l’accueil : **la recette du jour** (la même pour toute la famille ce jour-là) et des sélections : de saison, pour recevoir, en quelques ingrédients, les desserts, au Thermomix ;
+- trouver une recette avec **ce qu’on a dans le frigo** : on tape quelques ingrédients sur l’accueil, le carnet propose la recette qui en utilise le plus ;
+- faire sa **liste de courses** : sur une recette, on coche les ingrédients à acheter (ou « Courses » pour tous) ; ils se rangent sous leur recette, pour le nombre de personnes choisi. On coche au magasin, on peut tout regrouper (les quantités identiques sont additionnées) et l’envoyer par message ;
+- **préparer un repas** : un menu de l’apéritif au dessert, le nombre d’invités, le planning (ce qui se prépare à l’avance) et une carte du menu à imprimer ;
+- cocher les recettes **déjà cuisinées** et suivre sa progression dans le carnet ;
+- **envoyer une sélection** de recettes en un seul lien (ses favoris, le résultat d’une recherche) ;
+- imprimer **le carnet en livre** (couverture, sommaire, une recette par page) ou l’enregistrer en PDF ;
+- faire **lire les étapes à voix haute** en mode cuisine, et agrandir le texte (A, A+, A++ en bas de page) ;
 - passer en **mode cuisine** : une étape à la fois, en grand, écran qui reste allumé ;
 - imprimer une fiche propre, partager un lien, garder ses favoris ;
 - l’installer sur l’écran d’accueil du téléphone et le consulter sans connexion.
@@ -65,6 +73,13 @@ Quelques règles pour que tout fonctionne bien :
 - **Deux versions d’une même recette** : regardez `chili-con-carne.yaml` pour l’exemple (`versions:` avec `nom: Version 1`, `nom: Version 2`).
 
 Pour **modifier** une recette, ouvrez son fichier dans `src/content/recettes` et cliquez sur le crayon.
+
+## Ajouter une photo à une recette
+
+1. Ouvrez le dossier `public/photos` du dépôt, cliquez sur **Add file → Upload files** et déposez la photo (de préférence au format paysage, en `.jpg`, moins de 1 Mo). Donnez-lui un nom simple, par exemple `tarte-aux-pommes.jpg`.
+2. Dans la fiche de la recette, ajoutez la ligne `photo: tarte-aux-pommes.jpg` (par exemple juste sous `categories:`).
+
+La photo apparaît en haut de la recette, sur sa fiche dans le carnet, et quand on partage le lien. Si le nom ne correspond à aucun fichier, la mise à jour s’arrête et l’onglet **Actions** l’indique.
 
 ## Voir le site sur son ordinateur
 

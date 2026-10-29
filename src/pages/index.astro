@@ -3,11 +3,14 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Icone from '../components/Icone.astro';
 import IconeCategorie from '../components/IconeCategorie.astro';
+import '../styles/fiches.css';
+import { moisDeSaison } from '../lib/saisons';
 import { CATEGORIES, TYPES, VEDETTES } from '../lib/libelles';
 import {
   aLAvance,
   decouperTitre,
   estThermomix,
+  lien,
   lienRecette,
   lignesIngredients,
   lirePortions,
@@ -50,6 +53,54 @@ const fiches = recettes.map((r) => {
   };
 });
 
+// données des sélections de l'accueil (recette du jour, de saison, pour recevoir…)
+const extrait = (texte: string, max = 150) =>
+  texte.length <= max ? texte : `${texte.slice(0, texte.lastIndexOf(' ', max)).replace(/[,;:.]$/, '')}…`;
+const inspirations = fiches.map((f) => {
+  const d = f.r.data;
+  const v = versionsDe(d)[0];
+  const p = lirePortions(v.portions);
+  const note = v.notes?.find((n) => /astuce|conseil|avis/i.test(n.titre ?? '')) ?? v.notes?.[0];
+  const sansDessert = !f.categories.includes('dessert');
+  return {
+    s: f.slug,
+    u: lienRecette(f.r),
+    ph: d.photo ? lien(`photos/${d.photo}`) : '',
+    t: f.titre.principal,
+    x: f.titre.precision ?? '',
+    c: f.categories.map((c) => CATEGORIES[c].label).join(' · '),
+    k: CATEGORIES[f.categories[0]].couleur,
+    y: f.types.map((t) => TYPES[t]).join(' & '),
+    p: f.portions ?? '',
+    n: f.nb,
+    o: f.r.data.ordre ?? 0,
+    tmx: f.thermomix ? 1 : 0,
+    a: note ? { t: note.titre ?? '', x: extrait(note.texte.join(' ')) } : null,
+    m: moisDeSaison(d.titre),
+    jour: f.categories.some((c) => c !== 'base' && c !== 'sauce') ? 1 : 0,
+    recevoir:
+      f.categories.some((c) => ['entrée', 'plat', 'dessert'].includes(c)) &&
+      ((p.mode === 'personnes' && p.unite === 'personne' && (p.max ?? p.base) >= 6) || f.avance)
+        ? 1
+        : 0,
+    peu: f.nb <= 5 && !f.categories.includes('base') && !f.categories.includes('sauce') && sansDessert ? 1 : 0,
+    dessert: f.categories.includes('dessert') ? 1 : 0,
+  };
+});
+
+// mots d'ingrédients les plus courants, proposés pendant la saisie du frigo
+const PAS_DES_INGREDIENTS = new Set(
+  'pour avec dans sans environ cuillère cuillères soupe café pincée pincées sachet sachets tranche tranches boîte boîtes gousse gousses branche branches feuille feuilles facultatif frais fraîche fraîches fraîs gros grosse grosses petit petits petite petites bien selon goût quelques morceaux morceau râpé râpée haché hachée hachés coupé coupée coupés verre verres litre litres paquet paquets bocal bocaux type moyen moyenne moyennes belle belles entier entiers entière entières liquide épaisse épais surgelé surgelée surgelés poudre zeste zestes bouquet botte bottes mûrs mûres mûre mûr cuits cuites cuite cuit pièces pièce après autre autres bonne barquette barquettes brins boule boules tasse tasses cuillerée'.split(' '),
+);
+const frequences = new Map<string, number>();
+for (const f of fiches)
+  for (const l of versionsDe(f.r.data).flatMap(lignesIngredients))
+    for (const m of l.toLowerCase().match(/\p{L}[\p{L}’'-]{3,}/gu) ?? []) {
+      const mot = m.replace(/^[dl][’']/, '');
+      if (mot.length >= 4 && !PAS_DES_INGREDIENTS.has(mot)) frequences.set(mot, (frequences.get(mot) ?? 0) + 1);
+    }
+const vocabulaire = [...frequences.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 300).map(([m]) => m).sort((a, b) => a.localeCompare(b, 'fr'));
+
 const compte = (f: (x: (typeof fiches)[number]) => boolean) => fiches.filter(f).length;
 const nbAvecTemps = compte((f) => f.temps.preparation != null || f.temps.cuisson != null);
 const total = fiches.length;
@@ -79,27 +130,8 @@ const DUREES = [
     <h1 class="accueil-titre">
       Les 1000 <span class="de">et</span> 1 recettes <span class="de">de</span> <span class="prenom">Claire<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c48-9 98-12 150-10 47 2 95 6 144 1" /></svg></span>
     </h1>
-    <p class="accueil-intro">
-      Toutes ses recettes, salées et sucrées, réunies dans un seul carnet. Cherchez un plat, un ingrédient que vous
-      avez sous la main, ou laissez-vous guider.
-    </p>
-    <p class="accueil-astuce">Astuce : tapez plusieurs ingrédients, par exemple « saumon avocat ».</p>
+    <p class="accueil-intro">Toutes ses recettes, salées et sucrées, réunies dans un seul carnet.</p>
 
-    <ul class="tuiles" aria-label="Catégories">
-      {
-        Object.entries(CATEGORIES).map(([cle, c]) => (
-          <li>
-            <button type="button" class="tuile" data-categorie={cle} style={`--teinte:${c.couleur}`}>
-              <span class="tuile-icone">
-                <IconeCategorie categorie={cle} />
-              </span>
-              <span class="tuile-nom">{c.pluriel}</span>
-              <span class="tuile-nb">{compte((f) => f.categories.includes(cle))}</span>
-            </button>
-          </li>
-        ))
-      }
-    </ul>
   </section>
 
   <section id="carnet" class="carnet" aria-label="Le carnet de recettes">
@@ -149,9 +181,31 @@ const DUREES = [
     </div>
 
     <div class="conteneur">
+      <ul class="tuiles" id="tuiles" aria-label="Catégories">
+        {
+          Object.entries(CATEGORIES).map(([cle, c]) => (
+            <li>
+              <button type="button" class="tuile" data-categorie={cle} style={`--teinte:${c.couleur}`}>
+                <span class="tuile-icone">
+                  <IconeCategorie categorie={cle} />
+                </span>
+                <span class="tuile-nom">{c.pluriel}</span>
+                <span class="tuile-nb">{compte((f) => f.categories.includes(cle))}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="inspirations" id="inspirations" aria-label="Idées du jour"></div>
+      <h2 class="titre-carnet" id="titre-carnet">Tout le carnet</h2>
+      <div class="banniere-selection" id="banniere-selection" hidden>
+        <p><strong>Une sélection de recettes vous a été envoyée.</strong> Gardez-la en l’ajoutant à vos favoris.</p>
+        <button type="button" class="bouton bouton-principal" id="adopter-selection"><Icone nom="coeur" /> Ajouter à mes favoris</button>
+      </div>
       <div class="etat">
         <p class="nb-resultats" aria-live="polite"><strong>{total}</strong> recettes</p>
         <ul class="actifs" aria-label="Filtres actifs"></ul>
+        <button type="button" class="bouton partager-selection" id="partager-selection" hidden><Icone nom="partager" /> Envoyer ces recettes</button>
       </div>
 
       <ul class="fiches" id="fiches">
@@ -161,6 +215,7 @@ const DUREES = [
             return (
               <li
                 class="fiche"
+                id={`r-${f.slug}`}
                 style={`--teinte:${cat.couleur}`}
                 data-slug={f.slug}
                 data-types={f.types.join('|')}
@@ -174,6 +229,7 @@ const DUREES = [
                 data-ordre={f.r.data.ordre}
               >
                 <a href={lienRecette(f.r)}>
+                  {f.r.data.photo && <img class="fiche-photo" src={lien(`photos/${f.r.data.photo}`)} alt="" loading="lazy" />}
                   <span class="fiche-kicker">
                     {f.categories.map((c) => CATEGORIES[c].label).join(' · ')}
                     <span class="fiche-type">{f.types.map((t) => TYPES[t]).join(' & ')}</span>
@@ -274,31 +330,6 @@ const DUREES = [
           </div>
         </fieldset>
         <fieldset>
-          <legend>Temps de préparation</legend>
-          <p class="aide">Seuls les temps écrits par Claire sont pris en compte ({nbAvecTemps} recettes en indiquent).</p>
-          <div class="puces">
-            {
-              DUREES.map(([v, l]) => (
-                <button type="button" class="puce" data-groupe="prep" data-valeur={v} aria-pressed="false">
-                  {l} <span class="nb" />
-                </button>
-              ))
-            }
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Temps de cuisson</legend>
-          <div class="puces">
-            {
-              DUREES.map(([v, l]) => (
-                <button type="button" class="puce" data-groupe="cuis" data-valeur={v} aria-pressed="false">
-                  {l} <span class="nb" />
-                </button>
-              ))
-            }
-          </div>
-        </fieldset>
-        <fieldset>
           <legend>Particularités</legend>
           <div class="puces">
             <button type="button" class="puce" data-groupe="tmx" data-valeur="1" aria-pressed="false">
@@ -310,8 +341,41 @@ const DUREES = [
             <button type="button" class="puce" data-groupe="favoris" data-valeur="1" aria-pressed="false">
               <Icone nom="coeur" /> Mes favoris <span class="nb" />
             </button>
+            <button type="button" class="puce" data-groupe="cuite" data-valeur="oui" aria-pressed="false">
+              <Icone nom="coche" /> Déjà cuisinées <span class="nb" />
+            </button>
+            <button type="button" class="puce" data-groupe="cuite" data-valeur="non" aria-pressed="false">
+              Pas encore cuisinées <span class="nb" />
+            </button>
           </div>
         </fieldset>
+        <details class="temps" id="filtres-temps">
+          <summary>Temps indiqués par Claire <span>({nbAvecTemps} recettes en indiquent un)</span></summary>
+          <fieldset>
+            <legend>Temps de préparation</legend>
+            <div class="puces">
+              {
+                DUREES.map(([v, l]) => (
+                  <button type="button" class="puce" data-groupe="prep" data-valeur={v} aria-pressed="false">
+                    {l} <span class="nb" />
+                  </button>
+                ))
+              }
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Temps de cuisson</legend>
+            <div class="puces">
+              {
+                DUREES.map(([v, l]) => (
+                  <button type="button" class="puce" data-groupe="cuis" data-valeur={v} aria-pressed="false">
+                    {l} <span class="nb" />
+                  </button>
+                ))
+              }
+            </div>
+          </fieldset>
+        </details>
       </div>
       <footer class="panneau-pied">
         <button type="button" class="bouton" data-effacer>Tout effacer</button>
@@ -320,6 +384,8 @@ const DUREES = [
     </form>
   </dialog>
 
+  <datalist id="vocabulaire-frigo">{vocabulaire.map((m) => <option value={m} />)}</datalist>
+  <script type="application/json" id="donnees-inspirations" set:html={JSON.stringify(inspirations)} />
   <script type="application/json" id="index-recherche" set:html={JSON.stringify(fiches.map((f) => ({ s: f.slug, ...f.index })))} />
 </Base>
 
@@ -380,7 +446,7 @@ const DUREES = [
     /* 4 colonnes sur grand écran, 3 sur tablette : « Accompagnements » doit tenir */
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 12px;
-    margin: 44px 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
@@ -443,6 +509,20 @@ const DUREES = [
     font-variant-numeric: tabular-nums;
   }
 
+  @media (max-width: 560px) {
+    .accueil {
+      padding-top: 24px;
+      padding-bottom: 20px;
+    }
+    .accueil-intro {
+      margin-top: 14px;
+    }
+  }
+
+  .tuiles {
+    margin-top: 24px;
+  }
+
   @media (max-width: 420px) {
     .tuile {
       grid-template-columns: auto minmax(0, 1fr);
@@ -498,8 +578,8 @@ const DUREES = [
 
   .recherche input {
     width: 100%;
-    height: 44px;
-    padding: 0 14px 0 42px;
+    height: 52px;
+    padding: 0 14px 0 44px;
     border: 1px solid var(--trait-2);
     border-radius: 999px;
     background: var(--carte);
@@ -526,7 +606,7 @@ const DUREES = [
   }
 
   .segment .puce {
-    min-height: 36px;
+    min-height: 44px;
     border: 0;
   }
 
@@ -536,13 +616,13 @@ const DUREES = [
     border-radius: 999px;
     background: var(--accent);
     color: var(--sur-accent);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     line-height: 20px;
     text-align: center;
   }
 
   .tri select {
-    height: 42px;
+    height: 48px;
     padding: 0 34px 0 14px;
     border: 1px solid var(--trait-2);
     border-radius: 999px;
@@ -610,6 +690,25 @@ const DUREES = [
     font-variant-numeric: tabular-nums;
   }
 
+  .partager-selection {
+    min-height: 34px;
+    margin-left: auto;
+    font-size: 0.875rem;
+  }
+
+  .banniere-selection {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    margin-top: 22px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    background: var(--accent-doux);
+    color: var(--encre);
+  }
+
   .actifs {
     display: flex;
     flex-wrap: wrap;
@@ -629,7 +728,7 @@ const DUREES = [
     border-radius: 999px;
     background: var(--accent-doux);
     color: var(--accent-fort);
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     font-weight: 600;
   }
 
@@ -643,148 +742,6 @@ const DUREES = [
     color: var(--encre-3);
     text-decoration: underline;
     text-underline-offset: 3px;
-  }
-
-  /* ---------- fiches ---------- */
-
-  .fiches {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
-    gap: 14px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .fiche {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid var(--trait);
-    border-radius: var(--rayon);
-    background: var(--carte);
-    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
-  }
-
-  .fiche::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    height: 4px;
-    background: var(--teinte);
-  }
-
-  .fiche:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--ombre-forte);
-    border-color: color-mix(in srgb, var(--teinte) 40%, var(--trait));
-  }
-
-  .fiche a {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 168px;
-    padding: 20px 56px 16px 20px;
-    text-decoration: none;
-  }
-
-  .fiche-kicker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px 10px;
-    font-size: 0.6875rem;
-    font-weight: 650;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--teinte);
-  }
-
-  .fiche-type {
-    color: var(--encre-3);
-  }
-
-  .fiche-titre {
-    margin: 10px 0 18px;
-    font-size: 1.3125rem;
-    font-weight: 560;
-    line-height: 1.22;
-  }
-
-  .precision {
-    font-style: italic;
-    font-weight: 400;
-    color: var(--encre-2);
-  }
-
-  .fiche-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px 12px;
-    margin-top: auto;
-    font-size: 0.8125rem;
-    color: var(--encre-3);
-  }
-
-  .fav {
-    position: absolute;
-    top: 12px;
-    right: 10px;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: var(--encre-3);
-  }
-
-  .fav:hover {
-    background: var(--fond-2);
-    color: var(--accent);
-  }
-
-  .fav :global(svg) {
-    width: 20px;
-    height: 20px;
-  }
-
-  .fav[aria-pressed='true'] {
-    color: var(--accent);
-  }
-
-  .fav[aria-pressed='true'] :global(.coeur) {
-    fill: currentColor;
-  }
-
-  @media (max-width: 560px) {
-    .fiche a {
-      min-height: 0;
-      padding: 18px 52px 14px 18px;
-    }
-    .fiche-titre {
-      margin: 8px 0 12px;
-      font-size: 1.25rem;
-    }
-  }
-
-  .fiche-lettre {
-    position: absolute;
-    right: -4px;
-    bottom: -38px;
-    font-family: var(--serif);
-    font-size: 132px;
-    font-style: italic;
-    font-weight: 600;
-    line-height: 1;
-    color: var(--teinte);
-    opacity: 0.09;
-    pointer-events: none;
-    user-select: none;
   }
 
   /* ---------- sommaire ---------- */
@@ -841,7 +798,7 @@ const DUREES = [
   }
 
   .sommaire-cat {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 650;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -953,7 +910,7 @@ const DUREES = [
 
   .aide {
     margin: -4px 0 10px;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
     color: var(--encre-3);
   }
 
@@ -966,6 +923,26 @@ const DUREES = [
   .puces .puce :global(svg) {
     width: 16px;
     height: 16px;
+  }
+
+  .temps {
+    margin-top: 18px;
+    border-top: 1px solid var(--trait);
+    padding-top: 14px;
+  }
+
+  .temps summary {
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+
+  .temps summary span {
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--encre-3);
   }
 
   .puces .puce[disabled] {
@@ -990,10 +967,39 @@ const DUREES = [
 <script>
   import { basculerFavori, lireFavoris } from '../scripts/favoris';
   import { initialiserCarnet } from '../scripts/carnet';
+  import { initialiserInspirations } from '../scripts/inspirations';
+  import { initialiserFrigo } from '../scripts/frigo';
+  import { lireCuisinees } from '../scripts/perso';
 
+  const base = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
+  initialiserInspirations(base);
+  initialiserFrigo(base);
   initialiserCarnet();
 
   // cœurs des fiches
+  // « déjà cuisinée » sur les fiches, et la progression dans le carnet
+  const majCuites = () => {
+    const cuites = lireCuisinees();
+    document.querySelectorAll<HTMLElement>('.fiche[data-slug]').forEach((f) => {
+      const oui = f.dataset.slug! in cuites;
+      f.classList.toggle('cuite', oui);
+      const meta = f.querySelector('.fiche-meta');
+      const badge = meta?.querySelector('.badge-cuite');
+      if (oui && meta && !badge) meta.insertAdjacentHTML('beforeend', '<span class="badge badge-cuite">✓ Cuisinée</span>');
+      if (!oui) badge?.remove();
+    });
+    const nb = Object.keys(cuites).length;
+    const total = document.querySelectorAll('#fiches .fiche').length;
+    const zone = document.getElementById('progression');
+    if (!zone) return;
+    zone.hidden = nb === 0;
+    zone.innerHTML = `<span>Vous avez cuisiné <strong>${nb}</strong> recette${nb > 1 ? 's' : ''} du carnet sur ${total}</span>
+      <span class="progression-barre" aria-hidden="true"><span style="width:${Math.max(2, (nb / total) * 100)}%"></span></span>
+      <a href="?cuite=oui#carnet">Voir lesquelles</a>`;
+  };
+  majCuites();
+  window.addEventListener('cuisinees', majCuites);
+
   const majCoeurs = () => {
     const favoris = new Set(lireFavoris());
     document.querySelectorAll<HTMLButtonElement>('.fav').forEach((b) => {
@@ -1002,7 +1008,7 @@ const DUREES = [
   };
   majCoeurs();
   window.addEventListener('favoris', majCoeurs);
-  document.getElementById('fiches')!.addEventListener('click', (e) => {
+  document.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.fav');
     if (b) basculerFavori(b.dataset.slug!);
   });

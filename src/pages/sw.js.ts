@@ -4,7 +4,7 @@ import { lien } from '../lib/recettes';
 
 // Service worker : le carnet reste consultable sans connexion (en cuisine, à la cave…).
 export const GET: APIRoute = async () => {
-  const pages = [lien(), ...(await getCollection('recettes')).map((r) => lien(`recettes/${r.id}/`))];
+  const pages = [lien(), lien('courses/'), lien('repas/'), ...(await getCollection('recettes')).map((r) => lien(`recettes/${r.id}/`))];
   const version = `carnet-${Date.now()}`;
   const code = `
 const VERSION = ${JSON.stringify(version)};

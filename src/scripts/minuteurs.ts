@@ -67,7 +67,36 @@ function debloquerSon() {
   }
 }
 
+// iPhone : la sonnerie passe aussi en mode silencieux (Safari 16.4 et plus récents)
+function sonPrioritaire(oui: boolean) {
+  const session = (navigator as Navigator & { audioSession?: { type: string } }).audioSession;
+  if (session) session.type = oui ? 'playback' : 'auto';
+}
+
+// l'écran reste allumé tant qu'un minuteur tourne : un iPhone verrouillé ne sonne pas
+let verrou: WakeLockSentinel | null = null;
+let demande = false;
+async function garderEcranAllume(oui: boolean) {
+  if (!('wakeLock' in navigator)) return;
+  try {
+    if (oui && !verrou && !demande && document.visibilityState === 'visible') {
+      demande = true;
+      verrou = await navigator.wakeLock.request('screen');
+      verrou.addEventListener('release', () => (verrou = null));
+    } else if (!oui && verrou) {
+      await verrou.release();
+      verrou = null;
+    }
+  } catch {
+    verrou = null;
+  } finally {
+    demande = false;
+  }
+}
+
 function sonner() {
+  sonPrioritaire(true);
+  setTimeout(() => sonPrioritaire(false), 2000);
   try {
     audio ??= new AudioContext();
     const t = audio.currentTime;
@@ -178,12 +207,12 @@ function tic() {
     }, 4000);
   }
   const termines = liste.filter((m) => restant(m) === 0).length;
-  const badge = document.querySelector<HTMLElement>('.minuteur-badge');
-  if (badge) {
+  document.querySelectorAll<HTMLElement>('.minuteur-badge').forEach((badge) => {
     badge.textContent = termines ? 'Terminé' : prochain ? horloge(restant(prochain)) : '';
     badge.classList.toggle('termine', termines > 0);
-  }
+  });
   document.title = termines ? `⏰ ${titreOrigine}` : titreOrigine;
+  garderEcranAllume(!!prochain || termines > 0);
   if (panneau?.open) {
     panneau.querySelectorAll<HTMLElement>('[data-id] .m-temps').forEach((t) => {
       const m = liste.find((x) => x.id === t.closest<HTMLElement>('[data-id]')!.dataset.id);
@@ -224,6 +253,7 @@ function ouvrirPanneau() {
           <input type="text" maxlength="40" placeholder="Ex. : le gâteau au four" />
         </label>
         <button type="button" class="bouton bouton-principal pm-lancer">Lancer le minuteur</button>
+        <p class="pm-aide">L’écran reste allumé tant qu’un minuteur tourne : laissez le site ouvert, il sonnera même en mode silencieux.</p>
         <section class="pm-en-cours" aria-label="Minuteurs en cours"></section>
       </form>`;
     document.body.append(panneau);
@@ -282,7 +312,7 @@ export function initialiserMinuteurs() {
     const action = (e.target as HTMLElement).closest<HTMLElement>('[data-action]');
     if (action) agir(action.closest<HTMLElement>('[data-id]')!.dataset.id!, action.dataset.action!);
   });
-  document.getElementById('ouvrir-minuteur')?.addEventListener('click', ouvrirPanneau);
+  document.querySelectorAll('[data-ouvrir-minuteur]').forEach((b) => b.addEventListener('click', ouvrirPanneau));
   // un minuteur lancé ou arrêté dans un autre onglet
   window.addEventListener('storage', (e) => {
     if (e.key === CLE) {

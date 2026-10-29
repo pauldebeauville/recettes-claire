@@ -47,6 +47,12 @@
   flex: none;
 }
 
+.cuisine-outils .bouton[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
 .cuisine-progression {
   height: 4px;
   background: var(--trait);
@@ -206,5 +212,38 @@
 @media print {
   .cuisine {
     display: none !important;
+  }
+}
+
+/* iPad en paysage : les ingrédients restent affichés à côté des étapes */
+@media (min-width: 900px) and (orientation: landscape) {
+  .cuisine {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 34%);
+    grid-template-rows: auto auto 1fr auto;
+  }
+  .cuisine-tete,
+  .cuisine-progression,
+  .cuisine-pied {
+    grid-column: 1 / -1;
+  }
+  .cuisine-scene {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .cuisine-ingredients,
+  .cuisine-ingredients[hidden] {
+    position: static;
+    display: block !important;
+    grid-column: 2;
+    grid-row: 3;
+    width: auto;
+    margin: 24px var(--gouttiere) 24px 0;
+    box-shadow: none;
+  }
+  .cuisine [data-action='ingredients'] {
+    display: none;
+  }
+  .cuisine-texte {
+    font-size: clamp(1.5rem, 2.4vw, 2.125rem);
   }
 }

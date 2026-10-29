@@ -1,0 +1,541 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { CATEGORIES, NOM_SITE } from '../lib/libelles';
+import { lien, typesDe, versionsDe, type Corps } from '../lib/recettes';
+import '../styles/perso.css';
+
+// Le carnet en livre : une recette par page, rangées par chapitre, prêtes à imprimer ou à enregistrer en PDF.
+const recettes = (await getCollection('recettes')).sort((a, b) => (a.data.ordre ?? 999) - (b.data.ordre ?? 999));
+const chapitres = Object.entries(CATEGORIES)
+  .map(([cle, c]) => ({ cle, titre: c.pluriel, recettes: recettes.filter((r) => r.data.categories[0] === cle) }))
+  .filter((c) => c.recettes.length);
+
+function etapes(c: Corps) {
+  let n = 0;
+  return (c.preparation ?? []).map((e) => {
+    if (typeof e !== 'string' && 'section' in e) {
+      if (!e.suite) n = 0;
+      return { section: e.section };
+    }
+    n += 1;
+    return typeof e === 'string' ? { n, texte: [e] } : { n, titre: e.titre, texte: e.texte };
+  });
+}
+const annee = new Date().getFullYear();
+---
+
+<Base titre="Le carnet en livre" description="Toutes les recettes de Claire, mises en page comme un livre, à imprimer ou à enregistrer en PDF.">
+  <section class="conteneur page-perso livre-reglages">
+    <nav class="fil"><a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a></nav>
+    <h1>Le carnet en livre</h1>
+    <p class="chapo">
+      Toutes les recettes, une par page, rangées par chapitre avec un sommaire : à imprimer, ou à enregistrer en PDF
+      pour l’offrir.
+    </p>
+    <div class="livre-choix" role="radiogroup" aria-label="Recettes à mettre dans le livre">
+      <button type="button" role="radio" class="puce" data-livre="tout" aria-checked="true">Tout le carnet</button>
+      <button type="button" role="radio" class="puce" data-livre="salé" aria-checked="false">Le salé</button>
+      <button type="button" role="radio" class="puce" data-livre="sucré" aria-checked="false">Le sucré</button>
+      <button type="button" role="radio" class="puce" data-livre="favoris" aria-checked="false">Mes favoris</button>
+    </div>
+    <p class="livre-compte" aria-live="polite"></p>
+    <button type="button" class="bouton bouton-principal" id="livre-imprimer"><Icone nom="imprimer" /> Imprimer ou enregistrer en PDF</button>
+    <p class="livre-aide">
+      Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » comme imprimante. Pour un rendu soigné,
+      gardez le format A4 et décochez « En-têtes et pieds de page ».
+    </p>
+  </section>
+
+  <div class="livre" id="livre">
+    <section class="livre-page livre-couverture">
+      <p class="couv-kicker">Carnet de famille</p>
+      <h1 class="couv-titre">Les 1000 <em>et</em> 1 recettes <span>de <em>Claire</em></span></h1>
+      <p class="couv-sous-titre"><span class="livre-total">{recettes.length}</span> recettes salées et sucrées</p>
+      <p class="couv-annee">{annee}</p>
+    </section>
+
+    <section class="livre-page livre-sommaire">
+      <h2>Sommaire</h2>
+      {
+        chapitres.map((c) => (
+          <div class="sommaire-chapitre" data-chapitre={c.cle}>
+            <h3>{c.titre}</h3>
+            <ol>
+              {c.recettes.map((r) => (
+                <li data-slug={r.id}>
+                  <span class="som-titre">{r.data.titre}</span>
+                  <span class="som-points" aria-hidden="true" />
+                  <span class="som-n" />
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </section>
+
+    {
+      chapitres.map((c) => (
+        <>
+          <section class="livre-page livre-chapitre" data-chapitre={c.cle} style={`--teinte:${CATEGORIES[c.cle].couleur}`}>
+            <h2>{c.titre}</h2>
+          </section>
+          {c.recettes.map((r) => {
+            const versions = versionsDe(r.data);
+            return (
+              <article
+                class="livre-page livre-recette"
+                data-slug={r.id}
+                data-types={typesDe(r.data).join('|')}
+                data-chapitre={c.cle}
+                style={`--teinte:${CATEGORIES[c.cle].couleur}`}
+              >
+                <header>
+                  <p class="lr-kicker">
+                    <span class="lr-n" /> · {r.data.categories.map((k) => CATEGORIES[k].label).join(' · ')}
+                  </p>
+                  <h2>{r.data.titre}</h2>
+                </header>
+                {versions.map((v, i) => (
+                  <div class="lr-version">
+                    {versions.length > 1 && <h3 class="lr-nom-version">{v.nom ?? `Version ${i + 1}`}{v.titre && v.titre !== r.data.titre ? ` — ${v.titre}` : ''}</h3>}
+                    {(v.portions || v.temps?.length || v.intro?.length) && (
+                      <p class="lr-meta">
+                        {[v.portions, ...(v.temps ?? []).map((t) => `${t.label} : ${t.valeur}`), ...(v.intro ?? [])].filter(Boolean).join(' · ')}
+                      </p>
+                    )}
+                    <div class="lr-corps">
+                      <div class="lr-ingredients">
+                        <h4>Ingrédients</h4>
+                        <ul>
+                          {(v.ingredients ?? []).map((x) =>
+                            typeof x === 'string' ? <li>{x}</li> : <li class="lr-groupe">{x.groupe}</li>,
+                          )}
+                        </ul>
+                      </div>
+                      <div class="lr-preparation">
+                        <h4>Préparation</h4>
+                        <ol>
+                          {etapes(v).map((e) =>
+                            'section' in e ? (
+                              <li class="lr-section">{e.section}</li>
+                            ) : (
+                              <li>
+                                <span class="lr-num">{e.n}.</span>
+                                <div>
+                                  {e.titre && <strong>{e.titre}</strong>}
+                                  {e.texte.map((t) => (
+                                    <p>{t}</p>
+                                  ))}
+                                </div>
+                              </li>
+                            ),
+                          )}
+                        </ol>
+                      </div>
+                    </div>
+                    {v.notes?.map((n) => (
+                      <aside class="lr-note">
+                        {n.titre && <strong>{n.titre} : </strong>}
+                        {n.texte.join(' ')}
+                      </aside>
+                    ))}
+                  </div>
+                ))}
+              </article>
+            );
+          })}
+        </>
+      ))
+    }
+    <section class="livre-page livre-fin">
+      <p>{NOM_SITE}</p>
+      <p class="fin-sous">Les recettes sont reproduites telles que Claire les a écrites.</p>
+    </section>
+  </div>
+</Base>
+
+<style is:global>
+  .livre-reglages {
+    padding-bottom: 30px;
+  }
+
+  .livre-choix {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .livre-compte {
+    margin: 14px 0;
+    color: var(--encre-2);
+  }
+
+  .livre-aide {
+    margin-top: 12px;
+    font-size: 0.875rem;
+    color: var(--encre-3);
+  }
+
+  /* aperçu à l'écran : des pages de papier les unes sous les autres */
+  .livre {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 30px 16px 60px;
+    background: var(--fond-2);
+  }
+
+  .livre-page {
+    width: min(210mm, 100%);
+    min-height: min(297mm, 140vw);
+    padding: clamp(20px, 6vw, 18mm) clamp(18px, 5vw, 16mm);
+    background: #fffdf8;
+    color: #2b231d;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 10%), 0 10px 30px -18px rgb(0 0 0 / 35%);
+    font-family: var(--sans);
+    font-size: 10.5pt;
+    line-height: 1.5;
+  }
+
+  .livre-page[hidden] {
+    display: none !important;
+  }
+
+  .livre-couverture {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .couv-kicker {
+    font-size: 10pt;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #85776a;
+  }
+
+  .couv-titre {
+    margin-top: 18pt;
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 8vw, 46pt);
+    font-weight: 560;
+    line-height: 1.05;
+  }
+
+  .couv-titre em {
+    font-weight: 400;
+  }
+
+  .couv-titre span {
+    display: block;
+  }
+
+  .couv-titre span em {
+    font-weight: 560;
+    color: #a8442a;
+  }
+
+  .couv-sous-titre {
+    margin-top: 22pt;
+    font-family: var(--serif);
+    font-size: 15pt;
+    font-style: italic;
+    color: #5c4f45;
+  }
+
+  .couv-annee {
+    margin-top: 40pt;
+    color: #85776a;
+  }
+
+  .livre-sommaire h2,
+  .livre-chapitre h2 {
+    font-family: var(--serif);
+    font-size: 26pt;
+    font-weight: 560;
+  }
+
+  .sommaire-chapitre {
+    margin-top: 16pt;
+    break-inside: avoid;
+  }
+
+  .sommaire-chapitre h3 {
+    font-family: var(--serif);
+    font-size: 13pt;
+    font-style: italic;
+    color: #a8442a;
+  }
+
+  .sommaire-chapitre ol {
+    margin: 4pt 0 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 14mm;
+  }
+
+  .sommaire-chapitre li {
+    display: flex;
+    align-items: baseline;
+    gap: 4pt;
+    padding: 1.5pt 0;
+    font-size: 9.5pt;
+    break-inside: avoid;
+  }
+
+  .som-titre {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .som-points {
+    flex: 1;
+    min-width: 8pt;
+    border-bottom: 1px dotted #c9b9a3;
+  }
+
+  .som-n {
+    color: #85776a;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .livre-chapitre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 10pt solid var(--teinte);
+    text-align: center;
+  }
+
+  .livre-chapitre h2 {
+    font-size: 40pt;
+    font-style: italic;
+    color: var(--teinte);
+  }
+
+  .livre-recette header {
+    padding-bottom: 10pt;
+    border-bottom: 2pt solid var(--teinte);
+  }
+
+  .lr-kicker {
+    font-size: 8.5pt;
+    font-weight: 650;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--teinte);
+  }
+
+  .livre-recette h2 {
+    margin-top: 4pt;
+    font-family: var(--serif);
+    font-size: 21pt;
+    font-weight: 560;
+    line-height: 1.15;
+  }
+
+  .lr-nom-version {
+    margin-top: 14pt;
+    font-family: var(--serif);
+    font-size: 13pt;
+    font-style: italic;
+    color: var(--teinte);
+  }
+
+  .lr-meta {
+    margin-top: 8pt;
+    font-style: italic;
+    color: #5c4f45;
+  }
+
+  .lr-corps {
+    display: grid;
+    grid-template-columns: 34% 1fr;
+    gap: 9mm;
+    margin-top: 12pt;
+  }
+
+  @media (max-width: 600px) {
+    .lr-corps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .lr-corps h4 {
+    margin: 0 0 6pt;
+    font-family: var(--serif);
+    font-size: 12pt;
+  }
+
+  .lr-ingredients ul,
+  .lr-preparation ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lr-ingredients li {
+    padding: 2.5pt 0;
+    border-bottom: 0.5pt solid #e3d7c4;
+  }
+
+  .lr-groupe {
+    padding-top: 8pt !important;
+    border-bottom: 0 !important;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--teinte);
+  }
+
+  .lr-preparation li {
+    display: flex;
+    gap: 6pt;
+    margin-bottom: 6pt;
+    break-inside: avoid;
+  }
+
+  .lr-preparation li p + p {
+    margin-top: 2pt;
+  }
+
+  .lr-num {
+    flex: none;
+    min-width: 14pt;
+    font-family: var(--serif);
+    font-weight: 600;
+    color: var(--teinte);
+  }
+
+  .lr-section {
+    display: block !important;
+    margin: 8pt 0 4pt;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--teinte);
+  }
+
+  .lr-note {
+    margin-top: 10pt;
+    padding: 7pt 10pt;
+    border-left: 2pt solid var(--teinte);
+    background: #f6efe4;
+    break-inside: avoid;
+  }
+
+  .livre-fin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 18pt;
+    font-style: italic;
+    text-align: center;
+    color: #a8442a;
+  }
+
+  .fin-sous {
+    margin-top: 8pt;
+    font-size: 10pt;
+    color: #85776a;
+  }
+
+  @page {
+    size: A4;
+    margin: 16mm 15mm 18mm;
+    @bottom-center {
+      content: counter(page);
+      font-family: Georgia, serif;
+      font-size: 9pt;
+      color: #85776a;
+    }
+  }
+
+  @page :first {
+    @bottom-center {
+      content: none;
+    }
+  }
+
+  @media print {
+    .site-tete,
+    .site-pied,
+    .livre-reglages,
+    .minuteurs,
+    .toast {
+      display: none !important;
+    }
+    body {
+      background: #fff;
+    }
+    .livre {
+      display: block;
+      padding: 0;
+      background: none;
+    }
+    .livre-page {
+      width: auto;
+      min-height: 0;
+      padding: 0;
+      box-shadow: none;
+      background: none;
+      break-after: page;
+    }
+    .livre-couverture,
+    .livre-chapitre,
+    .livre-fin {
+      min-height: 250mm;
+    }
+  }
+</style>
+
+<script>
+  import { lireFavoris } from '../scripts/favoris';
+
+  const pages = [...document.querySelectorAll<HTMLElement>('.livre-recette')];
+  const choisir = (choix: string) => {
+    const favoris = new Set(lireFavoris());
+    let n = 0;
+    const numeros = new Map<string, number>();
+    for (const p of pages) {
+      const d = p.dataset;
+      const garde = choix === 'tout' || (choix === 'favoris' ? favoris.has(d.slug!) : d.types!.split('|').includes(choix));
+      p.hidden = !garde;
+      if (garde) {
+        numeros.set(d.slug!, ++n);
+        p.querySelector('.lr-n')!.textContent = `N° ${n}`;
+      }
+    }
+    // sommaire et pages de chapitre : seulement ce qui reste
+    document.querySelectorAll<HTMLElement>('.livre-sommaire li').forEach((li) => {
+      const num = numeros.get(li.dataset.slug!);
+      li.hidden = !num;
+      li.querySelector('.som-n')!.textContent = num ? `n° ${num}` : '';
+    });
+    document.querySelectorAll<HTMLElement>('[data-chapitre]').forEach((el) => {
+      if (el.classList.contains('livre-recette')) return;
+      const cle = el.dataset.chapitre!;
+      el.hidden = !pages.some((p) => !p.hidden && p.dataset.chapitre === cle);
+    });
+    document.querySelector('.livre-total')!.textContent = String(n);
+    document.querySelector('.livre-compte')!.textContent = n
+      ? `${n} recette${n > 1 ? 's' : ''} dans le livre, soit environ ${n + document.querySelectorAll('.livre-chapitre:not([hidden])').length + 3} pages.`
+      : 'Aucune recette : ajoutez d’abord des favoris.';
+    (document.getElementById('livre-imprimer') as HTMLButtonElement).disabled = n === 0;
+    document.querySelectorAll<HTMLButtonElement>('[data-livre]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.livre === choix)));
+  };
+  document.querySelectorAll<HTMLButtonElement>('[data-livre]').forEach((b) => b.addEventListener('click', () => choisir(b.dataset.livre!)));
+  document.getElementById('livre-imprimer')!.addEventListener('click', () => window.print());
+  choisir('tout');
+</script>

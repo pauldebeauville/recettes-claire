@@ -10,7 +10,7 @@
   border-radius: 999px;
   background: var(--encre);
   color: var(--fond);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   line-height: 20px;
   text-align: center;
@@ -92,7 +92,7 @@
 
 .m-nom {
   overflow: hidden;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   opacity: 0.8;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -101,14 +101,14 @@
 .minuteur-carte button {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: rgb(255 255 255 / 12%);
   color: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
 }
 
@@ -119,6 +119,12 @@
 .minuteur-carte button svg {
   width: 16px;
   height: 16px;
+}
+
+@media (max-width: 760px) {
+  .minuteurs {
+    bottom: calc(86px + env(safe-area-inset-bottom));
+  }
 }
 
 @media (max-width: 560px) {
@@ -136,8 +142,8 @@
     font-size: 1.25rem;
   }
   .minuteur-carte button {
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
   }
 }
 
@@ -265,6 +271,12 @@
   justify-content: center;
   min-height: 50px;
   font-size: 1rem;
+}
+
+.pm-aide {
+  margin-top: -4px;
+  font-size: 0.9375rem;
+  color: var(--encre-3);
 }
 
 .pm-en-cours h3 {

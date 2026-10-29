@@ -65,6 +65,8 @@ export function ingredientHtml(ligne: string): string {
     if (colle || /th\.?\s*$/i.test(avant) || /\d\s*x\s*$/i.test(avant) || (PAS_UNE_QUANTITE.test(apres) && !longueurIngredient) || PAR_UNITE.test(clause)) {
       continue;
     }
+    // « beurre 1/2 sel » : c'est du demi-sel, pas une quantité
+    if (!m[3] && /^(1\/2|½)$/.test(m[1]) && /^\s*sel\b/i.test(apres)) continue;
     const v1 = valeur(m[1]);
     const v2 = m[3] ? valeur(m[3]) : undefined;
     if (!isFinite(v1) || (v2 !== undefined && !isFinite(v2))) continue;

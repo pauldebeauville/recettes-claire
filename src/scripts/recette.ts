@@ -2,79 +2,11 @@
 import '../styles/cuisine.css';
 import { basculerFavori, lireFavoris, toast } from './favoris';
 import { creerMinuteur } from './minuteurs';
+import { momentDe } from './repas';
+import { MULTIPLES, ajusterQuantites, enFraction, lignesAffichees, type Portions } from './quantites';
+import { dateCourte, definirCourses, ecrireRepas, lireCourses, lireCuisinees, lireRepas, marquerCuisinee } from './perso';
 
-type Portions = { mode: 'personnes'; base: number; max?: number; unite: string; pas: number } | { mode: 'multiple' };
-
-const MULTIPLES = [0.5, 1, 1.5, 2, 3, 4, 5, 6];
-const ESPACE_FINE = ' ';
-const FRACTIONS: [number, string][] = [
-  [0, ''],
-  [0.25, '¼'],
-  [1 / 3, '⅓'],
-  [0.5, '½'],
-  [2 / 3, '⅔'],
-  [0.75, '¾'],
-];
-
-function enFraction(v: number, pas: number): { valeur: number; texte: string } {
-  // pas d'un quart ou d'un demi, en gardant les tiers quand ils tombent juste
-  const tiers = Math.round(v * 3) / 3;
-  let r = Math.abs(tiers - v) < 0.02 && Math.abs(tiers - Math.round(tiers * 2) / 2) > 0.1 ? tiers : Math.round(v / pas) * pas;
-  if (r <= 0) r = pas;
-  const entier = Math.floor(r + 1e-9);
-  const reste = r - entier;
-  const f = FRACTIONS.find(([x]) => Math.abs(x - reste) < 0.02)?.[1] ?? '';
-  return { valeur: r, texte: entier ? (f ? `${entier}${ESPACE_FINE}${f}` : String(entier)) : f };
-}
-
-const decimal = (v: number) => v.toLocaleString('fr-FR', { maximumFractionDigits: 2 });
-
-function arrondirDecimal(v: number, g: string): number {
-  const pas =
-    g === 'grand' ? (v < 1 ? 0.05 : v < 5 ? 0.1 : 0.25) : v < 10 ? 0.5 : v < 25 ? 1 : v < 100 ? 5 : v < 1000 ? 10 : 50;
-  return Math.max(pas, Math.round(v / pas) * pas);
-}
-
-/** Met en forme une quantité recalculée. */
-function formater(v: number, g: string, fraction: boolean): { valeur: number; texte: string; approx: boolean } {
-  if (g === 'cuillere' || fraction) {
-    const f = enFraction(v, v < 3 ? 0.25 : 0.5);
-    return { ...f, approx: false };
-  }
-  if (g === 'nombre') {
-    if (v < 1) return { ...enFraction(v, 0.25), approx: false };
-    const r = Math.round(v);
-    return { valeur: r, texte: String(r), approx: Math.abs(r - v) / v > 0.15 };
-  }
-  const r = arrondirDecimal(v, g);
-  return { valeur: r, texte: decimal(r), approx: false };
-}
-
-function ajusterQuantites(racine: HTMLElement, facteur: number) {
-  racine.querySelectorAll<HTMLElement>('.q').forEach((q) => {
-    const mot = q.nextSibling?.nodeType === 3 && /^\s+$/.test(q.nextSibling.textContent!) ? (q.nextSibling.nextSibling as HTMLElement | null) : null;
-    const accord = mot?.classList?.contains('w') ? mot : null;
-    if (facteur === 1) {
-      q.textContent = q.dataset.o!;
-      q.classList.remove('change');
-      if (accord) accord.textContent = accord.dataset.o!;
-      return;
-    }
-    const g = q.dataset.g!;
-    const fraction = !!q.dataset.f;
-    const a = formater(+q.dataset.v! * facteur, g, fraction);
-    let texte = a.texte;
-    let max = a.valeur;
-    if (q.dataset.v2) {
-      const b = formater(+q.dataset.v2 * facteur, g, fraction);
-      texte = b.texte === a.texte ? a.texte : `${a.texte}${q.dataset.sep}${b.texte}`;
-      max = b.valeur;
-    }
-    q.textContent = (a.approx ? '≈ ' : '') + texte;
-    q.classList.add('change');
-    if (accord) accord.textContent = max >= 2 ? accord.dataset.p! : accord.dataset.s!;
-  });
-}
+const BASE = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/`;
 
 function initialiserVersion(v: HTMLElement) {
   const portions: Portions = JSON.parse(v.dataset.portions!);
@@ -82,10 +14,60 @@ function initialiserVersion(v: HTMLElement) {
   const unite = v.querySelector('.portions-unite')!;
   const [moins, plus] = v.querySelectorAll<HTMLButtonElement>('.pas');
   const avis = v.querySelector<HTMLElement>('.avis')!;
-  const sansQuantite = [...v.querySelectorAll('.liste-ingredients label span')].some((s) => !s.querySelector('.q'));
+  const sansQuantite = [...v.querySelectorAll('.liste-ingredients .ingredient')].some((s) => !s.querySelector('.q'));
   let valeur = portions.mode === 'personnes' ? portions.base : 1;
 
-  const afficher = () => {
+  // liste de courses : les ingrédients cochés sont à acheter, rangés sous cette recette
+  const article = v.closest<HTMLElement>('.recette')!;
+  const no = +v.id.split('-')[1];
+  const plusieurs = document.querySelectorAll('.version').length > 1;
+  const cases = [...v.querySelectorAll<HTMLButtonElement>('.ajout-courses')];
+  const position = (c: HTMLElement) => +c.closest<HTMLElement>('li')!.dataset.i!;
+  const dans = (c: HTMLElement) => c.getAttribute('aria-pressed') === 'true';
+  const entree = () => lireCourses().recettes.find((r) => r.slug === article.dataset.slug && r.version === no);
+  const enregistrerCourses = () => {
+    const coches = new Set(cases.filter(dans).map(position));
+    definirCourses(
+      {
+        slug: article.dataset.slug!,
+        version: no,
+        titre: `${article.dataset.titre}${plusieurs ? ` (Version ${no})` : ''}`,
+        url: `${location.pathname}${plusieurs ? `#version-${no}` : ''}`,
+        portions: portions.mode === 'personnes' ? `pour ${sortie.textContent} ${unite.textContent}` : `recette × ${sortie.textContent}`,
+        valeur,
+      },
+      lignesAffichees(v).filter((l) => coches.has(l.i)),
+    );
+  };
+  const synchroniserCourses = () => {
+    const dedans = new Set(entree()?.lignes.map((l) => l.i));
+    cases.forEach((c) => c.setAttribute('aria-pressed', String(dedans.has(position(c)))));
+  };
+  cases.forEach((c) =>
+    c.addEventListener('click', () => {
+      const ajoute = !dans(c);
+      c.setAttribute('aria-pressed', String(ajoute));
+      enregistrerCourses();
+      const ingredient = c.closest('li')!.querySelector('.ingredient')!.textContent!.trim();
+      if (ajoute) toast(`Ajouté à votre liste de courses : ${ingredient}`);
+      else
+        toast(`Retiré de votre liste de courses : ${ingredient}`, {
+          libelle: 'Annuler',
+          action: () => {
+            c.setAttribute('aria-pressed', 'true');
+            enregistrerCourses();
+          },
+        });
+    }),
+  );
+  v.addEventListener('courses-cases', enregistrerCourses);
+  window.addEventListener('courses', synchroniserCourses);
+  synchroniserCourses();
+  // une recette déjà dans la liste réapparaît pour le même nombre de personnes
+  const deja = entree()?.valeur;
+  if (deja) valeur = deja;
+
+  const afficher = (parUtilisateur = false) => {
     const facteur = portions.mode === 'personnes' ? valeur / portions.base : valeur;
     if (portions.mode === 'personnes') {
       sortie.textContent = String(valeur);
@@ -110,6 +92,8 @@ function initialiserVersion(v: HTMLElement) {
       if (v.dataset.tmx && facteur > 1.5) phrases.push('Attention à la capacité du bol du Thermomix.');
       avis.querySelector('.avis-texte')!.innerHTML = phrases.map((p) => `<span>${p}</span>`).join('');
     }
+    // les quantités de la liste de courses suivent le nombre de personnes
+    if (parUtilisateur && cases.some(dans)) enregistrerCourses();
   };
 
   const changer = (sens: number) => {
@@ -119,24 +103,16 @@ function initialiserVersion(v: HTMLElement) {
       const i = MULTIPLES.indexOf(valeur) + sens;
       valeur = MULTIPLES[Math.min(MULTIPLES.length - 1, Math.max(0, i))];
     }
-    afficher();
+    afficher(true);
   };
   moins.addEventListener('click', () => changer(-1));
   plus.addEventListener('click', () => changer(1));
   v.querySelector('.lien-retour')!.addEventListener('click', () => {
     valeur = portions.mode === 'personnes' ? portions.base : 1;
-    afficher();
+    afficher(true);
   });
   afficher();
 
-  // étapes : un toucher les marque comme faites
-  v.querySelectorAll<HTMLElement>('.etape').forEach((e) =>
-    e.addEventListener('click', (ev) => {
-      if ((ev.target as HTMLElement).closest('button, a')) return;
-      if (getSelection()?.toString()) return;
-      e.classList.toggle('faite');
-    }),
-  );
 }
 
 function versionActive(): HTMLElement {
@@ -175,14 +151,77 @@ function initialiserActions(article: HTMLElement) {
   const majFavori = () => {
     const oui = lireFavoris().includes(slug);
     favori.setAttribute('aria-pressed', String(oui));
-    favori.querySelector('span')!.textContent = oui ? 'Dans mes favoris' : 'Favori';
+    favori.querySelector('span')!.textContent = 'Favori';
   };
   majFavori();
   favori.addEventListener('click', () => {
     toast(basculerFavori(slug) ? 'Ajoutée à vos favoris' : 'Retirée de vos favoris');
     majFavori();
   });
+  // déjà cuisinée, liste de courses, repas : un petit récapitulatif sous les boutons
+  const cuisinee = document.getElementById('cuisinee')!;
+  const courses = document.getElementById('courses')!;
+  const etatPerso = document.getElementById('etat-perso')!;
+  const majPerso = () => {
+    const date = lireCuisinees()[slug];
+    cuisinee.setAttribute('aria-pressed', String(!!date));
+    cuisinee.querySelector('span')!.textContent = date ? `Cuisinée le ${dateCourte(date)}` : 'Je l’ai cuisinée';
+    const dansCourses = lireCourses().recettes.some((r) => r.slug === slug);
+    courses.setAttribute('aria-pressed', String(dansCourses));
+    const dansRepas = lireRepas().plats.some((p) => p.slug === slug);
+    const morceaux = [
+      date && `Cuisinée le ${dateCourte(date)}`,
+      dansCourses && `Dans votre <a href="${BASE}courses/">liste de courses</a>`,
+      dansRepas && `Au menu de votre <a href="${BASE}repas/">repas</a>`,
+    ].filter(Boolean);
+    etatPerso.hidden = !morceaux.length;
+    etatPerso.innerHTML = morceaux.join(' · ');
+  };
+  majPerso();
+  ['cuisinees', 'courses', 'repas'].forEach((e) => window.addEventListener(e, majPerso));
+  cuisinee.addEventListener('click', () => {
+    const oui = !lireCuisinees()[slug];
+    marquerCuisinee(slug, oui);
+    toast(oui ? 'Bravo ! Recette ajoutée à celles que vous avez cuisinées' : 'Retirée des recettes cuisinées');
+  });
+  // « Courses » : tous les ingrédients d'un coup (ou les retire s'ils y sont déjà tous)
+  courses.addEventListener('click', () => {
+    const v = versionActive();
+    const cases = [...v.querySelectorAll<HTMLButtonElement>('.ajout-courses')];
+    const toutes = cases.every((c) => c.getAttribute('aria-pressed') === 'true');
+    const avant = cases.map((c) => c.getAttribute('aria-pressed'));
+    cases.forEach((c) => c.setAttribute('aria-pressed', String(!toutes)));
+    v.dispatchEvent(new CustomEvent('courses-cases'));
+    if (toutes)
+      toast('Recette retirée de votre liste de courses', {
+        libelle: 'Annuler',
+        action: () => {
+          cases.forEach((c, i) => c.setAttribute('aria-pressed', avant[i]!));
+          v.dispatchEvent(new CustomEvent('courses-cases'));
+        },
+      });
+    else toast('Tous les ingrédients sont dans votre liste de courses');
+  });
+  document.getElementById('repas')!.addEventListener('click', () => {
+    const r = lireRepas();
+    if (!r.plats.some((p) => p.slug === slug)) {
+      r.plats.push({ slug, moment: momentDe(article.dataset.categorie ?? 'plat') });
+      ecrireRepas(r);
+    }
+    toast('Ajoutée à votre repas');
+  });
+  // le menu « … » se referme après un choix ou un clic ailleurs
+  const plus = document.querySelector<HTMLDetailsElement>('.plus');
+  document.addEventListener('click', (e) => {
+    if (plus?.open && (!plus.contains(e.target as Node) || (e.target as HTMLElement).closest('.plus-menu button'))) plus.open = false;
+  });
+
   document.getElementById('imprimer')!.addEventListener('click', () => window.print());
+  document.getElementById('imprimer-grand')!.addEventListener('click', () => {
+    document.documentElement.classList.add('impression-grande');
+    window.addEventListener('afterprint', () => document.documentElement.classList.remove('impression-grande'), { once: true });
+    window.print();
+  });
   document.getElementById('partager')!.addEventListener('click', async () => {
     const donnees = { title: article.dataset.titre, text: `${article.dataset.titre} — une recette de Claire`, url: location.href.split('#')[0] };
     if (navigator.share) {
@@ -247,6 +286,9 @@ function initialiserCuisine(article: HTMLElement) {
       <header class="cuisine-tete">
         <p class="cuisine-titre"></p>
         <div class="cuisine-outils">
+          <button type="button" class="bouton bouton-icone" data-action="lire" aria-pressed="false" aria-label="Lire les étapes à voix haute" title="Lire à voix haute" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4Z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+          </button>
           <button type="button" class="bouton" data-action="ingredients" aria-expanded="false">Ingrédients</button>
           <button type="button" class="bouton bouton-icone" data-action="fermer" aria-label="Quitter le mode cuisine">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
@@ -272,7 +314,16 @@ function initialiserCuisine(article: HTMLElement) {
     const nb = v.querySelector('.portions-valeur output')!.textContent;
     const unite = v.querySelector('.portions-unite')!.textContent;
     ingredients.innerHTML = `<p class="kicker">${unite === 'fois la recette' ? `Recette × ${nb}` : `Pour ${nb} ${unite}`}</p>`;
-    ingredients.append(v.querySelector('.liste-ingredients')!.cloneNode(true));
+    // en cuisine, les cases servent à suivre ce qui est déjà ajouté au plat
+    const copie = v.querySelector('.liste-ingredients')!.cloneNode(true) as HTMLElement;
+    copie.querySelectorAll('.ajout-courses, a').forEach((b) => b.remove());
+    copie.querySelectorAll<HTMLElement>('.ingredient').forEach((ing) => {
+      const label = document.createElement('label');
+      label.innerHTML = '<input type="checkbox" />';
+      ing.replaceWith(label);
+      label.append(ing);
+    });
+    ingredients.append(copie);
     document.body.append(ecran);
     document.documentElement.classList.add('sans-defilement');
     garderEcranAllume();
@@ -281,6 +332,30 @@ function initialiserCuisine(article: HTMLElement) {
     const scene = ecran.querySelector<HTMLElement>('.cuisine-scene')!;
     const suivant = ecran.querySelector<HTMLButtonElement>('[data-action="suivant"]')!;
     const precedent = ecran.querySelector<HTMLButtonElement>('[data-action="precedent"]')!;
+    // lecture à voix haute, pour suivre la recette les mains dans la pâte
+    const voix = 'speechSynthesis' in window ? window.speechSynthesis : null;
+    const boutonLire = ecran.querySelector<HTMLButtonElement>('[data-action="lire"]')!;
+    boutonLire.hidden = !voix;
+    let lecture = false;
+    try {
+      lecture = !!voix && localStorage.getItem('recettes-claire:lecture') === '1';
+    } catch {
+      /* rien */
+    }
+    const lire = () => {
+      if (!voix || !lecture) return;
+      voix.cancel();
+      const texte = ecran.querySelector<HTMLElement>('.cuisine-texte')!.innerText.replace(/\s+/g, ' ');
+      const phrase = new SpeechSynthesisUtterance(`Étape ${i + 1}. ${texte}`);
+      phrase.lang = 'fr-FR';
+      phrase.rate = 0.95;
+      const francaise = voix.getVoices().find((v) => v.lang.startsWith('fr'));
+      if (francaise) phrase.voice = francaise;
+      voix.speak(phrase);
+    };
+    const majLecture = () => boutonLire.setAttribute('aria-pressed', String(lecture));
+    majLecture();
+
     const afficher = () => {
       const e = etapes[i];
       scene.dataset.n = e.n;
@@ -289,8 +364,10 @@ function initialiserCuisine(article: HTMLElement) {
       ecran.querySelector<HTMLElement>('.cuisine-progression span')!.style.width = `${((i + 1) / etapes.length) * 100}%`;
       precedent.disabled = i === 0;
       suivant.childNodes[0].textContent = i === etapes.length - 1 ? 'Terminer ' : 'Suivant ';
+      lire();
     };
     const fermer = () => {
+      voix?.cancel();
       ecran.remove();
       document.documentElement.classList.remove('sans-defilement');
       document.removeEventListener('keydown', clavier);
@@ -302,7 +379,8 @@ function initialiserCuisine(article: HTMLElement) {
     const aller = (sens: number) => {
       if (sens > 0 && i === etapes.length - 1) {
         fermer();
-        toast('Bon appétit !');
+        marquerCuisinee(article.dataset.slug!, true);
+        toast('Bon appétit ! Recette ajoutée à celles que vous avez cuisinées');
         return;
       }
       i = Math.min(etapes.length - 1, Math.max(0, i + sens));
@@ -325,7 +403,17 @@ function initialiserCuisine(article: HTMLElement) {
       if (action === 'fermer') fermer();
       else if (action === 'suivant') aller(1);
       else if (action === 'precedent') aller(-1);
-      else if (action === 'ingredients') {
+      else if (action === 'lire') {
+        lecture = !lecture;
+        try {
+          localStorage.setItem('recettes-claire:lecture', lecture ? '1' : '0');
+        } catch {
+          /* rien */
+        }
+        majLecture();
+        if (lecture) lire();
+        else voix?.cancel();
+      } else if (action === 'ingredients') {
         ingredients.hidden = !ingredients.hidden;
         ecran.querySelector('[data-action="ingredients"]')!.setAttribute('aria-expanded', String(!ingredients.hidden));
       }
@@ -345,8 +433,24 @@ function initialiserCuisine(article: HTMLElement) {
   });
 }
 
+/** « ← Le carnet » ramène à la recherche et aux filtres d'où l'on venait, au niveau de cette recette. */
+function initialiserRetour(article: HTMLElement) {
+  const fil = document.querySelector<HTMLAnchorElement>('.fil a');
+  if (!fil) return;
+  try {
+    const recherche = sessionStorage.getItem('recettes-claire:retour');
+    const depuis = sessionStorage.getItem('recettes-claire:depuis');
+    if (recherche == null && !depuis) return;
+    const base = fil.getAttribute('href')!.split(/[?#]/)[0];
+    fil.href = `${base}${recherche ?? ''}#${depuis === article.dataset.slug ? `r-${depuis}` : 'carnet'}`;
+  } catch {
+    /* rien */
+  }
+}
+
 export function initialiserRecette() {
   const article = document.querySelector<HTMLElement>('.recette')!;
+  initialiserRetour(article);
   document.querySelectorAll<HTMLElement>('.version').forEach(initialiserVersion);
   initialiserOnglets();
   initialiserActions(article);

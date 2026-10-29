@@ -1,0 +1,232 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { lien } from '../lib/recettes';
+import '../styles/perso.css';
+---
+
+<Base titre="Ma liste de courses" description="Les ingrédients de vos recettes, regroupés et à cocher au magasin.">
+  <section class="conteneur page-perso">
+    <nav class="fil"><a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a></nav>
+    <h1>Ma liste de courses</h1>
+    <p class="chapo">Les ingrédients des recettes que vous avez ajoutées, regroupés et à cocher au fil des rayons.</p>
+
+    <div class="courses-vide" id="courses-vide" hidden>
+      <Icone nom="panier" />
+      <p>Votre liste est vide.</p>
+      <p>Sur une recette, cochez les ingrédients à acheter, ou touchez <strong>Courses</strong> pour les prendre tous : ils s’ajoutent ici, rangés par recette, pour le nombre de personnes choisi.</p>
+      <a class="bouton bouton-principal" href={lien('#carnet')}>Parcourir le carnet</a>
+    </div>
+
+    <div class="courses-outils" id="courses-outils" hidden>
+      <div class="segment" role="radiogroup" aria-label="Affichage de la liste">
+        <button type="button" role="radio" class="puce" data-vue-courses="recettes" aria-checked="true">Par recette</button>
+        <button type="button" role="radio" class="puce" data-vue-courses="tout" aria-checked="false">Tout regroupé</button>
+      </div>
+      <div class="courses-actions">
+        <button type="button" class="bouton bouton-principal" id="courses-partager"><Icone nom="partager" /> Envoyer la liste</button>
+        <button type="button" class="bouton" id="courses-decocher">Tout décocher</button>
+        <button type="button" class="bouton" id="courses-vider">Vider</button>
+      </div>
+    </div>
+
+    <div class="courses-liste" id="courses-liste" hidden></div>
+  </section>
+</Base>
+
+<style is:global>
+  .courses-vide {
+    margin-top: 36px;
+    padding: 36px 24px;
+    border: 1px dashed var(--trait-2);
+    border-radius: 20px;
+    text-align: center;
+    color: var(--encre-2);
+  }
+
+  .courses-vide > svg {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 10px;
+    color: var(--accent);
+  }
+
+  .courses-vide p + p {
+    margin-top: 6px;
+  }
+
+  .courses-vide .bouton {
+    margin-top: 18px;
+  }
+
+  .courses-outils {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .courses-outils .segment {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--trait-2);
+    border-radius: 999px;
+    background: var(--carte);
+  }
+
+  .courses-outils .segment .puce {
+    border: 0;
+  }
+
+  .courses-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .courses-titre-recettes {
+    margin-top: 30px;
+    font-size: 1.25rem;
+  }
+
+  .courses-recettes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .courses-recettes li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 14px;
+    border: 1px solid var(--trait);
+    border-radius: 14px;
+    background: var(--carte);
+    font-size: 0.875rem;
+  }
+
+  .courses-recettes a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .courses-recettes span {
+    color: var(--encre-3);
+  }
+
+  .courses-retirer {
+    min-height: 40px;
+    padding: 4px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--fond-2);
+    font-size: 0.9375rem;
+    color: var(--encre-2);
+  }
+
+  .courses-compte {
+    margin-top: 26px;
+    font-size: 0.9375rem;
+    color: var(--encre-3);
+  }
+
+  .courses-lignes {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .courses-lignes li {
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .courses-lignes label {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 2px;
+    cursor: pointer;
+    font-size: 1.0625rem;
+  }
+
+  .courses-lignes input {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    margin-top: 2px;
+    accent-color: var(--accent);
+  }
+
+  .courses-lignes small {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.9375rem;
+    color: var(--encre-3);
+  }
+
+  .courses-lignes input:checked + span {
+    color: var(--encre-3);
+    text-decoration: line-through;
+  }
+
+  .courses-sous-groupe {
+    padding: 14px 0 4px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .courses-groupe {
+    margin-top: 18px;
+  }
+
+  .courses-groupe-tete {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .courses-groupe h2 {
+    font-size: 1.375rem;
+  }
+
+  .courses-groupe + .courses-groupe {
+    padding-top: 24px;
+    border-top: 1px solid var(--trait-2);
+  }
+
+  .courses-groupe h2 a {
+    text-decoration: none;
+  }
+
+  .courses-groupe h2 span {
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--encre-3);
+  }
+
+  @media print {
+    .site-tete,
+    .site-pied,
+    .fil,
+    .courses-outils,
+    .courses-retirer {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { initialiserCourses } from '../scripts/courses';
+  initialiserCourses();
+</script>

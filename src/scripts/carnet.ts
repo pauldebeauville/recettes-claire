@@ -1,5 +1,7 @@
 // Recherche, filtres, tri et affichage du carnet (page d'accueil).
-import { lireFavoris } from './favoris';
+import { basculerFavori, lireFavoris, toast } from './favoris';
+import { lireCuisinees } from './perso';
+import { MOTS_VIDES, SYNONYMES, existe, normaliser, singulier, trouve } from './recherche';
 
 type Etat = {
   q: string;
@@ -12,59 +14,13 @@ type Etat = {
   tmx: boolean;
   avance: boolean;
   favoris: boolean;
+  cuite: string; // '' | 'oui' | 'non'
+  selection: Set<string>; // recettes envoyées par quelqu'un (?selection=slug,slug)
   tri: string;
   vue: string;
 };
 
 type Entree = { s: string; t: string; i: string };
-
-const MOTS_VIDES = new Set(['de', 'la', 'le', 'les', 'du', 'des', 'et', 'a', 'au', 'aux', 'en', 'd', 'l', 'un', 'une', 'avec', 'pour', 'sur']);
-const SYNONYMES: Record<string, string> = { st: 'saint', ste: 'sainte', tmx: 'thermomix' };
-
-export function normaliser(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/œ/g, 'oe')
-    .replace(/æ/g, 'ae')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[’']/g, ' ')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-}
-
-const singulier = (m: string) => (m.length > 3 ? m.replace(/(s|x)$/, '') : m);
-
-function proche(a: string, b: string): boolean {
-  // une lettre de différence (oubli, ajout ou faute de frappe)
-  if (Math.abs(a.length - b.length) > 1) return false;
-  let i = 0;
-  let j = 0;
-  let ecarts = 0;
-  while (i < a.length && j < b.length) {
-    if (a[i] === b[j]) {
-      i++;
-      j++;
-      continue;
-    }
-    if (++ecarts > 1) return false;
-    if (a.length > b.length) i++;
-    else if (b.length > a.length) j++;
-    else {
-      i++;
-      j++;
-    }
-  }
-  return ecarts + (a.length - i) + (b.length - j) <= 1;
-}
-
-function trouve(jeton: string, mots: string[]): boolean {
-  for (const m of mots) {
-    if (m.startsWith(jeton) || singulier(m) === jeton) return true;
-    if (jeton.length >= 5 && (proche(jeton, m) || (m.length > jeton.length && proche(jeton, m.slice(0, jeton.length))))) return true;
-  }
-  return false;
-}
 
 export function initialiserCarnet() {
   const index: Entree[] = JSON.parse(document.getElementById('index-recherche')!.textContent!);
@@ -78,6 +34,7 @@ export function initialiserCarnet() {
   const titres = new Map(fiches.map((f) => [f.dataset.slug!, f.querySelector('.fiche-titre')!.textContent!.trim()]));
 
   const etat: Etat = lireAdresse();
+  let cuites = new Set<string>();
 
   function lireAdresse(): Etat {
     const p = new URLSearchParams(location.search);
@@ -93,6 +50,8 @@ export function initialiserCarnet() {
       tmx: p.has('tmx'),
       avance: p.has('avance'),
       favoris: p.has('favoris'),
+      cuite: p.get('cuite') ?? '',
+      selection: liste('selection'),
       tri: p.get('tri') ?? 'carnet',
       vue: p.get('vue') ?? 'fiches',
     };
@@ -104,13 +63,31 @@ export function initialiserCarnet() {
     if (etat.type) p.set('type', etat.type);
     if (etat.cat.size) p.set('cat', [...etat.cat].join(','));
     if (etat.ved.size) p.set('ved', [...etat.ved].join(','));
-    for (const k of ['n', 'prep', 'cuis'] as const) if (etat[k]) p.set(k, etat[k]);
+    if (etat.selection.size) p.set('selection', [...etat.selection].join(','));
+    for (const k of ['n', 'prep', 'cuis', 'cuite'] as const) if (etat[k]) p.set(k, etat[k]);
     for (const k of ['tmx', 'avance', 'favoris'] as const) if (etat[k]) p.set(k, '1');
     if (etat.tri !== 'carnet') p.set('tri', etat.tri);
     if (etat.vue !== 'fiches') p.set('vue', etat.vue);
     const qs = p.toString();
     history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
+    memoriserRetour();
   }
+
+  /** La recette ouverte saura revenir à cette recherche et à ces filtres. */
+  function memoriserRetour() {
+    try {
+      sessionStorage.setItem('recettes-claire:retour', location.search);
+    } catch {
+      /* rien */
+    }
+  }
+
+  const vocabulaire = [...new Set([...mots.values()].flatMap((m) => [...m.t, ...m.i]))];
+  const approx = new Map<string, boolean>();
+  const tolerer = (j: string) => {
+    if (!approx.has(j)) approx.set(j, !existe(j, vocabulaire));
+    return approx.get(j)!;
+  };
 
   function jetons(): string[] {
     return normaliser(etat.q)
@@ -125,8 +102,9 @@ export function initialiserCarnet() {
     const m = mots.get(slug)!;
     let s = 0;
     for (const j of js) {
-      if (trouve(j, m.t)) s += 3;
-      else if (trouve(j, m.i)) s += 1;
+      const t = tolerer(j);
+      if (trouve(j, m.t, t)) s += 3;
+      else if (trouve(j, m.i, t)) s += 1;
       else return -1;
     }
     return s;
@@ -139,6 +117,7 @@ export function initialiserCarnet() {
   function correspond(f: HTMLLIElement, sauf?: string, favoris = new Set(lireFavoris())): boolean {
     const d = f.dataset;
     if (etat.type && !d.types!.split('|').includes(etat.type)) return false;
+    if (etat.selection.size && !etat.selection.has(d.slug!)) return false;
     if (sauf !== 'cat' && etat.cat.size && !d.cats!.split('|').some((c) => etat.cat.has(c))) return false;
     if (sauf !== 'ved' && etat.ved.size && !d.veds!.split('|').some((c) => etat.ved.has(c))) return false;
     if (sauf !== 'n' && !nbOk(+d.nb!, etat.n)) return false;
@@ -147,6 +126,7 @@ export function initialiserCarnet() {
     if (sauf !== 'tmx' && etat.tmx && !d.tmx) return false;
     if (sauf !== 'avance' && etat.avance && !d.avance) return false;
     if (sauf !== 'favoris' && etat.favoris && !favoris.has(d.slug!)) return false;
+    if (sauf !== 'cuite' && etat.cuite && (etat.cuite === 'oui') !== cuites.has(d.slug!)) return false;
     return true;
   }
 
@@ -159,6 +139,7 @@ export function initialiserCarnet() {
       case 'n':
       case 'prep':
       case 'cuis':
+      case 'cuite':
         return etat[groupe] === valeur;
       default:
         return etat[groupe as 'tmx' | 'avance' | 'favoris'];
@@ -182,6 +163,8 @@ export function initialiserCarnet() {
         return !!d.tmx;
       case 'avance':
         return !!d.avance;
+      case 'cuite':
+        return (valeur === 'oui') === cuites.has(d.slug!);
       default:
         return favoris.has(d.slug!);
     }
@@ -201,7 +184,11 @@ export function initialiserCarnet() {
     return texte;
   }
 
+  const nbFiltres = () =>
+    +!!etat.selection.size + etat.cat.size + etat.ved.size + +!!etat.n + +!!etat.prep + +!!etat.cuis + +etat.tmx + +etat.avance + +etat.favoris + +!!etat.cuite;
+
   function actualiser() {
+    cuites = new Set(Object.keys(lireCuisinees()));
     const favoris = new Set(lireFavoris());
     const js = jetons();
     const visibles: { f: HTMLLIElement; s: number }[] = [];
@@ -225,6 +212,18 @@ export function initialiserCarnet() {
     });
 
     const sommaire = etat.vue === 'sommaire';
+    // une sélection reçue, et le partage de ce qu'on regarde (favoris, ou résultat d'une recherche)
+    const favorisSet = new Set(lireFavoris());
+    document.getElementById('banniere-selection')!.hidden = !etat.selection.size || [...etat.selection].every((s) => favorisSet.has(s));
+    document.getElementById('partager-selection')!.hidden = !(etat.favoris || etat.q || nbFiltres()) || visibles.length === 0 || visibles.length > 40;
+    // les idées du jour s'effacent dès qu'on cherche ou qu'on filtre
+    const auRepos = !etat.q && !etat.type && !nbFiltres() && !sommaire;
+    const inspirations = document.getElementById('inspirations');
+    if (inspirations) inspirations.hidden = !auRepos;
+    const titreCarnet = document.getElementById('titre-carnet');
+    if (titreCarnet) titreCarnet.hidden = !auRepos;
+    const tuiles = document.getElementById('tuiles');
+    if (tuiles) tuiles.hidden = !auRepos;
     document.getElementById('fiches')!.hidden = sommaire;
     document.getElementById('sommaire')!.hidden = !sommaire;
     document.getElementById('vide')!.hidden = visibles.length > 0;
@@ -238,7 +237,7 @@ export function initialiserCarnet() {
     document.querySelectorAll<HTMLButtonElement>('[data-vue]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.vue === etat.vue)));
 
     // puces du panneau, avec le nombre de recettes qu'elles donneraient
-    const nbActifs = etat.cat.size + etat.ved.size + +!!etat.n + +!!etat.prep + +!!etat.cuis + +etat.tmx + +etat.avance + +etat.favoris;
+    const nbActifs = nbFiltres();
     for (const p of puces) {
       const { groupe, valeur } = p.dataset as { groupe: string; valeur: string };
       const actif = valeurPuce(groupe, valeur);
@@ -248,6 +247,7 @@ export function initialiserCarnet() {
       p.disabled = !actif && nb === 0;
     }
     document.querySelector('.nb-filtres')!.textContent = nbActifs ? String(nbActifs) : '';
+    if (etat.prep || etat.cuis) (document.getElementById('filtres-temps') as HTMLDetailsElement).open = true;
     document.getElementById('voir-resultats')!.textContent =
       visibles.length ? `Voir ${visibles.length} recette${visibles.length > 1 ? 's' : ''}` : 'Aucune recette';
 
@@ -268,9 +268,10 @@ export function initialiserCarnet() {
       actifs.append(li);
     };
     if (etat.q) ajouter(`« ${etat.q} »`, () => (etat.q = ''));
+    if (etat.selection.size) ajouter(`Sélection reçue (${etat.selection.size})`, () => etat.selection.clear());
     etat.cat.forEach((c) => ajouter(libelleActif('cat', c), () => etat.cat.delete(c)));
     etat.ved.forEach((c) => ajouter(libelleActif('ved', c), () => etat.ved.delete(c)));
-    for (const k of ['n', 'prep', 'cuis'] as const) if (etat[k]) ajouter(libelleActif(k, etat[k]), () => (etat[k] = ''));
+    for (const k of ['n', 'prep', 'cuis', 'cuite'] as const) if (etat[k]) ajouter(libelleActif(k, etat[k]), () => (etat[k] = ''));
     for (const k of ['tmx', 'avance', 'favoris'] as const) if (etat[k]) ajouter(libelleActif(k, '1'), () => (etat[k] = false));
     if (etat.q || nbActifs) {
       const li = document.createElement('li');
@@ -285,9 +286,10 @@ export function initialiserCarnet() {
   }
 
   function effacer() {
-    Object.assign(etat, { q: '', type: '', n: '', prep: '', cuis: '', tmx: false, avance: false, favoris: false });
+    Object.assign(etat, { q: '', type: '', n: '', prep: '', cuis: '', cuite: '', tmx: false, avance: false, favoris: false });
     etat.cat.clear();
     etat.ved.clear();
+    etat.selection.clear();
     changer();
   }
 
@@ -328,7 +330,7 @@ export function initialiserCarnet() {
       if (groupe === 'cat' || groupe === 'ved') {
         const s = etat[groupe];
         s.has(valeur) ? s.delete(valeur) : s.add(valeur);
-      } else if (groupe === 'n' || groupe === 'prep' || groupe === 'cuis') {
+      } else if (groupe === 'n' || groupe === 'prep' || groupe === 'cuis' || groupe === 'cuite') {
         etat[groupe] = etat[groupe] === valeur ? '' : valeur;
       } else {
         const k = groupe as 'tmx' | 'avance' | 'favoris';
@@ -341,6 +343,31 @@ export function initialiserCarnet() {
     if ((e.target as HTMLElement).closest('[data-effacer]')) effacer();
   });
   document.getElementById('ouvrir-filtres')!.addEventListener('click', () => panneau.showModal());
+  document.getElementById('adopter-selection')!.addEventListener('click', () => {
+    const favoris = new Set(lireFavoris());
+    etat.selection.forEach((s) => !favoris.has(s) && basculerFavori(s));
+    toast(`${etat.selection.size} recette${etat.selection.size > 1 ? 's' : ''} ajoutée${etat.selection.size > 1 ? 's' : ''} à vos favoris`);
+    actualiser();
+  });
+  document.getElementById('partager-selection')!.addEventListener('click', async () => {
+    const slugs = fiches.filter((f) => !f.hidden).map((f) => f.dataset.slug!);
+    const url = `${location.origin}${location.pathname}?selection=${slugs.join(',')}#carnet`;
+    const donnees = { title: 'Une sélection de recettes de Claire', text: `${slugs.length} recette${slugs.length > 1 ? 's' : ''} du carnet de Claire`, url };
+    if (navigator.share) {
+      try {
+        await navigator.share(donnees);
+      } catch {
+        /* annulé */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      toast('Lien de la sélection copié');
+    } catch {
+      toast(url);
+    }
+  });
   panneau.addEventListener('click', (e) => {
     if (e.target === panneau) panneau.close();
   });
@@ -353,13 +380,28 @@ export function initialiserCarnet() {
     }),
   );
   window.addEventListener('favoris', actualiser);
+  window.addEventListener('cuisinees', actualiser);
   // le lien « Favoris » de l'en-tête, quand on est déjà sur l'accueil
-  document.getElementById('lien-favoris')!.addEventListener('click', (e) => {
-    e.preventDefault();
-    etat.favoris = true;
-    changer();
-    document.getElementById('carnet')!.scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('[data-lien-favoris]').forEach((l) =>
+    l.addEventListener('click', (e) => {
+      e.preventDefault();
+      etat.favoris = true;
+      changer();
+      document.getElementById('carnet')!.scrollIntoView({ behavior: 'smooth' });
+    }),
+  );
+
+  document.addEventListener('click', (e) => {
+    const lien = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="/recettes/"]');
+    const fiche = lien?.closest<HTMLElement>('[data-slug]');
+    if (!fiche) return;
+    try {
+      sessionStorage.setItem('recettes-claire:depuis', fiche.dataset.slug!);
+    } catch {
+      /* rien */
+    }
   });
 
+  memoriserRetour();
   actualiser();
 }
