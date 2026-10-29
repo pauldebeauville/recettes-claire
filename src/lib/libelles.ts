@@ -1,3 +1,5 @@
+export const NOM_SITE = 'Les 1000 et 1 recettes de Claire';
+
 // Libellés affichés et couleurs. Les clés sont celles écrites dans les fiches YAML.
 
 export const TYPES: Record<string, string> = {

@@ -8,7 +8,6 @@ import {
   aLAvance,
   decouperTitre,
   estThermomix,
-  lien,
   lienRecette,
   lignesIngredients,
   lirePortions,
@@ -76,23 +75,15 @@ const DUREES = [
 
 <Base>
   <section class="accueil conteneur">
-    <div class="accueil-haut">
-      <div>
-        <p class="kicker">Carnet de famille · {total} recettes</p>
-        <h1 class="accueil-titre">
-          Les recettes <span class="de">de</span> <span class="prenom">Claire<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c48-9 98-12 150-10 47 2 95 6 144 1" /></svg></span>
-        </h1>
-        <p class="accueil-intro">
-          Toutes ses recettes, salées et sucrées, réunies dans un seul carnet. Cherchez un plat, un ingrédient que vous
-          avez sous la main, ou laissez-vous guider.
-        </p>
-        <p class="accueil-astuce">Astuce : tapez plusieurs ingrédients, par exemple « saumon avocat ».</p>
-      </div>
-      <picture class="portrait">
-        <source srcset={lien('images/claire.webp')} type="image/webp" />
-        <img src={lien('images/claire.jpg')} width="180" height="180" alt="Portrait de Claire, dessiné au crayon" />
-      </picture>
-    </div>
+    <p class="kicker">Carnet de famille · {total} recettes</p>
+    <h1 class="accueil-titre">
+      Les 1000 <span class="de">et</span> 1 recettes <span class="de">de</span> <span class="prenom">Claire<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c48-9 98-12 150-10 47 2 95 6 144 1" /></svg></span>
+    </h1>
+    <p class="accueil-intro">
+      Toutes ses recettes, salées et sucrées, réunies dans un seul carnet. Cherchez un plat, un ingrédient que vous
+      avez sous la main, ou laissez-vous guider.
+    </p>
+    <p class="accueil-astuce">Astuce : tapez plusieurs ingrédients, par exemple « saumon avocat ».</p>
 
     <ul class="tuiles" aria-label="Catégories">
       {
@@ -384,71 +375,10 @@ const DUREES = [
     color: var(--encre-3);
   }
 
-  /* portrait de Claire : dans la marge du titre, pour ne pas repousser les recettes */
-  .accueil-haut {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: 28px 48px;
-  }
-
-  .portrait {
-    display: block;
-    margin: 0 10px 6px 0;
-  }
-
-  .portrait img {
-    display: block;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    box-shadow: 0 0 0 6px var(--carte), 0 0 0 7px var(--trait-2), var(--ombre-forte);
-  }
-
-  /* sur téléphone : le portrait se range à côté du titre */
-  @media (max-width: 900px) {
-    .accueil-haut {
-      align-items: center;
-      gap: 0 18px;
-    }
-    .accueil-haut > div {
-      display: contents;
-    }
-    .accueil-haut .kicker {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-    .accueil-titre {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .portrait {
-      grid-column: 2;
-      grid-row: 2;
-      margin: 14px 6px 0 0;
-    }
-    .accueil-intro,
-    .accueil-astuce {
-      grid-column: 1 / -1;
-    }
-    .portrait img {
-      width: 96px;
-      height: 96px;
-      box-shadow: 0 0 0 4px var(--carte), 0 0 0 5px var(--trait-2), var(--ombre);
-    }
-  }
-
-  @media (max-width: 420px) {
-    .portrait img {
-      width: 80px;
-      height: 80px;
-    }
-  }
-
   .tuiles {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* 4 colonnes sur grand écran, 3 sur tablette : « Accompagnements » doit tenir */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 12px;
     margin: 44px 0 0;
     padding: 0;
@@ -457,18 +387,18 @@ const DUREES = [
 
   @media (max-width: 760px) {
     .tuiles {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
   }
 
   .tuile {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     width: 100%;
-    padding: 14px 16px;
+    padding: 14px 14px;
     border: 1px solid var(--trait);
     border-radius: var(--rayon);
     background: var(--carte);
@@ -499,8 +429,10 @@ const DUREES = [
   }
 
   .tuile-nom {
+    hyphens: auto;
+    overflow-wrap: break-word;
     font-family: var(--serif);
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 560;
     line-height: 1.2;
   }
@@ -513,7 +445,7 @@ const DUREES = [
 
   @media (max-width: 420px) {
     .tuile {
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto minmax(0, 1fr);
       gap: 10px;
       padding: 12px;
     }

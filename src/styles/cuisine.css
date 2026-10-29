@@ -11,6 +11,8 @@
   z-index: 60;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  /* une seule colonne à la largeur de l'écran, même avec un très long titre */
+  grid-template-columns: minmax(0, 1fr);
   background: var(--fond);
   animation: apparait 0.2s ease-out;
 }
@@ -30,6 +32,7 @@
 }
 
 .cuisine-titre {
+  min-width: 0;
   font-family: var(--serif);
   font-size: 1.125rem;
   font-weight: 600;
@@ -200,87 +203,7 @@
   cursor: default;
 }
 
-/* ---------- minuteurs ---------- */
-
-.minuteurs {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  z-index: 70;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: min(340px, calc(100vw - 32px));
-}
-
-.cuisine ~ .minuteurs {
-  right: auto;
-  left: 16px;
-  bottom: 96px;
-}
-
-.minuteur-carte {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  gap: 4px 12px;
-  padding: 10px 10px 10px 16px;
-  border-radius: 16px;
-  background: var(--encre);
-  color: var(--fond);
-  box-shadow: var(--ombre-forte);
-  animation: apparait 0.2s ease-out;
-}
-
-.minuteur-carte.en-pause .m-temps {
-  opacity: 0.55;
-}
-
-.minuteur-carte.termine {
-  background: var(--accent);
-  color: var(--sur-accent);
-  animation: pulse 1s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  to {
-    transform: scale(1.02);
-  }
-}
-
-.m-temps {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.m-nom {
-  overflow: hidden;
-  font-size: 0.8125rem;
-  opacity: 0.8;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.minuteur-carte button {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 12%);
-  color: inherit;
-}
-
-.minuteur-carte button svg {
-  width: 16px;
-  height: 16px;
-}
-
 @media print {
-  .minuteurs,
   .cuisine {
     display: none !important;
   }

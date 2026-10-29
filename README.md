@@ -1,4 +1,4 @@
-# Les recettes de Claire
+# Les 1000 et 1 recettes de Claire
 
 Le carnet de recettes de Claire en site web : 155 recettes salées et sucrées, reprises mot pour mot de ses deux carnets (PDF).
 Le site est hébergé gratuitement sur GitHub Pages et masqué des moteurs de recherche.
@@ -9,6 +9,7 @@ Sur le site, on peut :
 - filtrer par salé / sucré, catégorie (apéritif, entrée, plat…), ingrédient vedette, nombre d’ingrédients, temps indiqués, Thermomix, recettes à préparer à l’avance, favoris ;
 - ajuster les quantités au nombre de personnes (fractions, accords « 1 avocat → 2 avocats », quantités « par personne » laissées telles quelles) ;
 - cocher les ingrédients et les étapes, lancer un minuteur en touchant une durée (« 20 minutes ») ;
+- garder un **minuteur** sous la main sur toutes les pages (bouton « Minuteur » en haut) : il continue de tourner quand on change de page, et se met en pause ou s’arrête de partout ;
 - passer en **mode cuisine** : une étape à la fois, en grand, écran qui reste allumé ;
 - imprimer une fiche propre, partager un lien, garder ses favoris ;
 - l’installer sur l’écran d’accueil du téléphone et le consulter sans connexion.

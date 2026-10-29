@@ -3,13 +3,14 @@ import '../styles/global.css';
 import Icone from '../components/Icone.astro';
 import { getCollection } from 'astro:content';
 import { lien } from '../lib/recettes';
+import { NOM_SITE } from '../lib/libelles';
 
 interface Props {
   titre?: string;
   description?: string;
 }
 const { titre, description = 'Toutes les recettes de Claire, salées et sucrées, réunies dans un carnet.' } = Astro.props;
-const titreComplet = titre ? `${titre} · Les recettes de Claire` : 'Les recettes de Claire';
+const titreComplet = titre ? `${titre} · ${NOM_SITE}` : NOM_SITE;
 const slugs = (await getCollection('recettes')).map((r) => r.id);
 const adresse = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -31,8 +32,8 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
     <link rel="manifest" href={lien('manifest.webmanifest')} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="Les recettes de Claire" />
-    <meta property="og:title" content={titre ?? 'Les recettes de Claire'} />
+    <meta property="og:site_name" content={NOM_SITE} />
+    <meta property="og:title" content={titre ?? NOM_SITE} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={adresse.href} />
     <meta property="og:image" content={new URL(lien('partage.png'), Astro.site).href} />
@@ -44,11 +45,14 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
     <a class="visuellement-cache" href="#contenu">Aller au contenu</a>
     <header class="site-tete">
       <div class="conteneur">
-        <a class="logo" href={lien()}>Les recettes de <em>Claire</em></a>
+        <a class="logo" href={lien()}><span>Les 1000 et 1 recettes</span> <span>de <em>Claire</em></span></a>
         <nav class="site-nav" aria-label="Navigation principale">
-          <a href={lien('#carnet')}><Icone nom="livre" /><span class="libelle">Le carnet</span></a>
+          <a href={lien('#carnet')} class="lien-carnet"><Icone nom="livre" /><span class="libelle">Le carnet</span></a>
           <button type="button" id="au-hasard" data-slugs={JSON.stringify(slugs)} data-base={lien('recettes/')}>
             <Icone nom="de" /><span class="libelle">Au hasard</span>
+          </button>
+          <button type="button" id="ouvrir-minuteur" aria-haspopup="dialog">
+            <Icone nom="horloge" /><span class="libelle">Minuteur</span><span class="minuteur-badge" aria-live="off"></span>
           </button>
           <a href={lien('?favoris=1#carnet')} id="lien-favoris">
             <Icone nom="coeur" /><span class="libelle">Favoris</span><span class="nb-favoris"></span>
@@ -61,13 +65,16 @@ const adresse = new URL(Astro.url.pathname, Astro.site);
     </main>
     <footer class="site-pied">
       <div class="conteneur">
-        <p class="signature">Les recettes de Claire</p>
+        <p class="signature">{NOM_SITE}</p>
         <p>Carnet de famille · Les recettes sont reproduites telles qu’elle les a écrites.</p>
       </div>
     </footer>
     <div class="toast" role="status" aria-live="polite"></div>
     <script>
       import { lireFavoris } from '../scripts/favoris';
+      import { initialiserMinuteurs } from '../scripts/minuteurs';
+
+      initialiserMinuteurs();
 
       const hasard = document.getElementById('au-hasard') as HTMLButtonElement;
       hasard.addEventListener('click', () => {

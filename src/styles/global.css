@@ -348,8 +348,22 @@ svg {
   .site-nav .libelle {
     display: none;
   }
+  .site-nav a,
+  .site-nav button {
+    padding: 0 9px;
+  }
+  /* le titre ramène déjà à l'accueil : on garde la place pour les autres boutons */
+  .site-nav .lien-carnet {
+    display: none;
+  }
+  /* le titre passe sur deux lignes */
   .logo {
-    font-size: 1.125rem;
+    font-size: 0.9375rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+  .logo span {
+    display: block;
   }
 }
 

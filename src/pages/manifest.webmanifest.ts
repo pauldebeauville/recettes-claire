@@ -1,12 +1,13 @@
 import type { APIRoute } from 'astro';
 import { lien } from '../lib/recettes';
+import { NOM_SITE } from '../lib/libelles';
 
 // Permet d'ajouter le carnet à l'écran d'accueil du téléphone, comme une application.
 export const GET: APIRoute = () =>
   new Response(
     JSON.stringify({
-      name: 'Les recettes de Claire',
-      short_name: 'Recettes Claire',
+      name: NOM_SITE,
+      short_name: '1000 et 1 recettes',
       description: 'Le carnet de recettes de Claire',
       lang: 'fr',
       start_url: lien(),

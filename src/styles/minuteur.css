@@ -1,0 +1,284 @@
+/* Minuteurs : le bouton de l'en-tête, le panneau de réglage et les minuteurs en cours (sur toutes les pages). */
+
+.minuteur-badge:empty {
+  display: none;
+}
+
+.minuteur-badge {
+  min-width: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--encre);
+  color: var(--fond);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 20px;
+  text-align: center;
+}
+
+.minuteur-badge.termine {
+  background: var(--accent);
+  color: var(--sur-accent);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* ---------- minuteurs en cours (en bas de l'écran) ---------- */
+
+.minuteurs {
+  position: fixed;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.minuteurs:empty {
+  display: none;
+}
+
+/* en mode cuisine, ils laissent la place au panneau des ingrédients et aux boutons */
+.sans-defilement .minuteurs {
+  right: auto;
+  left: 16px;
+  bottom: 96px;
+}
+
+.minuteur-carte {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 16px;
+  background: var(--encre);
+  color: var(--fond);
+  box-shadow: var(--ombre-forte);
+  animation: monte-minuteur 0.2s ease-out;
+}
+
+@keyframes monte-minuteur {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.minuteur-carte.en-pause .m-temps {
+  opacity: 0.55;
+}
+
+.minuteur-carte.termine {
+  background: var(--accent);
+  color: var(--sur-accent);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+.m-temps {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.m-nom {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  opacity: 0.8;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.minuteur-carte button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 12%);
+  color: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.minuteur-carte button:hover {
+  background: rgb(255 255 255 / 22%);
+}
+
+.minuteur-carte button svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 560px) {
+  .minuteurs {
+    right: 10px;
+    width: min(340px, calc(100vw - 20px));
+    gap: 6px;
+  }
+  .minuteur-carte {
+    gap: 4px 8px;
+    padding: 6px 6px 6px 14px;
+    border-radius: 14px;
+  }
+  .m-temps {
+    font-size: 1.25rem;
+  }
+  .minuteur-carte button {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ---------- panneau de réglage ---------- */
+
+.panneau-minuteur {
+  width: min(400px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  margin: 72px 16px auto auto;
+  padding: 0;
+  border: 1px solid var(--trait);
+  border-radius: 20px;
+  background: var(--fond);
+  color: var(--encre);
+  box-shadow: var(--ombre-forte);
+}
+
+.panneau-minuteur::backdrop {
+  background: rgb(30 20 10 / 25%);
+}
+
+.panneau-minuteur[open] {
+  animation: monte-minuteur 0.2s ease-out;
+}
+
+@media (max-width: 560px) {
+  .panneau-minuteur {
+    width: 100vw;
+    max-width: 100vw;
+    margin: auto 0 0;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+.pm-contenu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px max(20px, env(safe-area-inset-bottom));
+}
+
+.pm-tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pm-tete h2 {
+  font-size: 1.5rem;
+}
+
+.pm-reglage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--fond-2);
+}
+
+.pm-reglage .pas {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--carte);
+  color: var(--encre);
+  box-shadow: 0 1px 2px rgb(60 40 20 / 12%);
+}
+
+.pm-reglage .pas svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.2;
+}
+
+.pm-valeur {
+  font-family: var(--serif);
+  font-size: 2.25rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.pm-raccourcis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pm-raccourcis .puce[aria-pressed='true'] {
+  background: var(--encre);
+  border-color: var(--encre);
+  color: var(--fond);
+}
+
+.pm-nom {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--encre-2);
+}
+
+.pm-nom em {
+  color: var(--encre-3);
+}
+
+.pm-nom input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--trait-2);
+  border-radius: 12px;
+  background: var(--carte);
+  font-size: 1rem;
+  outline: none;
+}
+
+.pm-nom input:focus {
+  border-color: var(--accent);
+}
+
+.pm-lancer {
+  justify-content: center;
+  min-height: 50px;
+  font-size: 1rem;
+}
+
+.pm-en-cours h3 {
+  margin-bottom: 8px;
+  font-size: 1.125rem;
+}
+
+.pm-en-cours .minuteur-carte + .minuteur-carte {
+  margin-top: 8px;
+}
+
+@media print {
+  .minuteurs,
+  .panneau-minuteur {
+    display: none !important;
+  }
+}

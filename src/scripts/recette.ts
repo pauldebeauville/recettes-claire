@@ -204,13 +204,13 @@ function initialiserActions(article: HTMLElement) {
 
 // ---------- minuteurs dans les étapes ----------
 
-function initialiserMinuteurs() {
+function initialiserMinuteursEtapes(article: HTMLElement) {
   document.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.minuteur');
     if (!b) return;
-    const etape = b.closest<HTMLElement>('.etape, .cuisine-scene');
-    const n = etape?.dataset.n;
-    creerMinuteur(+b.dataset.s!, `${n ? `Étape ${n} · ` : ''}${b.textContent!.trim()}`);
+    const n = b.closest<HTMLElement>('.etape, .cuisine-scene')?.dataset.n;
+    // le nom de la recette suit le minuteur sur les autres pages
+    creerMinuteur(+b.dataset.s!, `${article.dataset.titre}${n ? ` · étape ${n}` : ''}`);
   });
 }
 
@@ -350,6 +350,6 @@ export function initialiserRecette() {
   document.querySelectorAll<HTMLElement>('.version').forEach(initialiserVersion);
   initialiserOnglets();
   initialiserActions(article);
-  initialiserMinuteurs();
+  initialiserMinuteursEtapes(article);
   initialiserCuisine(article);
 }
