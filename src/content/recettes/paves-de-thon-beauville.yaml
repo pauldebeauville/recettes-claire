@@ -1,0 +1,34 @@
+titre: Pavés de Thon Beauvillé
+type: salé
+categories:
+- plat
+vedettes:
+- poisson
+ordre: 25
+portions: Pour 4 personnes
+ingredients:
+- 4 pavés de thon
+- 100 g de lardons
+- 2 oignons
+- 15 cl de crème fraîche
+- Sel, poivre
+preparation:
+- titre: Préparer les oignons et les lardons
+  texte:
+  - Dans une poêle, faites revenir les oignons finement émincés jusqu’à ce qu’ils soient fondants. Réservez-les.
+  - Dans la même poêle, faites revenir les lardons jusqu’à ce qu’ils soient dorés. Mélangez les oignons, les lardons et la crème fraîche. Réservez.
+- titre: Cuire les pavés de thon
+  texte:
+  - Dans une poêle bien chaude, faites cuire les pavés de thon avec un filet d’huile. Salez et poivrez.
+- titre: Assembler le plat
+  texte:
+  - Au moment de servir, nappez chaque pavé de thon avec le mélange d’oignons, lardons et crème.
+  - Réchauffez légèrement si nécessaire.
+- titre: Service
+  texte:
+  - Servez immédiatement avec une garniture de courgettes sautées ou un accompagnement de votre choix.
+notes:
+- titre: Astuce
+  texte:
+  - Le mélange d’oignons et lardons sur le pavé de thon apporte une texture fondante et évite que le poisson soit sec.
+source: Carnet salé, p. 25

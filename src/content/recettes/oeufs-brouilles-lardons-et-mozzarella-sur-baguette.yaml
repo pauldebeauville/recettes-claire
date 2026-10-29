@@ -1,0 +1,38 @@
+titre: Œufs brouillés, lardons et mozzarella sur baguette
+type: salé
+categories:
+- plat
+vedettes:
+- œufs
+ordre: 80
+portions: Pour 2 à 3 personnes
+ingredients:
+- 2 à 3 œufs par personne
+- 1 baguette (coupée en tronçons)
+- 100 g de lardons
+- 1 boule de mozzarella ou gruyère râpé
+- 1 c. à soupe d’huile d’olive (pour les lardons)
+- Sel, poivre
+preparation:
+- titre: Préparez la baguette
+  texte:
+  - Coupez la baguette en tronçons et faites-les légèrement toaster au four pour qu’ils soient croustillants.
+- titre: Faites revenir les lardons
+  texte:
+  - Dans une poêle, faites chauffer l’huile d’olive, puis faites revenir les lardons jusqu’à ce qu’ils soient légèrement dorés. Réservez.
+- titre: Préparez les œufs brouillés
+  texte:
+  - Cassez les œufs dans un bol, ajoutez une pincée de sel et de poivre, et battez légèrement.
+  - Faites cuire les œufs à feu doux dans une poêle en mélangeant constamment jusqu’à obtenir une consistance crémeuse.
+- titre: Assemblez les tartines
+  texte:
+  - Disposez les œufs brouillés sur les tronçons de baguette.
+  - Ajoutez les lardons par-dessus.
+  - Déposez des morceaux de mozzarella (ou parsemez de gruyère râpé).
+- titre: Cuisson finale
+  texte:
+  - Placez les tartines au four pendant 2 à 3 minutes, juste le temps que le fromage fonde.
+notes:
+- texte:
+  - Servir chaud.
+source: Carnet salé, p. 88

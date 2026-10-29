@@ -1,0 +1,40 @@
+titre: Tiramisu à la Nantaise
+type: sucré
+categories:
+- dessert
+ordre: 144
+portions: Pour une dizaine de personnes
+ingredients:
+- 6 œufs
+- 200 g de sucre
+- 500 g de mascarpone
+- 1 paquet et de demi-petits-beurre (type "Lu")
+- 150 g de noisettes décortiquées, légèrement grillées et concassées finement
+- 2 grandes tasses de café
+- Cacao en poudre (pour saupoudrer)
+preparation:
+- titre: Préparation de la crème mascarpone
+  texte:
+  - Séparez les blancs des jaunes d'œufs.
+  - Fouettez les jaunes avec le sucre à l’aide d’un batteur électrique jusqu’à obtenir une texture claire et mousseuse.
+  - Ajoutez les noisettes et le mascarpone et fouettez le tout.
+  - Montez les blancs en neige ferme et incorporez-les délicatement au mélange précédent.
+- titre: Préparation des couches
+  texte:
+  - Versez le café dans une assiette creuse.
+  - Trempez rapidement les petits-beurre dans le café pour les imbiber sans les détremper.
+  - Disposez une première couche de petits-beurre imbibés dans un plat à gratin.
+  - Recouvrez de la moitié de la crème au mascarpone.
+- titre: Montage
+  texte:
+  - Ajoutez une deuxième couche de petits-beurre imbibés.
+  - Recouvrez avec le reste de la crème mascarpone.
+  - Terminez par une dernière couche de petits-beurre.
+- titre: Finition
+  texte:
+  - Placez le tiramisu au réfrigérateur pendant au moins 4 heures pour qu’il prenne.
+  - Avant de servir, saupoudrez généreusement de cacao en poudre.
+- titre: Dressage
+  texte:
+  - Servez le tiramisu frais directement dans le plat, en ajoutant éventuellement quelques noisettes concassées pour une touche croquante.
+source: Carnet sucré, p. 27

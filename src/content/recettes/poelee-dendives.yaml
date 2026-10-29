@@ -1,0 +1,36 @@
+titre: Poêlée d’endives
+type: salé
+categories:
+- plat
+- accompagnement
+vedettes:
+- légumes
+ordre: 83
+portions: Pour 1 personne (à multiplier selon le nombre de convives)
+ingredients:
+- 1 endive par personne
+- 1 bocal de pois chiches
+- Poitrine fumée ou lardons
+- 1 échalote
+- 1 c. à soupe d’huile d’olive
+preparation:
+- titre: Préparez les endives
+  texte:
+  - Lavez les endives, coupez-les en tronçons et faites-les cuire à la vapeur pendant 12 minutes. Réservez.
+- titre: Préparez la poitrine fumée et l’échalote
+  texte:
+  - Coupez la poitrine fumée (ou utilisez des lardons) en petits morceaux.
+  - Émincez l’échalote.
+- titre: Faites revenir
+  texte:
+  - Dans une poêle, faites chauffer l’huile d’olive.
+  - Ajoutez l’échalote et faites-la revenir jusqu’à ce qu’elle devienne translucide.
+  - Ajoutez la poitrine fumée ou les lardons, et laissez cuire jusqu’à ce qu’ils soient dorés.
+- titre: Assemblez la poêlée
+  texte:
+  - Incorporez les endives cuites et les pois chiches dans la poêle.
+  - Mélangez bien et laissez chauffer quelques minutes pour que les saveurs se mélangent.
+notes:
+- texte:
+  - Servir chaud, accompagné de pâtes ou de riz selon votre préférence.
+source: Carnet salé, p. 91

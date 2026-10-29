@@ -1,0 +1,55 @@
+titre: Koulibiac de Saumon, Sauce à l’Aneth
+type: salé
+categories:
+- plat
+vedettes:
+- saumon
+ordre: 29
+portions: Pour 6 personnes
+temps:
+- label: Préparation
+  valeur: 30 minutes
+- label: Cuisson
+  valeur: 45 minutes
+ingredients:
+- groupe: Pour le koulibiac
+- 1 kg de filet de saumon sans peau
+- 600 g de pâte feuilletée
+- 4 œufs
+- 500 g d’épinards en branches (surgelés)
+- 20 cl de crème épaisse
+- 50 g de farine
+- Sel, poivre
+- groupe: Pour accompagner
+- 6 betteraves cuites
+- 150 g de beurre
+- Jus de 2 citrons
+- 1 bouquet d’aneth
+preparation:
+- titre: Préparer les épinards
+  texte:
+  - Faites cuire les épinards à découvert dans une casserole ou au micro-ondes. Pressez-les bien pour éliminer toute l’eau, puis hachez-les grossièrement. Mélangez-les avec la crème, la farine, du sel et du poivre.
+- titre: Cuire les œufs
+  texte:
+  - Pendant ce temps, faites cuire les œufs 8 minutes dans de l’eau bouillante. Plongez-les dans de l’eau froide, écalez-les et coupez-les en deux.
+- titre: Préparer la pâte
+  texte:
+  - Préchauffez le four à 210°C (th. 7).
+  - Étalez la pâte feuilletée sur un plan de travail fariné pour former un grand rectangle. Placez-la sur une plaque à four garnie de papier sulfurisé, en laissant dépasser les bords.
+- titre: Assembler le koulibiac
+  texte:
+  - Disposez les épinards au centre de la pâte dans la longueur.
+  - Posez les filets de saumon dessus, puis ajoutez les demi-œufs durs alignés en file.
+  - Rabattez les bords de la pâte et pincez-les entre vos doigts pour bien sceller.
+  - Badigeonnez le koulibiac de jaune d’œuf et enfournez pour 35 minutes.
+- titre: Préparer la sauce à l’aneth
+  texte:
+  - Pendant la cuisson, faites fondre le beurre dans une casserole.
+  - Filtrez-le et ajoutez le jus des citrons, une cuillère à soupe d’aneth ciselé, du sel et du poivre. Emulsionnez.
+- titre: Préparer les betteraves
+  texte:
+  - Pelez et coupez les betteraves en dés. Faites-les chauffer quelques instants à la vapeur ou au micro-ondes. Salez, poivrez et ajoutez une touche d’aneth.
+- titre: Service
+  texte:
+  - Servez le koulibiac chaud, accompagné des betteraves et de la sauce à l’aneth.
+source: Carnet salé, p. 29

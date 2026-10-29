@@ -1,0 +1,33 @@
+titre: Toasts Saumon et Avocat (avec Asperges Vertes)
+type: salé
+categories:
+- apéritif
+- entrée
+vedettes:
+- saumon
+ordre: 1
+portions: Pour 2 personnes
+ingredients:
+- 2 tranches de pain de campagne
+- 100 g de saumon fumé
+- 1 à 2 avocats mûrs
+- ½ citron
+- Quelques brins d’aneth
+- 1 botte d’asperges vertes (optionnel)
+- Huile d'olive
+- Crème fraîche épaisse
+preparation:
+- titre: Cuisson des asperges (si utilisées)
+  texte:
+  - Cuire les asperges 8 à 10 minutes dans de l’eau bouillante, puis les refroidir dans de l’eau froide.
+- titre: Assemblage des toasts
+  texte:
+  - Faire griller le pain.
+  - Couper l’avocat en tranches et les disposer sur le pain.
+  - Ajouter le saumon fumé.
+- titre: Finition
+  texte:
+  - Arroser d’un filet de jus de citron et d’huile d’olive.
+  - Ajouter les asperges ou un brin d’aneth pour décorer.
+  - Servir avec une cuillère de crème fraîche.
+source: Carnet salé, p. 1

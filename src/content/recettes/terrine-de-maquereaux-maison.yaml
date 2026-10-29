@@ -1,0 +1,38 @@
+titre: Terrine de Maquereaux Maison
+type: salé
+categories:
+- entrée
+vedettes:
+- poisson
+ordre: 24
+portions: Pour une terrine d’1 kg (moule de 19 cm de longueur)
+ingredients:
+- 600 g de filets de maquereaux
+- 240 g de crème liquide (type Elle & Vire)
+- 5 c. à soupe d’huile d’olive
+- 4 gousses d’ail cuites à sec (ou de tomates en dés)
+- 3½ c. à soupe de moutarde
+- 2 c. à café d’ail haché
+- 2 c. à café de basilic
+- 1 c. à café de sel fin
+- Poivre
+preparation:
+- titre: Cuire les maquereaux
+  texte:
+  - Préchauffez le four à 180°C.
+  - Faites cuire les filets de maquereaux pendant 15 minutes au four.
+  - Laissez refroidir légèrement.
+- titre: Préparer la terrine
+  texte:
+  - Dans un mixeur, déposez les maquereaux cuits.
+  - Ajoutez l’huile d’olive, la moutarde, l’ail haché, et la crème liquide.
+  - Mixez jusqu’à obtenir une texture homogène.
+  - Incorporez le basilic, le sel, le poivre, et les tomates ou l’ail cuit. Mélangez bien.
+- titre: Assembler et réfrigérer
+  texte:
+  - Versez la préparation dans un moule à terrine.
+  - Couvrez et laissez reposer au réfrigérateur pendant au moins 2 heures.
+- titre: Service
+  texte:
+  - Servez la terrine bien fraîche, accompagnée de pain grillé ou de légumes croquants.
+source: Carnet salé, p. 24

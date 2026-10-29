@@ -1,0 +1,27 @@
+titre: Pavés de Biche aux Myrtilles
+type: salé
+categories:
+- plat
+vedettes:
+- viande
+ordre: 12
+intro:
+- Avec sauce Bordelaise ou Grand Veneur
+ingredients:
+- 4 pavés de biche (Picard ou autre)
+- 1 sachet de myrtilles (Picard ou frais)
+- 1 pot de sauce Bordelaise ou Grand Veneur (Picard ou maison)
+preparation:
+- titre: Cuire les pavés de biche
+  texte:
+  - Faites cuire les pavés selon les instructions, de préférence saisis à feu vif puis cuits à point à feu doux.
+- titre: Préparer la sauce
+  texte:
+  - Réchauffez la sauce choisie (Bordelaise ou Grand Veneur) dans une petite casserole.
+- titre: Ajouter les myrtilles
+  texte:
+  - Incorporez les myrtilles à la sauce chaude et laissez mijoter quelques minutes.
+- titre: Service
+  texte:
+  - Servez les pavés nappés de la sauce aux myrtilles, accompagnés de légumes de saison ou de pommes dauphines.
+source: Carnet salé, p. 12

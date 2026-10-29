@@ -1,0 +1,38 @@
+titre: Cordon Bleu de Saumon
+type: salé
+categories:
+- plat
+vedettes:
+- saumon
+ordre: 8
+portions: Pour 4 personnes
+ingredients:
+- 500 g de saumon frais ou truite de mer
+- 200 g de saumon fumé ou truite fumée
+- 300 g de crème fraîche ou fromage blanc
+- 1 citron (jus)
+- 1 pincée de sel et de poivre
+- Ciboulette ou aneth (facultatif)
+preparation:
+- titre: Pocher le saumon frais
+  texte:
+  - Faites chauffer une casserole d’eau avec une feuille de laurier (facultatif).
+  - Ajoutez le saumon frais et laissez-le cuire jusqu’à ce qu’il atteigne une légère ébullition. Retirez du feu et égouttez sur du papier absorbant.
+- titre: Préparer le saumon fumé
+  texte:
+  - Coupez le saumon fumé en petits morceaux.
+- titre: Préparer la base crémeuse
+  texte:
+  - Dans un bol, mélangez la crème fraîche (ou le fromage blanc) avec le jus de citron, le sel et le poivre.
+  - Incorporez les morceaux de saumon fumé et mélangez jusqu’à obtenir une préparation homogène.
+- titre: Assembler le tout
+  texte:
+  - Ajoutez le saumon frais poché en morceaux à la préparation. Mélangez délicatement pour bien répartir les saveurs.
+- titre: Finition et service
+  texte:
+  - Servez frais, décoré de ciboulette ou d’aneth haché, avec des blinis, des tranches de pain grillé ou une salade verte.
+notes:
+- titre: Astuce
+  texte:
+  - Ajoutez une pincée de piment d’Espelette pour relever les saveurs si souhaité.
+source: Carnet salé, p. 8

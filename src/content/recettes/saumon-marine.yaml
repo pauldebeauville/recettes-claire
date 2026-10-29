@@ -1,0 +1,41 @@
+titre: Saumon Mariné
+type: salé
+categories:
+- entrée
+vedettes:
+- saumon
+ordre: 7
+portions: Pour 4 personnes
+ingredients:
+- 450 g de saumon frais (en tranches fines, préparé et coupé par votre poissonnier)
+- 1 citron vert (jus)
+- 2 échalotes crues (hachées)
+- 1 c. à soupe d’aneth frais (haché)
+- Sel
+preparation:
+- titre: Préparer la marinade
+  texte:
+  - Dans un bol, mélangez le jus de citron vert, les échalotes hachées, l’aneth et une pincée de sel.
+- titre: Mariner le saumon
+  texte:
+  - Disposez les tranches de saumon dans un plat creux.
+  - Versez la marinade uniformément sur le saumon.
+  - Couvrez et laissez mariner au réfrigérateur pendant 30 minutes à 1 heure.
+- titre: Préparer l’accompagnement
+  texte:
+  - Coupez l’avocat, la mangue et la mozzarella en dés ou en tranches fines.
+- titre: Servir
+  texte:
+  - Disposez le saumon mariné sur une assiette.
+  - Ajoutez l’avocat, la mangue et la mozzarella en accompagnement.
+  - Servez frais.
+notes:
+- titre: Accompagnement suggéré
+  texte:
+  - 1 avocat
+  - 1 mangue
+  - 1 boule de mozzarella
+- titre: Astuce
+  texte:
+  - Pour encore plus de saveurs, ajoutez un filet d’huile d’olive avant de servir.
+source: Carnet salé, p. 7

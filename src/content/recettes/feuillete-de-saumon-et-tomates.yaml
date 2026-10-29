@@ -1,0 +1,51 @@
+titre: Feuilleté de Saumon et Tomates
+type: salé
+categories:
+- plat
+vedettes:
+- saumon
+ordre: 2
+portions: Pour 4 à 6 personnes
+ingredients:
+- 1 filet de saumon frais (environ 800 g, de préférence sans arêtes)
+- 1 rouleau de pâte feuilletée
+- 4 càs de tapenade d’olives vertes
+- 2 tomates bien mûres
+- 1 boule de mozzarella
+- Quelques feuilles de basilic frais
+- 1 œuf entier
+- Huile d’olive
+- Sel et poivre
+preparation:
+- titre: Préparer le four
+  texte:
+  - Préchauffez le four à 200°C (th. 6).
+- titre: Préparer la base
+  texte:
+  - Étalez la pâte feuilletée sur une plaque.
+  - Placez le saumon côté peau sur la pâte.
+  - Étalez la tapenade sur le filet à l’aide d’une cuillère.
+  - Salez et poivrez légèrement le saumon.
+- titre: Garniture
+  texte:
+  - Effeuillez le basilic et déposez les feuilles sur le saumon.
+  - Coupez les tomates en rondelles, salez et poivrez-les, puis placez-les sur le basilic.
+  - Ajoutez des morceaux de mozzarella par-dessus.
+- titre: Fermer le feuilleté
+  texte:
+  - Repliez les bords de la pâte pour enfermer le saumon et la garniture.
+  - Badigeonnez les bords de la pâte avec l’œuf battu pour une dorure brillante.
+- titre: Cuisson
+  texte:
+  - Placez la plaque contenant le feuilleté sur l'étage du bas du four.
+  - Disposez une plaque ou un carton alimentaire sur l’étagère supérieure pour éviter que le feuilleté ne cuise trop rapidement sur le dessus.
+  - Faites cuire 20 minutes à 200°C.
+  - Baissez la température à 180°C et poursuivez la cuisson pendant 10 minutes.
+- titre: Service
+  texte:
+  - Servez chaud avec une salade ou des légumes.
+notes:
+- titre: Astuce
+  texte:
+  - Essayez avec du pesto rosso à la place de la tapenade pour varier les saveurs !
+source: Carnet salé, p. 2

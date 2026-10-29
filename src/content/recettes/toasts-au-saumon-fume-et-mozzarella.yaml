@@ -1,0 +1,35 @@
+titre: Toasts au Saumon Fumé et Mozzarella
+type: salé
+categories:
+- apéritif
+vedettes:
+- saumon
+- fromage
+ordre: 20
+portions: Pour 4 personnes
+ingredients:
+- 4 tranches de pain (type toasts)
+- 4 tranches de saumon fumé
+- 1 boule de mozzarella
+- Huile d’olive
+- Sel, poivre
+preparation:
+- titre: Préparer les toasts
+  texte:
+  - Faites légèrement toaster les tranches de pain à la poêle avec un filet d’huile d’olive.
+- titre: Préparer la mozzarella
+  texte:
+  - Découpez la mozzarella en tranches.
+  - Arrosez-les d’un filet d’huile d’olive.
+- titre: Assembler et cuire
+  texte:
+  - Disposez les tranches de mozzarella sur les toasts.
+  - Placez-les au four et laissez fondre la mozzarella à basse température.
+- titre: Ajouter le saumon
+  texte:
+  - Sortez les toasts du four, poivrez légèrement la mozzarella.
+  - Disposez une tranche de saumon fumé sur chaque toast.
+- titre: Service
+  texte:
+  - Servez immédiatement avec une salade verte pour accompagner.
+source: Carnet salé, p. 20

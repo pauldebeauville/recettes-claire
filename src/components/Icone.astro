@@ -1,0 +1,36 @@
+---
+// Petites icônes au trait, dessinées pour le site.
+interface Props {
+  nom: keyof typeof ICONES;
+  class?: string;
+}
+const ICONES = {
+  recherche: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/>',
+  coeur: '<path class="coeur" d="M12 20s-7.5-4.6-9.2-9.3C1.7 7.6 3.8 4.5 7 4.5c2 0 3.6 1.1 5 3 1.4-1.9 3-3 5-3 3.2 0 5.3 3.1 4.2 6.2C19.5 15.4 12 20 12 20Z"/>',
+  de: '<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/>',
+  filtres: '<path d="M4 6h16M7 12h10M10 18h4"/>',
+  fermer: '<path d="M6 6l12 12M18 6 6 18"/>',
+  imprimer: '<path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="8" rx="2"/><path d="M7 14h10v6.5H7z"/>',
+  partager: '<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12"/>',
+  cuisine: '<path d="M5 10h14v5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5v-5Z"/><path d="M3 10h18M9 6.5c0-1 .7-1.5.7-2.5M12.5 6.5c0-1 .7-1.5.7-2.5"/>',
+  moins: '<path d="M6 12h12"/>',
+  plus: '<path d="M12 6v12M6 12h12"/>',
+  gauche: '<path d="m14.5 6-6 6 6 6"/>',
+  droite: '<path d="m9.5 6 6 6-6 6"/>',
+  personnes: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17 14.3c1.9.6 3.1 2.2 3.5 4.7"/>',
+  liste: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1" fill="currentColor"/><circle cx="4.5" cy="12" r="1" fill="currentColor"/><circle cx="4.5" cy="18" r="1" fill="currentColor"/>',
+  grille: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+  horloge: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  four: '<rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 8.5h17"/><rect x="7" y="11.5" width="10" height="5.5" rx="1"/>',
+  calendrier: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  robot: '<path d="M7 9h10l-1.2 9.5a2 2 0 0 1-2 1.5h-3.6a2 2 0 0 1-2-1.5L7 9Z"/><path d="M5.5 9h13M10 5.5h4M12 5.5V9"/>',
+  livre: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/>',
+  pause: '<path d="M9 6v12M15 6v12"/>',
+  lecture: '<path d="M8 5.5v13l10-6.5-10-6.5Z"/>',
+  ingredients: '<path d="M6 4h12M8 4v3.5c0 1-1.5 1.5-1.5 3V19a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 1.5-1.5v-8.5c0-1.5-1.5-2-1.5-3V4"/><path d="M6.5 13h11"/>',
+  coche: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+} as const;
+const { nom, class: classe } = Astro.props;
+---
+
+<svg viewBox="0 0 24 24" aria-hidden="true" class={classe} set:html={ICONES[nom]} />

@@ -1,0 +1,45 @@
+titre: Flans de poireaux aux ris d'agneau
+type: salé
+categories:
+- entrée
+vedettes:
+- légumes
+- viande
+ordre: 113
+portions: Pour 4 personnes
+temps:
+- label: Préparation
+  valeur: 20 minutes
+- label: Cuisson
+  valeur: 20 minutes
+ingredients:
+- 1 kg de blancs de poireaux
+- 1 dl de crème fraîche épaisse
+- 3 œufs
+- 500 g de ris d'agneau
+- 30 g de beurre
+- groupe: Sauce
+- 4 blancs de poireaux
+- 20 g de beurre
+- 1 dl de crème fraîche liquide
+- 1 petite truffe (facultatif)
+preparation:
+- titre: Préparer les poireaux
+  texte:
+  - "Nettoyez puis émincez finement les blancs de poireaux. Faites-les étuver pendant 20 minutes avec le beurre (10 g), 1/2 dl d'eau et une pincée de sel, puis passez\uFFFEles au mixeur."
+- titre: Préparer les ris d'agneau
+  texte:
+  - Mettez les ris d'agneau dans une casserole d'eau froide et portez à ébullition sur feu doux. Égouttez-les puis passez-les sous un jet d’eau froide. Coupez-les en 2, puis faites-les revenir à feu très vif dans la poêle avec 20 g de beurre pour les colorer.
+- titre: Préparer la base des flans
+  texte:
+  - Préchauffez le four (thermostat 7/210°C). Mélangez les œufs, la crème, la purée de poireaux, le sel et le poivre. Beurrez des moules et répartissez-y les petits morceaux de ris d'agneau et la préparation aux poireaux.
+- titre: Cuisson des flans
+  texte:
+  - Installez les moules dans un plat creux rempli d'eau chaude et mettez-les au four pendant 20 minutes.
+- titre: Préparer la sauce
+  texte:
+  - Lavez, émincez et faites étuver les poireaux dans 20 g de beurre et 1 dl d’eau pendant 10 minutes. Salez et poivrez. Ajoutez la crème fraîche et laissez bouillir 5 minutes. Passez-la au mixeur puis ajoutez la truffe émincée (si utilisée).
+- titre: Service
+  texte:
+  - Servez très chaud accompagné de la sauce aux poireaux truffée. Une salade parfumée à l'estragon ou au cerfeuil complétera parfaitement ces petits flans.
+source: Carnet salé, p. 124

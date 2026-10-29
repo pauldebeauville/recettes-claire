@@ -1,0 +1,30 @@
+titre: Financiers
+type: sucré
+categories:
+- dessert
+ordre: 138
+ingredients:
+- 125 g de sucre glace
+- 125 g de poudre d’amande
+- 125 g de beurre
+- 4 blancs d’œufs
+- 50 g de farine
+- 1 pincée de sel
+- 4 gouttes d’amande amère
+preparation:
+- titre: Préparez le beurre noisette
+  texte:
+  - Dans une casserole, faites fondre le beurre jusqu’à ce qu’il prenne une couleur ambrée (attention à ne pas le brûler). Les particules ne doivent pas être noires. Réservez dans un bol pour qu’il refroidisse et soit tiède (pas chaud).
+- titre: Préparez la pâte à financiers
+  texte:
+  - Dans un saladier, mélangez la farine, la poudre d’amande, le sucre glace et la pincée de sel.
+  - Ajoutez les blancs d’œufs un par un en mélangeant bien après chaque ajout.
+  - Incorporez ensuite le beurre noisette tiède et les gouttes d’amande amère.
+- titre: Cuisson
+  texte:
+  - Remplissez les moules à financiers aux 2/3.
+  - Enfournez dans un four préchauffé à 180°C pendant 22 minutes environ.
+notes:
+- texte:
+  - Laissez refroidir avant de démouler. Dégustez ces financiers avec un thé ou un café pour un moment gourmand.
+source: Carnet sucré, p. 21

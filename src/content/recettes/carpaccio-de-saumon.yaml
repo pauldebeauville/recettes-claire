@@ -1,0 +1,37 @@
+titre: Carpaccio de Saumon
+type: salé
+categories:
+- entrée
+vedettes:
+- saumon
+ordre: 13
+portions: Pour 4 personnes
+ingredients:
+- 4 pavés de saumon
+- Jus de 1½ citron vert
+- 10 cl de crème fraîche (facultatif)
+- 6 c. à soupe d’huile d’olive
+- 1 échalote (hachée finement)
+- 1 bouquet d’aneth (haché)
+- Sel, poivre
+preparation:
+- titre: Préparer le saumon
+  texte:
+  - Tranchez le saumon aussi finement que possible (idéalement avec un couteau bien aiguisé).
+  - Si vous préférez, vous pouvez alterner avec des tranches de saumon fumé.
+- titre: Mariner le saumon
+  texte:
+  - Pressez le jus de 1½ citron vert sur les tranches de saumon.
+  - Ajoutez l’échalote hachée, l’aneth, le sel et le poivre.
+  - Mélangez délicatement avec l’huile d’olive.
+- titre: Repos au frais
+  texte:
+  - Laissez mariner au réfrigérateur pendant au moins 30 minutes.
+- titre: Service
+  texte:
+  - Servez frais, accompagné d’une salade ou de pain grillé.
+notes:
+- titre: Astuce
+  texte:
+  - Pour une touche originale, ajoutez des fines rondelles de courgettes crues marinées avec le saumon.
+source: Carnet salé, p. 13

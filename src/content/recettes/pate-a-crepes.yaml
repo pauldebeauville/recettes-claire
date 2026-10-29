@@ -1,0 +1,55 @@
+titre: Pâte à crêpes
+type:
+- salé
+- sucré
+categories:
+- base
+vedettes:
+- œufs
+ordre: 60
+versions:
+- nom: Version 1
+  portions: Pour 4 personnes (environ 12 crêpes moyennes)
+  ingredients:
+  - 150 g de farine
+  - 1/2 cuillère à café de sel
+  - 2 ou 3 œufs entiers
+  - 2 ou 3 verres de lait
+  - 1 grosse noix de beurre
+  - Un peu d’huile pour la cuisson
+  preparation:
+  - Mettre la farine et le sel dans une terrine. Casser les œufs, puis ajouter un peu de lait.
+  - Mélanger avec une cuillère en bois jusqu’à obtention d’une pâte lisse.
+  - Incorporer peu à peu le lait froid et une noix de beurre fondu.
+  - Laisser reposer cette pâte, qui doit être assez épaisse, pendant 30 minutes environ.
+  - Cuire les crêpes sur feu vif dans une poêle très chaude. Verser une couche fine d'huile.
+  - Retourner les crêpes dès qu'elles sont sèches, puis les retourner et laisser cuire un peu.
+  notes:
+  - titre: Conseil
+    texte:
+    - Pour des crêpes sucrées, ajouter une cuillère de sucre dans la pâte.
+  source: Carnet salé, p. 67
+- nom: Version 2
+  portions: Pour 4 personnes (12 crêpes)
+  ingredients:
+  - 'Farine : 150 g'
+  - 'Sel : 1/2 cuillère à café'
+  - 'Œufs entiers : 3'
+  - 'Lait : 3 verres'
+  - 'Beurre : 1 grosse noix'
+  preparation:
+  - Mettre la farine et le sel dans une terrine. Casser les œufs au centre.
+  - Mélanger avec une cuillère en bois jusqu’à obtenir une pâte bien lisse.
+  - Incorporer progressivement le lait froid tout en mélangeant pour éviter les grumeaux. Ajouter une grosse noix de beurre fondu.
+  - Battre la pâte énergiquement pour qu’elle devienne liquide et homogène.
+  - titre: Cuisson des crêpes
+    texte:
+    - Chauffer une poêle très chaude sur feu vif.
+    - Frotter la poêle avec un tampon de papier absorbant enduit d’huile.
+    - Verser une petite louche de pâte dans la poêle, l’étaler rapidement, puis cuire jusqu’à ce que les bords se décollent. Retourner et cuire l’autre côté.
+    - Huiler légèrement la poêle entre chaque crêpe.
+  notes:
+  - titre: Astuce
+    texte:
+    - On gagne du temps en utilisant un batteur électrique pour mélanger la pâte.
+  source: Carnet sucré, p. 11

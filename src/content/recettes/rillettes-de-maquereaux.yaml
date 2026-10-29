@@ -1,0 +1,33 @@
+titre: Rillettes de Maquereaux
+type: salé
+categories:
+- apéritif
+- entrée
+vedettes:
+- poisson
+ordre: 23
+portions: Pour 8 personnes
+ingredients:
+- 2 boîtes de maquereaux à la tomate (grandes tailles)
+- 250 g de crème fraîche (25 cl)
+- 2 c. à soupe de moutarde
+- Herbes au choix (aneth, ciboulette, etc.)
+- Sel, poivre
+- 1 pincée d’ail (facultatif)
+preparation:
+- titre: Préparer les maquereaux
+  texte:
+  - Égouttez les maquereaux à la tomate et retirez les arêtes si nécessaire.
+  - Réduisez-les en morceaux ou en purée selon votre préférence.
+- titre: Assembler les rillettes
+  texte:
+  - Dans un bol, mélangez les maquereaux écrasés avec la crème fraîche et la moutarde.
+  - Ajoutez les herbes finement ciselées, le sel, le poivre et l’ail (si utilisé).
+- titre: Mélanger et réfrigérer
+  texte:
+  - Mélangez bien jusqu’à obtenir une préparation homogène.
+  - Placez au réfrigérateur pendant au moins 1 heure pour que les saveurs se mélangent.
+- titre: Service
+  texte:
+  - Servez frais avec du pain grillé ou des biscuits apéritifs salés.
+source: Carnet salé, p. 23

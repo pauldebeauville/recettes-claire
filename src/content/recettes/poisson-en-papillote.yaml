@@ -1,0 +1,42 @@
+titre: Poisson en Papillote
+type: salé
+categories:
+- plat
+vedettes:
+- poisson
+- légumes
+ordre: 14
+portions: Pour 4 personnes
+ingredients:
+- '4 filets de poisson (exemple : saumon, flétan, cabillaud ou autre, décongelé si surgelé)'
+- 'Légumes verts au choix : épinards, brocolis, courgettes, tomates cerises, ou pois mange-tout'
+- 4 feuilles de papier cuisson ou papier aluminium
+- 4 c. à soupe d’huile d’olive
+- 1 gousse d’ail (hachée, facultatif)
+- Sel, poivre
+- Herbes fraîches (aneth, persil, ou basilic)
+preparation:
+- titre: Préparer le four
+  texte:
+  - Préchauffez le four à 180°C.
+- titre: Préparer les papillotes
+  texte:
+  - Disposez une feuille de papier cuisson ou aluminium par personne. Badigeonnez chaque feuille d’un peu d’huile d’olive.
+  - Placez une portion de légumes sur chaque feuille (choisissez selon vos préférences).
+- titre: Ajouter le poisson
+  texte:
+  - Déposez un filet de poisson sur les légumes. Ajoutez une pincée de sel, du poivre, un filet d’huile d’olive, de l’ail (si souhaité), et des herbes fraîches.
+- titre: Fermer les papillotes
+  texte:
+  - Refermez les feuilles soigneusement pour bien sceller les papillotes. Assurez-vous qu’elles sont bien hermétiques.
+- titre: Cuisson
+  texte:
+  - Faites cuire les papillotes pendant 10 minutes à 180°C.
+- titre: Service
+  texte:
+  - Sortez délicatement les papillotes du four. Ouvrez-les juste avant de servir et disposez-les directement sur des assiettes.
+notes:
+- titre: Astuce
+  texte:
+  - La préparation peut être faite à l’avance et les papillotes conservées au frais jusqu’à la cuisson.
+source: Carnet salé, p. 14

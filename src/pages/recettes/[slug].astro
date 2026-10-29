@@ -1,0 +1,1011 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Icone from '../../components/Icone.astro';
+import { CATEGORIES, TYPES, VEDETTES } from '../../lib/libelles';
+import {
+  aLAvance,
+  decouperTitre,
+  estThermomix,
+  lien,
+  lienRecette,
+  lignesIngredients,
+  lirePortions,
+  typesDe,
+  versionsDe,
+  type Corps,
+  type Recette,
+} from '../../lib/recettes';
+import { etapeHtml, ingredientHtml, texteHtml } from '../../lib/rendu';
+
+export const getStaticPaths = (async () => {
+  const toutes = (await getCollection('recettes')).sort((a, b) => (a.data.ordre ?? 999) - (b.data.ordre ?? 999));
+  return toutes.map((r, i) => ({
+    params: { slug: r.id },
+    props: { r, toutes, precedente: toutes[i - 1], suivante: toutes[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  r: Recette;
+  toutes: Recette[];
+  precedente?: Recette;
+  suivante?: Recette;
+}
+const { r, toutes, precedente, suivante } = Astro.props;
+const d = r.data;
+const titre = decouperTitre(d.titre);
+const versions = versionsDe(d);
+const types = typesDe(d);
+const cat = CATEGORIES[d.categories[0]];
+const thermomix = estThermomix(d);
+const avance = aLAvance(d);
+
+// numérotation des étapes : elle repart à 1 à chaque partie, comme dans le carnet
+function etapes(c: Corps) {
+  let n = 0;
+  return (c.preparation ?? []).map((e) => {
+    if (typeof e !== 'string' && 'section' in e) {
+      n = 0;
+      return { section: e.section };
+    }
+    n += 1;
+    if (typeof e === 'string') return { n, texte: [e] };
+    return { n, titre: e.titre, texte: e.texte, liste: !!e.titre || e.texte.length > 1 };
+  });
+}
+
+const moule = (c: Corps) =>
+  /moule|terrine|ramequin|cercle|plat à gratin|plat à four/i.test(
+    [...lignesIngredients(c), ...(c.preparation ?? []).flatMap((e) => (typeof e === 'string' ? [e] : 'texte' in e ? e.texte : []))].join(' '),
+  );
+
+// « Dans le même esprit » : même catégorie, ingrédients vedettes en commun
+const proches = toutes
+  .filter((x) => x.id !== r.id && x.data.categories.some((c) => d.categories.includes(c)))
+  .map((x) => ({
+    x,
+    s:
+      (x.data.categories[0] === d.categories[0] ? 2 : 0) +
+      (x.data.vedettes ?? []).filter((v) => d.vedettes?.includes(v)).length * 3 -
+      Math.abs((x.data.ordre ?? 0) - (d.ordre ?? 0)) / 200,
+  }))
+  .sort((a, b) => b.s - a.s)
+  .slice(0, 4)
+  .map((p) => p.x);
+
+const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${lignesIngredients(versions[0]).length} ingrédients. Une recette du carnet de Claire.`;
+---
+
+<Base titre={d.titre} description={description}>
+  <article class="recette conteneur" style={`--teinte:${cat.couleur}`} data-slug={r.id} data-titre={d.titre}>
+    <nav class="fil" aria-label="Fil d’Ariane">
+      <a href={lien('#carnet')}><Icone nom="gauche" /> Le carnet</a>
+    </nav>
+
+    <header class="tete">
+      <p class="kicker tete-kicker">
+        {d.categories.map((c) => CATEGORIES[c].label).join(' · ')}
+        <span>{types.map((t) => TYPES[t]).join(' & ')}</span>
+      </p>
+      <h1>
+        {titre.principal}
+        {titre.precision && <span class="precision">{titre.precision}</span>}
+      </h1>
+      {
+        versions.length === 1 && versions[0].intro?.length && (
+          <div class="intro">
+            {versions[0].intro.map((l) => (
+              <p>{l}</p>
+            ))}
+          </div>
+        )
+      }
+      <ul class="meta">
+        {d.vedettes?.map((v) => <li class="badge">{VEDETTES[v]}</li>)}
+        {thermomix && (
+          <li class="badge">
+            <Icone nom="robot" /> Thermomix
+          </li>
+        )}
+        {avance && (
+          <li class="badge">
+            <Icone nom="calendrier" /> Se prépare à l’avance
+          </li>
+        )}
+        {versions.length > 1 && <li class="badge">{versions.length} versions</li>}
+      </ul>
+      <div class="actions">
+        <button type="button" class="bouton bouton-principal" id="ouvrir-cuisine">
+          <Icone nom="cuisine" /> Mode cuisine
+        </button>
+        <button type="button" class="bouton" id="favori" aria-pressed="false">
+          <Icone nom="coeur" /> <span>Favori</span>
+        </button>
+        <button type="button" class="bouton" id="imprimer"><Icone nom="imprimer" /> Imprimer</button>
+        <button type="button" class="bouton" id="partager"><Icone nom="partager" /> Partager</button>
+      </div>
+    </header>
+
+    {
+      versions.length > 1 && (
+        <div class="onglets" role="tablist" aria-label="Versions de la recette">
+          {versions.map((v, i) => (
+            <button type="button" role="tab" id={`onglet-${i + 1}`} aria-controls={`version-${i + 1}`} aria-selected={i === 0 ? 'true' : 'false'}>
+              {v.nom ?? `Version ${i + 1}`}
+              {v.portions && <span>{v.portions}</span>}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      versions.map((v, i) => {
+        const portions = lirePortions(v.portions);
+        return (
+          <div
+            class="version"
+            id={`version-${i + 1}`}
+            role={versions.length > 1 ? 'tabpanel' : undefined}
+            aria-labelledby={versions.length > 1 ? `onglet-${i + 1}` : undefined}
+            hidden={i > 0}
+            data-portions={JSON.stringify(portions)}
+            data-moule={moule(v) ? '1' : ''}
+            data-tmx={/thermomix/i.test(JSON.stringify(v)) ? '1' : ''}
+          >
+            {versions.length > 1 && v.intro?.length && (
+              <div class="intro">
+                {v.intro.map((l) => (
+                  <p>{l}</p>
+                ))}
+              </div>
+            )}
+            {v.temps?.length && (
+              <ul class="temps">
+                {v.temps.map((t) => (
+                  <li>
+                    <Icone nom="horloge" />
+                    <span>
+                      <strong>{t.label}</strong> {t.valeur}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div class="corps">
+              <aside class="ingredients" aria-labelledby={`titre-ingredients-${i + 1}`}>
+                <div class="ingredients-carte">
+                  <div class="portions">
+                    <button type="button" class="pas" data-pas="-1" aria-label="Moins">
+                      <Icone nom="moins" />
+                    </button>
+                    <p class="portions-valeur" aria-live="polite">
+                      <output>{portions.mode === 'personnes' ? portions.base : '1'}</output>
+                      <span class="portions-unite">
+                        {portions.mode === 'personnes'
+                          ? `${portions.unite}${portions.base > 1 ? 's' : ''}`
+                          : 'fois la recette'}
+                      </span>
+                    </p>
+                    <button type="button" class="pas" data-pas="1" aria-label="Plus">
+                      <Icone nom="plus" />
+                    </button>
+                  </div>
+                  <p class="portions-origine">
+                    {v.portions ? `Recette d’origine : ${v.portions.charAt(0).toLowerCase()}${v.portions.slice(1)}` : 'Nombre de personnes non précisé'}
+                  </p>
+                  <h2 id={`titre-ingredients-${i + 1}`}>Ingrédients</h2>
+                  <ul class="liste-ingredients">
+                    {(v.ingredients ?? []).map((x) =>
+                      typeof x === 'string' ? (
+                        <li>
+                          <label>
+                            <input type="checkbox" />
+                            <span set:html={ingredientHtml(x)} />
+                          </label>
+                        </li>
+                      ) : (
+                        <li class="groupe">{x.groupe}</li>
+                      ),
+                    )}
+                  </ul>
+                  <div class="avis" hidden>
+                    <p class="avis-texte" />
+                    <button type="button" class="lien-retour">Revenir à la recette d’origine</button>
+                  </div>
+                </div>
+              </aside>
+
+              <section class="preparation" aria-labelledby={`titre-preparation-${i + 1}`}>
+                <h2 id={`titre-preparation-${i + 1}`}>Préparation</h2>
+                <ol class="etapes">
+                  {etapes(v).map((e) =>
+                    'section' in e ? (
+                      <li class="section">
+                        <h3>{e.section}</h3>
+                      </li>
+                    ) : (
+                      <li class="etape" data-n={e.n}>
+                        <span class="num" aria-hidden="true">
+                          {e.n}
+                        </span>
+                        <div class="etape-corps">
+                          {e.titre && <h3 class="etape-titre">{e.titre}</h3>}
+                          {e.liste ? (
+                            <ul>
+                              {e.texte.map((t) => (
+                                <li set:html={etapeHtml(t)} />
+                              ))}
+                            </ul>
+                          ) : (
+                            e.texte.map((t) => <p set:html={etapeHtml(t)} />)
+                          )}
+                        </div>
+                      </li>
+                    ),
+                  )}
+                </ol>
+
+                {v.notes?.map((n) => (
+                  <aside class="note">
+                    {n.titre && <p class="note-titre">{n.titre}</p>}
+                    {n.texte.map((t) => (
+                      <p set:html={etapeHtml(t)} />
+                    ))}
+                  </aside>
+                ))}
+
+                {v.source && <p class="source">{v.source}</p>}
+              </section>
+            </div>
+          </div>
+        );
+      })
+    }
+
+    <footer class="suite">
+      <nav class="voisines" aria-label="Recettes voisines dans le carnet">
+        {
+          precedente && (
+            <a href={lienRecette(precedente)} rel="prev">
+              <span class="kicker">
+                <Icone nom="gauche" /> Page précédente
+              </span>
+              <span class="voisine-titre">{precedente.data.titre}</span>
+            </a>
+          )
+        }
+        {
+          suivante && (
+            <a href={lienRecette(suivante)} rel="next" class="suivante">
+              <span class="kicker">
+                Page suivante <Icone nom="droite" />
+              </span>
+              <span class="voisine-titre">{suivante.data.titre}</span>
+            </a>
+          )
+        }
+      </nav>
+
+      {
+        proches.length > 0 && (
+          <section class="proches" aria-labelledby="titre-proches">
+            <h2 id="titre-proches">Dans le même esprit</h2>
+            <ul>
+              {proches.map((p) => (
+                <li style={`--teinte:${CATEGORIES[p.data.categories[0]].couleur}`}>
+                  <a href={lienRecette(p)}>
+                    <span class="kicker">{CATEGORIES[p.data.categories[0]].label}</span>
+                    <span class="proche-titre">{p.data.titre}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </footer>
+  </article>
+</Base>
+
+<style>
+  .fil {
+    padding: 22px 0 0;
+  }
+
+  .fil a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .fil a:hover {
+    color: var(--accent);
+  }
+
+  .fil :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tete {
+    max-width: 52rem;
+    padding: clamp(24px, 5vw, 48px) 0 28px;
+  }
+
+  .tete-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    color: var(--teinte);
+  }
+
+  .tete-kicker span {
+    color: var(--encre-3);
+  }
+
+  .tete h1 {
+    margin-top: 14px;
+    font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.06;
+  }
+
+  .tete h1 .precision {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.5em;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--encre-2);
+  }
+
+  .intro {
+    margin-top: 16px;
+    font-family: var(--serif);
+    font-size: 1.1875rem;
+    font-style: italic;
+    color: var(--encre-2);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .meta .badge {
+    padding: 4px 11px;
+    font-size: 0.8125rem;
+  }
+
+  .meta :global(svg) {
+    width: 15px;
+    height: 15px;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 26px;
+  }
+
+  @media (max-width: 560px) {
+    .actions .bouton:not(.bouton-principal) {
+      flex: 1;
+      justify-content: center;
+      padding: 0 10px;
+    }
+    .actions .bouton-principal {
+      flex-basis: 100%;
+      justify-content: center;
+    }
+  }
+
+  .onglets {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .onglets button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 18px 12px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: none;
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--encre-3);
+    margin-bottom: -1px;
+  }
+
+  .onglets button span {
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .onglets button[aria-selected='true'] {
+    border-bottom-color: var(--accent);
+    color: var(--encre);
+  }
+
+  .version > .intro {
+    margin: 0 0 18px;
+  }
+
+  .temps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    margin: 0 0 22px;
+    padding: 0;
+    list-style: none;
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+  }
+
+  .temps li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .temps :global(svg) {
+    width: 18px;
+    height: 18px;
+    color: var(--teinte);
+  }
+
+  .temps strong {
+    color: var(--encre);
+    font-weight: 600;
+  }
+
+  .corps {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .corps {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- ingrédients ---------- */
+
+  .ingredients {
+    position: sticky;
+    top: 16px;
+  }
+
+  @media (max-width: 860px) {
+    .ingredients {
+      position: static;
+    }
+  }
+
+  .ingredients-carte {
+    padding: 22px 22px 18px;
+    border: 1px solid var(--trait);
+    border-radius: 18px;
+    background: var(--carte);
+  }
+
+  .portions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 999px;
+    background: var(--fond-2);
+  }
+
+  .pas {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--carte);
+    color: var(--encre);
+    box-shadow: 0 1px 2px rgb(60 40 20 / 12%);
+  }
+
+  .pas:hover {
+    color: var(--accent);
+  }
+
+  .pas:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .pas :global(svg) {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+  }
+
+  .portions-valeur {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .portions-valeur output {
+    font-family: var(--serif);
+    font-size: 1.625rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .portions-unite {
+    color: var(--encre-2);
+    font-size: 0.9375rem;
+  }
+
+  .portions-origine {
+    margin: 8px 0 0;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--encre-3);
+  }
+
+  .ingredients h2,
+  .preparation > h2 {
+    font-size: 1.5rem;
+  }
+
+  .ingredients h2 {
+    margin: 22px 0 8px;
+  }
+
+  .liste-ingredients {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .liste-ingredients li:not(.groupe) {
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .liste-ingredients li:last-child {
+    border-bottom: 0;
+  }
+
+  .liste-ingredients label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    cursor: pointer;
+    line-height: 1.45;
+  }
+
+  .liste-ingredients input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 1px 0 0;
+    accent-color: var(--accent);
+  }
+
+  .liste-ingredients input:checked + span {
+    color: var(--encre-3);
+    text-decoration: line-through;
+    text-decoration-color: var(--trait-2);
+  }
+
+  .liste-ingredients .groupe {
+    margin-top: 16px;
+    padding: 4px 0;
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--teinte);
+  }
+
+  .liste-ingredients :global(.q) {
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .liste-ingredients :global(.q.change) {
+    color: var(--accent);
+  }
+
+  .avis {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--accent-doux);
+    font-size: 0.8125rem;
+    color: var(--encre-2);
+  }
+
+  .avis-texte :global(span) {
+    display: block;
+    margin-top: 4px;
+  }
+
+  .lien-retour {
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent-fort);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- préparation ---------- */
+
+  .preparation > h2 {
+    margin: 6px 0 14px;
+  }
+
+  .etapes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .section h3 {
+    margin: 28px 0 4px;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--teinte);
+  }
+
+  .etape {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 6px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--trait);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .etape:last-child {
+    border-bottom: 0;
+  }
+
+  @media (max-width: 560px) {
+    .etape {
+      grid-template-columns: 34px 1fr;
+    }
+    .num {
+      font-size: 1.75rem;
+    }
+  }
+
+  .num {
+    font-family: var(--serif);
+    font-size: 2.125rem;
+    font-weight: 500;
+    font-style: italic;
+    line-height: 1;
+    color: var(--teinte);
+  }
+
+  .etape.faite {
+    opacity: 0.45;
+  }
+
+  .etape.faite .num {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+  }
+
+  .etape-titre {
+    margin: 4px 0 6px;
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    font-weight: 650;
+    letter-spacing: 0;
+  }
+
+  .etape-corps p,
+  .etape-corps li {
+    max-width: 40rem;
+  }
+
+  .etape-corps p:first-child {
+    margin-top: 3px;
+  }
+
+  .etape-corps p + p {
+    margin-top: 6px;
+  }
+
+  .etape-corps ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .etape-corps ul li {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  .etape-corps ul li + li {
+    margin-top: 6px;
+  }
+
+  .etape-corps ul li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.68em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--trait-2);
+  }
+
+  :global(.minuteur) {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 1px;
+    padding: 0 8px 0 6px;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 999px;
+    background: var(--accent-doux);
+    color: var(--accent-fort);
+    font-size: 0.92em;
+    font-weight: 600;
+    line-height: 1.5;
+    vertical-align: baseline;
+  }
+
+  :global(.minuteur:hover) {
+    border-color: var(--accent);
+  }
+
+  :global(.minuteur svg) {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
+  }
+
+  .note {
+    margin-top: 24px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--teinte);
+    border-radius: 4px 14px 14px 4px;
+    background: color-mix(in srgb, var(--teinte) 8%, var(--carte));
+  }
+
+  .note + .note {
+    margin-top: 12px;
+  }
+
+  .note-titre {
+    margin-bottom: 4px;
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--teinte);
+  }
+
+  .note p + p {
+    margin-top: 6px;
+  }
+
+  .source {
+    margin-top: 28px;
+    font-size: 0.8125rem;
+    color: var(--encre-3);
+    font-style: italic;
+  }
+
+  /* ---------- suite ---------- */
+
+  .suite {
+    margin-top: 72px;
+    padding-top: 36px;
+    border-top: 1px solid var(--trait);
+  }
+
+  .voisines {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .voisines a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon);
+    text-decoration: none;
+  }
+
+  .voisines a:hover {
+    border-color: var(--encre-3);
+  }
+
+  .voisines .suivante {
+    grid-column: 2;
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .voisines .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .voisines :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  .voisine-titre {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 560;
+    line-height: 1.25;
+  }
+
+  @media (max-width: 560px) {
+    .voisines {
+      grid-template-columns: 1fr;
+    }
+    .voisines .suivante {
+      grid-column: 1;
+    }
+  }
+
+  .proches {
+    margin-top: 48px;
+  }
+
+  .proches h2 {
+    font-size: 1.75rem;
+    margin-bottom: 16px;
+  }
+
+  .proches ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .proches a {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 16px 18px;
+    border: 1px solid var(--trait);
+    border-top: 4px solid var(--teinte);
+    border-radius: var(--rayon);
+    background: var(--carte);
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .proches a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre);
+  }
+
+  .proches .kicker {
+    color: var(--teinte);
+  }
+
+  .proche-titre {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 560;
+    line-height: 1.25;
+  }
+
+  /* ---------- impression ---------- */
+
+  @media print {
+    :global(.site-tete),
+    :global(.site-pied),
+    :global(.minuteurs),
+    .fil,
+    .actions,
+    .onglets,
+    .portions,
+    .avis,
+    .suite,
+    .liste-ingredients input {
+      display: none !important;
+    }
+    :global(body) {
+      background: #fff;
+      color: #000;
+      font-size: 11pt;
+    }
+    .tete {
+      padding: 0 0 12pt;
+    }
+    .tete h1 {
+      font-size: 24pt;
+    }
+    .corps {
+      grid-template-columns: 34% 1fr;
+      gap: 18pt;
+    }
+    .ingredients {
+      position: static;
+    }
+    .ingredients-carte {
+      padding: 0;
+      border: 0;
+    }
+    .version[hidden] {
+      display: none !important;
+    }
+    .etape {
+      padding: 6pt 0;
+      break-inside: avoid;
+    }
+    .num {
+      font-size: 16pt;
+    }
+    :global(.minuteur) {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: inherit;
+      font-weight: inherit;
+    }
+    :global(.minuteur svg) {
+      display: none;
+    }
+    .note {
+      break-inside: avoid;
+      background: none;
+      border-left-width: 2pt;
+    }
+  }
+</style>
+
+<script>
+  import { initialiserRecette } from '../../scripts/recette';
+  initialiserRecette();
+</script>

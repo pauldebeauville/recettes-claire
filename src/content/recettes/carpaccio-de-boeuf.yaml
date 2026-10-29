@@ -1,0 +1,43 @@
+titre: Carpaccio de Boeuf
+type: salé
+categories:
+- plat
+- entrée
+vedettes:
+- viande
+ordre: 40
+versions:
+- nom: Version 1
+  portions: Pour 2 personnes
+  ingredients:
+  - 1 paquet de carpaccio de bœuf
+  - Huile d'olive
+  - Vinaigrette aux échalotes (facultatif)
+  - 3 cuil. à soupe de parmesan en poudre
+  preparation:
+  - Étaler et superposer les tranches de bœuf.
+  - Asperger d'huile d'olive.
+  - Ajouter la vinaigrette aux échalotes si désiré.
+  - Saupoudrer de parmesan en poudre.
+  notes:
+  - titre: Accompagnement
+    texte:
+    - Cette recette s’accompagne d’une salade de courgettes et de fromage de chèvre.
+  source: Carnet salé, p. 43
+- nom: Version 2
+  portions: Pour 2 personnes
+  ingredients:
+  - 1 paquet de carpaccio de bœuf
+  - Huile d'olive
+  - Vinaigrette au vinaigre balsamique
+  - 3 cuil. à soupe de parmesan en poudre
+  preparation:
+  - Étalez et superposez les tranches de bœuf dans un plat.
+  - Arrosez d'huile d'olive.
+  - Préparez la vinaigrette au vinaigre balsamique et versez-la sur le bœuf.
+  - Saupoudrez de parmesan en poudre.
+  notes:
+  - titre: Accompagnement
+    texte:
+    - Ce carpaccio de bœuf s'accompagne d'une salade de courgettes et de fromage de chèvre.
+  source: Carnet salé, p. 44

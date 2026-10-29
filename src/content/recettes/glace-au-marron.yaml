@@ -1,0 +1,30 @@
+titre: Glace au marron
+type: sucré
+categories:
+- dessert
+ordre: 131
+portions: Pour 5 personnes
+ingredients:
+- 'Crème de marron Fauchier : 1 petite boîte (500 g)'
+- 'Sucre vanillé : 1 sachet'
+- 'Œufs : 3'
+- 'Crème fraîche : 2 cuillères à soupe'
+preparation:
+- titre: Préparer la crème
+  texte:
+  - Battre les jaunes d’œufs avec la crème de marron Fauchier et le sucre vanillé jusqu’à ce que l’on obtienne une crème épaisse.
+- titre: Monter les blancs en neige
+  texte:
+  - Battre les blancs d’œufs en neige ferme.
+  - Les ajouter délicatement à la préparation précédente en mélangeant doucement.
+- titre: Incorporer la crème fraîche
+  texte:
+  - Ajouter les 2 cuillères à soupe de crème fraîche et bien mélanger.
+- titre: Congélation
+  texte:
+  - Mettre la préparation dans un récipient adapté et placer au congélateur.
+notes:
+- texte:
+  - 'PS : On peut ajouter un coulis de fruit.'
+  - 'Exemple : Coup de glace au marron + coulis de poire, ou sauce aux marrons avec des poires chaudes sur un pain brioché doré.'
+source: Carnet sucré, p. 14

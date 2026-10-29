@@ -1,0 +1,48 @@
+titre: Koulibiac de Saumon aux Épinards
+type: salé
+categories:
+- plat
+vedettes:
+- saumon
+ordre: 5
+portions: Pour 4 personnes
+temps:
+- label: Temps de préparation et cuisson
+  valeur: 30 minutes
+ingredients:
+- 500 g de filet de saumon frais
+- 450 g d’épinards hachés (surgelés)
+- 300 g de champignons sauvages (surgelés)
+- 2 paquets de pâte feuilletée prêt à l’emploi
+- 2 c. à soupe d’échalote hachée (surgelée)
+- 6 c. à soupe de crème fraîche
+- 2 c. à soupe d’aneth haché (surgelé)
+- 1 noix de beurre
+- 10 cl de vin blanc sec
+- Jus d’½ citron
+- 1 œuf battu
+- Sel, poivre, noix de muscade râpée
+preparation:
+- titre: Préchauffer le four
+  texte:
+  - Préchauffez le four à 240°C (th. 8).
+  - Faites décongeler les épinards et les champignons si nécessaire.
+- titre: Préparer la garniture
+  texte:
+  - Faites cuire les épinards à sec dans une casserole, à feu vif, jusqu’à évaporation de l’eau. Salez, poivrez, ajoutez une pincée de noix de muscade râpée, et réservez.
+  - Faites chauffer le beurre dans une poêle, ajoutez les échalotes et les champignons, et laissez cuire 5 à 7 minutes.
+- titre: Préparer le saumon
+  texte:
+  - Coupez le filet de saumon en quatre morceaux. Salez, poivrez, et arrosez avec le jus de citron.
+- titre: Assembler le koulibiac
+  texte:
+  - Étalez la pâte feuilletée et coupez-la en 4 morceaux. Sur chaque morceau, placez une part de saumon, une cuillère d’épinards et une cuillère de champignons.
+  - Refermez la pâte pour former des paquets en soudant bien les bords. Dorez les bords à l’œuf battu. Percez deux trous au sommet avec la pointe d’un couteau pour laisser échapper la vapeur.
+- titre: Cuisson
+  texte:
+  - Disposez les koulibiacs sur une plaque recouverte de papier cuisson. Faites-les cuire au four pendant 15 minutes.
+notes:
+- titre: Service
+  texte:
+  - Servez chaud avec une salade verte ou des légumes vapeur.
+source: Carnet salé, p. 5

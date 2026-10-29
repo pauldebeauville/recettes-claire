@@ -1,0 +1,35 @@
+titre: Salade de Saumon Fumé et Avocats
+type: salé
+categories:
+- entrée
+vedettes:
+- saumon
+ordre: 21
+portions: Pour 4 personnes
+ingredients:
+- 160 g de chutes de saumon fumé (40 g par personne)
+- 4 avocats (1 par personne)
+- 4 œufs de caille
+- Olives (quantité selon votre goût)
+- 1 citron
+- Feuilles de salade
+- Pamplemousse ou tomates (facultatif)
+preparation:
+- titre: Préparer la base de la salade
+  texte:
+  - Disposez les feuilles de salade dans un grand plat pour former la base.
+- titre: Ajouter les ingrédients
+  texte:
+  - Coupez les avocats en lamelles et répartissez-les sur la salade.
+  - Ajoutez les chutes de saumon fumé en lamelles.
+  - Ajoutez les œufs de caille (cuits et écalés) ainsi que les olives.
+- titre: Préparer l’assaisonnement
+  texte:
+  - Arrosez la salade de jus de citron et ajoutez une vinaigrette selon vos goûts.
+- titre: Ajouter les options
+  texte:
+  - Si désiré, ajoutez des quartiers de pamplemousse ou des morceaux de tomates pour plus de fraîcheur et de couleur.
+- titre: Service
+  texte:
+  - Servez immédiatement en entrée ou en plat léger.
+source: Carnet salé, p. 21

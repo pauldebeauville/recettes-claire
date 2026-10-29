@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import Icone from '../components/Icone.astro';
+import { getCollection } from 'astro:content';
+import { lien } from '../lib/recettes';
+
+interface Props {
+  titre?: string;
+  description?: string;
+}
+const { titre, description = 'Toutes les recettes de Claire, salées et sucrées, réunies dans un carnet.' } = Astro.props;
+const titreComplet = titre ? `${titre} · Les recettes de Claire` : 'Les recettes de Claire';
+const slugs = (await getCollection('recettes')).map((r) => r.id);
+const adresse = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <!-- Site familial : on demande aux moteurs de recherche de ne pas l'indexer. -->
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="theme-color" content="#f7f1e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1714" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href={lien('icones/favicon-48.png')} sizes="48x48" type="image/png" />
+    <link rel="icon" href={lien('icones/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={lien('icones/apple-touch-icon.png')} />
+    <link rel="manifest" href={lien('manifest.webmanifest')} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Les recettes de Claire" />
+    <meta property="og:title" content={titre ?? 'Les recettes de Claire'} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={adresse.href} />
+    <meta property="og:image" content={new URL(lien('partage.png'), Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="visuellement-cache" href="#contenu">Aller au contenu</a>
+    <header class="site-tete">
+      <div class="conteneur">
+        <a class="logo" href={lien()}>Les recettes de <em>Claire</em></a>
+        <nav class="site-nav" aria-label="Navigation principale">
+          <a href={lien('#carnet')}><Icone nom="livre" /><span class="libelle">Le carnet</span></a>
+          <button type="button" id="au-hasard" data-slugs={JSON.stringify(slugs)} data-base={lien('recettes/')}>
+            <Icone nom="de" /><span class="libelle">Au hasard</span>
+          </button>
+          <a href={lien('?favoris=1#carnet')} id="lien-favoris">
+            <Icone nom="coeur" /><span class="libelle">Favoris</span><span class="nb-favoris"></span>
+          </a>
+        </nav>
+      </div>
+    </header>
+    <main id="contenu">
+      <slot />
+    </main>
+    <footer class="site-pied">
+      <div class="conteneur">
+        <p class="signature">Les recettes de Claire</p>
+        <p>Carnet de famille · Les recettes sont reproduites telles qu’elle les a écrites.</p>
+      </div>
+    </footer>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script>
+      import { lireFavoris } from '../scripts/favoris';
+
+      const hasard = document.getElementById('au-hasard') as HTMLButtonElement;
+      hasard.addEventListener('click', () => {
+        const slugs: string[] = JSON.parse(hasard.dataset.slugs!);
+        const ici = location.pathname.split('/').filter(Boolean).pop();
+        const choix = slugs.filter((s) => s !== ici);
+        location.href = `${hasard.dataset.base}${choix[Math.floor(Math.random() * choix.length)]}/`;
+      });
+
+      const majFavoris = () => {
+        const n = lireFavoris().length;
+        document.querySelector('.nb-favoris')!.textContent = n ? String(n) : '';
+      };
+      majFavoris();
+      window.addEventListener('favoris', majFavoris);
+
+      if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
+        navigator.serviceWorker.register(`${import.meta.env.BASE_URL.replace(/\/$/, '')}/sw.js`).catch(() => {});
+      }
+    </script>
+  </body>
+</html>

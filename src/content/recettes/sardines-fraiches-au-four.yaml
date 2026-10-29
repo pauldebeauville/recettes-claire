@@ -1,0 +1,33 @@
+titre: Sardines Fraîches au Four
+type: salé
+categories:
+- plat
+vedettes:
+- poisson
+ordre: 18
+portions: Pour 3 personnes
+ingredients:
+- 6 à 9 sardines fraîches (2 à 3 par personne)
+- 1 filet de coulis de tomate
+- 2 c. à soupe d’huile d’olive
+- Sel, poivre
+- 1 gousse d’ail (hachée)
+- 1 branche de thym
+- 1 feuille de laurier
+preparation:
+- titre: Préparer le plat
+  texte:
+  - Préchauffez le four à 180°C.
+  - Versez un filet de coulis de tomate au fond d’un plat allant au four. Ajoutez un filet d’huile d’olive, une pincée de sel et du poivre.
+- titre: Disposer les sardines
+  texte:
+  - Placez les sardines fraîches nettoyées sur le coulis de tomate.
+  - Arrosez avec un filet d’huile d’olive.
+  - Assaisonnez avec du sel, du poivre, l’ail haché, le thym et la feuille de laurier.
+- titre: Cuisson
+  texte:
+  - Enfournez pendant 35 minutes à 180°C.
+- titre: Service
+  texte:
+  - Servez chaud, accompagné de pommes de terre vapeur pour un plat équilibré et savoureux.
+source: Carnet salé, p. 18

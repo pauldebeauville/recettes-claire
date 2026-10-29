@@ -1,0 +1,20 @@
+titre: Meringue Nathalie Beauvais
+type: sucré
+categories:
+- dessert
+ordre: 132
+ingredients:
+- 100 g de blancs d’œufs
+- 100 g de sucre semoule
+- 100 g de sucre semoule (après)
+- 100 g de sucre
+preparation:
+- titre: Pâte
+  texte:
+  - Battre les blancs avec 100 g de sucre.
+  - Rajouter 100 g de sucre semoule (après) et 100 g de sucre supplémentaires.
+- titre: Cuisson
+  texte:
+  - Former des petits tas sur une plaque.
+  - Laisser cuire 3 heures au four à 100°C.
+source: Carnet sucré, p. 15

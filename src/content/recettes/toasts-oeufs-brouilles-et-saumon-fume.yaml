@@ -1,0 +1,38 @@
+titre: Toasts œufs brouillés et saumon fumé
+type: salé
+categories:
+- entrée
+vedettes:
+- œufs
+- saumon
+ordre: 81
+ingredients:
+- Pain pour toasts (tranches)
+- 2 œufs par personne
+- Saumon fumé (quantité selon préférence)
+- Lardons (petite quantité)
+- 1 échalote
+- 1 c. à soupe d’huile d’olive
+- 2 c. à soupe de crème fraîche
+- Sel, poivre
+preparation:
+- titre: Préparez les toasts
+  texte:
+  - Faites griller légèrement les tranches de pain et réservez.
+- titre: Faites revenir les lardons et l’échalote
+  texte:
+  - Dans une poêle, faites revenir les lardons jusqu’à ce qu’ils soient dorés.
+  - Ajoutez l’échalote finement émincée et faites revenir quelques minutes supplémentaires. Réservez.
+- titre: Préparez les œufs brouillés
+  texte:
+  - Dans la même poêle, cassez les œufs, ajoutez une pincée de sel et de poivre, puis mélangez à feu doux.
+  - Incorporez la crème fraîche lorsque les œufs commencent à prendre, et mélangez jusqu’à obtenir une consistance crémeuse.
+- titre: Assemblez les toasts
+  texte:
+  - Disposez d’abord les lardons sur chaque tranche de pain.
+  - Ajoutez ensuite les échalotes, puis une généreuse couche d’œufs brouillés.
+  - Terminez par une tranche de saumon fumé sur le dessus.
+notes:
+- texte:
+  - Servir chaud.
+source: Carnet salé, p. 89

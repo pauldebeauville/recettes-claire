@@ -1,0 +1,63 @@
+titre: Rillettes aux deux saumons
+type: salé
+categories:
+- apéritif
+- entrée
+vedettes:
+- saumon
+ordre: 9
+versions:
+- nom: Version 1
+  portions: Pour 6 personnes
+  temps:
+  - label: Temps de préparation
+    valeur: 10 minutes
+  - label: Temps de cuisson
+    valeur: 5 minutes
+  ingredients:
+  - 150 g de saumon fumé
+  - 300 g de saumon frais sans peau ni arêtes
+  - 1 bouquet d’aneth
+  - 100 g de fromage frais (type Fjord)
+  - 2 c. à soupe d’huile d’olive
+  - Sel, poivre
+  - 1 pincée d’ail en poudre (facultatif)
+  preparation:
+  - titre: Cuire le saumon frais
+    texte:
+    - Faites cuire le saumon frais 5 minutes à la vapeur ou dans de l’eau frémissante.
+    - Laissez tiédir, puis écrasez-le à la fourchette.
+  - titre: Préparer les autres ingrédients
+    texte:
+    - Coupez le saumon fumé en petits dés.
+    - Hachez finement l’aneth en retirant les tiges.
+  - titre: Assembler les rillettes
+    texte:
+    - Dans un saladier, mélangez le saumon frais écrasé, le saumon fumé, le fromage frais, l’huile d’olive et l’aneth.
+    - Assaisonnez avec du sel, du poivre et, si désiré, une pincée d’ail en poudre.
+    - Mélangez bien jusqu’à obtenir une texture homogène.
+  - titre: Réserver et servir
+    texte:
+    - Réservez les rillettes au frais au moins 30 minutes avant de servir.
+    - Servez avec des toasts grillés ou du pain frais.
+  notes:
+  - titre: Astuce
+    texte:
+    - Accompagnez ces rillettes d’un verre de Pouilly-Fuissé (blanc de Bourgogne) pour une harmonie parfaite.
+  source: Carnet salé, p. 9
+- nom: Version 2
+  ingredients:
+  - 150 g de saumon fumé
+  - 300 g de saumon frais
+  - 100 g de yaourt grecque
+  - 2 cuillères à soupe d'huile d'olive
+  - 1 gousse d'ail
+  - Aneth frais (à hacher après avoir coupé le saumon)
+  preparation:
+  - Cuire le saumon frais à la vapeur pendant 5 minutes.
+  - Couper le saumon frais et le saumon fumé en petits morceaux.
+  - Hacher l'aneth frais.
+  - Mélanger le tout dans un saladier, ajouter l'huile d'olive, le yaourt grec et l'ail écrasé.
+  - Mettre au frais pendant quelques heures.
+  - Former des petites boules et servir bien frais.
+  source: Carnet salé, p. 109

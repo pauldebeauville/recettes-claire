@@ -1,0 +1,42 @@
+titre: Œufs au jambon, sauce hollandaise
+type: salé
+categories:
+- plat
+vedettes:
+- œufs
+ordre: 119
+portions: Pour 4 personnes
+temps:
+- label: Préparation
+  valeur: 30 minutes
+- label: Cuisson
+  valeur: 10 minutes
+ingredients:
+- 4 muffins à l'anglaise
+- 8 tranches de bacon
+- 8 œufs
+- 30 g de beurre
+- 1 bouquet de ciboulette
+- 3 cl de vinaigre blanc
+- groupe: Pour la sauce hollandaise
+- 2 jaunes d'œufs
+- 100 g de beurre coupé en dés
+- 1 cuillère à soupe de jus de citron
+- Sel, poivre blanc
+preparation:
+- titre: Cuisson des œufs pochés
+  texte:
+  - Préchauffez le four à 90°C. Portez de l'eau et le vinaigre à frémissement dans une grande casserole. Cassez les œufs un à un dans une tasse et versez-les dans l'eau en les espaçant bien. Éteignez le feu, couvrez et laissez cuire pendant 5 minutes. Égouttez les œufs avec une écumoire et posez-les sur du papier absorbant.
+- titre: Préparer les muffins
+  texte:
+  - Toastes les muffins coupés en deux. Beurrez-les légèrement, puis déposez-les sur une plaque à pâtisserie, face beurrée orientée vers le haut.
+- titre: Cuisson du bacon
+  texte:
+  - Faites cuire les tranches de bacon 30 secondes de chaque côté dans une poêle antiadhésive bien chaude. Répartissez-les sur les muffins.
+- titre: Préparer la sauce hollandaise
+  texte:
+  - Fouettez les jaunes d'œufs dans une casserole avec le jus de citron et 2 cuillères à café d'eau. Placez au bain-marie et ajoutez le beurre petit à petit tout en continuant de mélanger. Salez et poivrez.
+- titre: Assemblage
+  texte:
+  - Répartissez les muffins sur des assiettes, nappez de sauce hollandaise, parsemez de ciboulette ciselée et dégustez sans attendre.
+source: Carnet salé, p. 131

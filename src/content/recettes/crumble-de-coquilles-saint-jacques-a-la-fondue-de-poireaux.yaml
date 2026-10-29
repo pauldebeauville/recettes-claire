@@ -1,0 +1,43 @@
+titre: Crumble de Coquilles Saint-Jacques à la Fondue de Poireaux
+type: salé
+categories:
+- entrée
+- plat
+vedettes:
+- fruits de mer
+- légumes
+ordre: 3
+portions: Pour 5 à 6 personnes
+ingredients:
+- groupe: Pour la fondue de poireaux
+- 500 g de blancs de poireaux
+- 100 g de crème liquide (normale ou light)
+- 500 g de coquilles Saint-Jacques (sans corail)
+- Sel, poivre
+- groupe: Pour la pâte à crumble
+- 120 g de farine
+- 80 g de parmesan râpé
+- 80 g de beurre en morceaux (congelé)
+preparation:
+- titre: Préparer la fondue de poireaux
+  texte:
+  - Coupez les blancs de poireaux en rondelles.
+  - Placez-les dans le bol du Thermomix et programmez 15 minutes, fonction sens inverse, vitesse 3, à 100°C.
+  - En fin de cuisson, ajoutez le sel, le poivre et la crème. Mélangez.
+- titre: Assembler la préparation
+  texte:
+  - Déposez la fondue de poireaux au fond d’un plat à gratin.
+  - Disposez les coquilles Saint-Jacques par-dessus.
+- titre: Préparer la pâte à crumble
+  texte:
+  - Mettez la farine, le parmesan et le beurre dans le bol du Thermomix.
+  - Mixez pendant 30 à 40 secondes, vitesse 4, jusqu’à obtenir une pâte sableuse.
+  - Répartissez cette pâte sur les poireaux et les Saint-Jacques.
+- titre: Cuisson
+  texte:
+  - Faites cuire au four préchauffé à 180°C pendant 30 minutes.
+notes:
+- titre: Astuce
+  texte:
+  - Vous pouvez doubler les proportions pour 10 à 12 personnes. La fondue de poireaux peut également être utilisée pour d'autres plats, avec ou sans crème.
+source: Carnet salé, p. 3

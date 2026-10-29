@@ -1,0 +1,1006 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import IconeCategorie from '../components/IconeCategorie.astro';
+import { CATEGORIES, TYPES, VEDETTES } from '../lib/libelles';
+import {
+  aLAvance,
+  decouperTitre,
+  estThermomix,
+  lienRecette,
+  lignesIngredients,
+  lirePortions,
+  nbIngredients,
+  normaliser,
+  tempsIndiques,
+  typesDe,
+  versionsDe,
+} from '../lib/recettes';
+
+const recettes = (await getCollection('recettes')).sort((a, b) => (a.data.ordre ?? 999) - (b.data.ordre ?? 999));
+
+const fiches = recettes.map((r) => {
+  const d = r.data;
+  const v = versionsDe(d);
+  const p = lirePortions(v[0].portions);
+  const temps = tempsIndiques(d);
+  const types = typesDe(d);
+  return {
+    r,
+    slug: r.id,
+    titre: decouperTitre(d.titre),
+    types,
+    categories: d.categories,
+    vedettes: d.vedettes ?? [],
+    nb: nbIngredients(d),
+    temps,
+    thermomix: estThermomix(d),
+    avance: aLAvance(d),
+    versions: v.length,
+    portions:
+      p.mode === 'personnes'
+        ? `${p.base}${p.max ? `–${p.max}` : ''} ${p.unite === 'personne' ? 'pers.' : `${p.unite}${p.base > 1 ? 's' : ''}`}`
+        : null,
+    lettre: normaliser(d.titre).charAt(0).toUpperCase(),
+    index: {
+      t: normaliser(d.titre),
+      i: normaliser(v.flatMap(lignesIngredients).join(' ')),
+    },
+  };
+});
+
+const compte = (f: (x: (typeof fiches)[number]) => boolean) => fiches.filter(f).length;
+const nbAvecTemps = compte((f) => f.temps.preparation != null || f.temps.cuisson != null);
+const total = fiches.length;
+const parLettre = Object.entries(
+  Object.groupBy(
+    [...fiches].sort((a, b) => a.r.data.titre.localeCompare(b.r.data.titre, 'fr', { sensitivity: 'base' })),
+    (f) => f.lettre,
+  ),
+);
+
+const NB_INGREDIENTS = [
+  ['5', 'Jusqu’à 5'],
+  ['8', '6 à 8'],
+  ['12', '9 à 12'],
+  ['13', 'Plus de 12'],
+];
+const DUREES = [
+  ['15', '15 min ou moins'],
+  ['30', '30 min ou moins'],
+  ['60', '1 h ou moins'],
+];
+---
+
+<Base>
+  <section class="accueil conteneur">
+    <p class="kicker">Carnet de famille · {total} recettes</p>
+    <h1 class="accueil-titre">
+      Les recettes <span class="de">de</span> <span class="prenom">Claire<svg viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true"><path d="M3 15c48-9 98-12 150-10 47 2 95 6 144 1" /></svg></span>
+    </h1>
+    <p class="accueil-intro">
+      Toutes ses recettes, salées et sucrées, réunies dans un seul carnet. Cherchez un plat, un ingrédient que vous
+      avez sous la main, ou laissez-vous guider.
+    </p>
+    <p class="accueil-astuce">Astuce : tapez plusieurs ingrédients, par exemple « saumon avocat ».</p>
+
+    <ul class="tuiles" aria-label="Catégories">
+      {
+        Object.entries(CATEGORIES).map(([cle, c]) => (
+          <li>
+            <button type="button" class="tuile" data-categorie={cle} style={`--teinte:${c.couleur}`}>
+              <span class="tuile-icone">
+                <IconeCategorie categorie={cle} />
+              </span>
+              <span class="tuile-nom">{c.pluriel}</span>
+              <span class="tuile-nb">{compte((f) => f.categories.includes(cle))}</span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="carnet" class="carnet" aria-label="Le carnet de recettes">
+    <div class="barre">
+      <div class="conteneur barre-ligne">
+        <label class="recherche">
+          <Icone nom="recherche" />
+          <span class="visuellement-cache">Rechercher une recette ou un ingrédient</span>
+          <input
+            id="q"
+            type="search"
+            autocomplete="off"
+            enterkeyhint="search"
+            placeholder="Une recette, un ingrédient…"
+          />
+        </label>
+        <div class="segment" role="radiogroup" aria-label="Salé ou sucré">
+          <button type="button" role="radio" class="puce" data-type="" aria-checked="true">Tout</button>
+          {
+            Object.entries(TYPES).map(([cle, label]) => (
+              <button type="button" role="radio" class="puce" data-type={cle} aria-checked="false">
+                {label}
+              </button>
+            ))
+          }
+        </div>
+        <button type="button" class="bouton" id="ouvrir-filtres">
+          <Icone nom="filtres" /> Filtres <span class="nb-filtres"></span>
+        </button>
+        <label class="tri">
+          <span class="visuellement-cache">Trier</span>
+          <select id="tri">
+            <option value="carnet">Ordre du carnet</option>
+            <option value="az">De A à Z</option>
+            <option value="ingredients">Moins d’ingrédients</option>
+          </select>
+        </label>
+        <div class="vues" role="radiogroup" aria-label="Affichage">
+          <button type="button" role="radio" class="bouton bouton-icone" data-vue="fiches" aria-checked="true" title="Fiches">
+            <Icone nom="grille" /><span class="visuellement-cache">Fiches</span>
+          </button>
+          <button type="button" role="radio" class="bouton bouton-icone" data-vue="sommaire" aria-checked="false" title="Sommaire">
+            <Icone nom="liste" /><span class="visuellement-cache">Sommaire</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="conteneur">
+      <div class="etat">
+        <p class="nb-resultats" aria-live="polite"><strong>{total}</strong> recettes</p>
+        <ul class="actifs" aria-label="Filtres actifs"></ul>
+      </div>
+
+      <ul class="fiches" id="fiches">
+        {
+          fiches.map((f) => {
+            const cat = CATEGORIES[f.categories[0]];
+            return (
+              <li
+                class="fiche"
+                style={`--teinte:${cat.couleur}`}
+                data-slug={f.slug}
+                data-types={f.types.join('|')}
+                data-cats={f.categories.join('|')}
+                data-veds={f.vedettes.join('|')}
+                data-nb={f.nb}
+                data-prep={f.temps.preparation ?? ''}
+                data-cuis={f.temps.cuisson ?? ''}
+                data-tmx={f.thermomix ? '1' : ''}
+                data-avance={f.avance ? '1' : ''}
+                data-ordre={f.r.data.ordre}
+              >
+                <a href={lienRecette(f.r)}>
+                  <span class="fiche-kicker">
+                    {f.categories.map((c) => CATEGORIES[c].label).join(' · ')}
+                    <span class="fiche-type">{f.types.map((t) => TYPES[t]).join(' & ')}</span>
+                  </span>
+                  <h3 class="fiche-titre">
+                    {f.titre.principal}
+                    {f.titre.precision && <span class="precision"> {f.titre.precision}</span>}
+                  </h3>
+                  <span class="fiche-meta">
+                    {f.portions && <span>{f.portions}</span>}
+                    <span>{f.nb} ingrédients</span>
+                    {f.versions > 1 && <span class="badge">{f.versions} versions</span>}
+                    {f.thermomix && <span class="badge">Thermomix</span>}
+                  </span>
+                </a>
+                <button type="button" class="fav" aria-pressed="false" data-slug={f.slug} aria-label={`Ajouter « ${f.r.data.titre} » aux favoris`}>
+                  <Icone nom="coeur" />
+                </button>
+                <span class="fiche-lettre" aria-hidden="true">{f.r.data.titre.charAt(0)}</span>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <div class="sommaire" id="sommaire" hidden>
+        {
+          parLettre.map(([lettre, liste]) => (
+            <section class="sommaire-lettre">
+              <h3>{lettre}</h3>
+              <ul>
+                {liste!.map((f) => (
+                  <li data-slug={f.slug}>
+                    <a href={lienRecette(f.r)}>
+                      <span class="sommaire-titre">{f.r.data.titre}</span>
+                      <span class="pointilles" aria-hidden="true" />
+                      <span class="sommaire-cat" style={`color:${CATEGORIES[f.categories[0]].couleur}`}>
+                        {CATEGORIES[f.categories[0]].label}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+
+      <div class="vide" id="vide" hidden>
+        <p class="vide-titre">Aucune recette ne correspond.</p>
+        <p>Essayez un autre mot, ou retirez un filtre.</p>
+        <button type="button" class="bouton" data-effacer>Effacer la recherche et les filtres</button>
+      </div>
+    </div>
+  </section>
+
+  <dialog id="panneau-filtres" class="panneau" aria-labelledby="titre-filtres">
+    <form method="dialog" class="panneau-contenu">
+      <header class="panneau-tete">
+        <h2 id="titre-filtres">Filtres</h2>
+        <button class="bouton bouton-icone" value="fermer" aria-label="Fermer"><Icone nom="fermer" /></button>
+      </header>
+      <div class="panneau-corps">
+        <fieldset>
+          <legend>Catégorie</legend>
+          <div class="puces">
+            {
+              Object.entries(CATEGORIES).map(([cle, c]) => (
+                <button type="button" class="puce" data-groupe="cat" data-valeur={cle} aria-pressed="false">
+                  {c.pluriel} <span class="nb" />
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Ingrédient vedette</legend>
+          <div class="puces">
+            {
+              Object.entries(VEDETTES).map(([cle, label]) => (
+                <button type="button" class="puce" data-groupe="ved" data-valeur={cle} aria-pressed="false">
+                  {label} <span class="nb" />
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Nombre d’ingrédients</legend>
+          <div class="puces">
+            {
+              NB_INGREDIENTS.map(([v, l]) => (
+                <button type="button" class="puce" data-groupe="n" data-valeur={v} aria-pressed="false">
+                  {l} <span class="nb" />
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Temps de préparation</legend>
+          <p class="aide">Seuls les temps écrits par Claire sont pris en compte ({nbAvecTemps} recettes en indiquent).</p>
+          <div class="puces">
+            {
+              DUREES.map(([v, l]) => (
+                <button type="button" class="puce" data-groupe="prep" data-valeur={v} aria-pressed="false">
+                  {l} <span class="nb" />
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Temps de cuisson</legend>
+          <div class="puces">
+            {
+              DUREES.map(([v, l]) => (
+                <button type="button" class="puce" data-groupe="cuis" data-valeur={v} aria-pressed="false">
+                  {l} <span class="nb" />
+                </button>
+              ))
+            }
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Particularités</legend>
+          <div class="puces">
+            <button type="button" class="puce" data-groupe="tmx" data-valeur="1" aria-pressed="false">
+              <Icone nom="robot" /> Thermomix <span class="nb" />
+            </button>
+            <button type="button" class="puce" data-groupe="avance" data-valeur="1" aria-pressed="false">
+              <Icone nom="calendrier" /> Se prépare à l’avance <span class="nb" />
+            </button>
+            <button type="button" class="puce" data-groupe="favoris" data-valeur="1" aria-pressed="false">
+              <Icone nom="coeur" /> Mes favoris <span class="nb" />
+            </button>
+          </div>
+        </fieldset>
+      </div>
+      <footer class="panneau-pied">
+        <button type="button" class="bouton" data-effacer>Tout effacer</button>
+        <button class="bouton bouton-principal" value="fermer" id="voir-resultats">Voir les recettes</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="application/json" id="index-recherche" set:html={JSON.stringify(fiches.map((f) => ({ s: f.slug, ...f.index })))} />
+</Base>
+
+<style>
+  .accueil {
+    padding-top: clamp(40px, 7vw, 88px);
+    padding-bottom: 40px;
+  }
+
+  .accueil-titre {
+    margin-top: 14px;
+    font-size: clamp(2.6rem, 7.5vw, 5.4rem);
+    font-weight: 560;
+    letter-spacing: -0.025em;
+    line-height: 1;
+  }
+
+  .accueil-titre .de {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--encre-2);
+  }
+
+  .prenom {
+    position: relative;
+    display: inline-block;
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .prenom svg {
+    position: absolute;
+    left: 2%;
+    right: 0;
+    bottom: -0.16em;
+    width: 98%;
+    height: 0.22em;
+    stroke: var(--accent);
+    stroke-width: 3.5;
+    opacity: 0.55;
+  }
+
+  .accueil-intro {
+    max-width: 38rem;
+    margin-top: 26px;
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    color: var(--encre-2);
+  }
+
+  .accueil-astuce {
+    margin-top: 12px;
+    font-size: 0.9375rem;
+    color: var(--encre-3);
+  }
+
+  .tuiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 44px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 760px) {
+    .tuiles {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+  }
+
+  .tuile {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon);
+    background: var(--carte);
+    text-align: left;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+
+  .tuile:hover {
+    border-color: var(--teinte);
+    transform: translateY(-1px);
+    box-shadow: var(--ombre);
+  }
+
+  .tuile-icone {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--teinte) 13%, transparent);
+    color: var(--teinte);
+  }
+
+  .tuile-icone :global(svg) {
+    width: 26px;
+    height: 26px;
+    stroke-width: 1.5;
+  }
+
+  .tuile-nom {
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+    font-weight: 560;
+    line-height: 1.2;
+  }
+
+  .tuile-nb {
+    font-size: 0.875rem;
+    color: var(--encre-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 420px) {
+    .tuile {
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      padding: 12px;
+    }
+    .tuile-nb {
+      display: none;
+    }
+    .tuile-icone {
+      width: 38px;
+      height: 38px;
+    }
+    .tuile-nom {
+      font-size: 0.9375rem;
+    }
+  }
+
+  /* ---------- barre de recherche et filtres ---------- */
+
+  .barre {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 12px 0;
+    background: color-mix(in srgb, var(--fond) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-block: 1px solid var(--trait);
+  }
+
+  .barre-ligne {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .recherche {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .recherche :global(svg) {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    width: 19px;
+    height: 19px;
+    transform: translateY(-50%);
+    color: var(--encre-3);
+    pointer-events: none;
+  }
+
+  .recherche input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px 0 42px;
+    border: 1px solid var(--trait-2);
+    border-radius: 999px;
+    background: var(--carte);
+    font-size: 1rem;
+    outline: none;
+  }
+
+  .recherche input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  .recherche input::placeholder {
+    color: var(--encre-3);
+  }
+
+  .segment {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--trait-2);
+    border-radius: 999px;
+    background: var(--carte);
+  }
+
+  .segment .puce {
+    min-height: 36px;
+    border: 0;
+  }
+
+  .nb-filtres:not(:empty) {
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--sur-accent);
+    font-size: 0.75rem;
+    line-height: 20px;
+    text-align: center;
+  }
+
+  .tri select {
+    height: 42px;
+    padding: 0 34px 0 14px;
+    border: 1px solid var(--trait-2);
+    border-radius: 999px;
+    background: var(--carte)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2385776a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")
+      no-repeat right 12px center / 16px;
+    appearance: none;
+    font-size: 0.9375rem;
+  }
+
+  .vues {
+    display: flex;
+    gap: 4px;
+  }
+
+  .vues .bouton[aria-checked='true'] {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--fond);
+  }
+
+  @media (max-width: 900px) {
+    .barre-ligne {
+      flex-wrap: wrap;
+    }
+    .recherche {
+      flex-basis: 100%;
+    }
+    .tri {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .tri,
+    .vues {
+      display: none;
+    }
+    .segment {
+      flex: 1;
+    }
+    .segment .puce {
+      flex: 1;
+      justify-content: center;
+      padding: 0 8px;
+    }
+  }
+
+  /* ---------- état ---------- */
+
+  .etat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin: 22px 0 18px;
+  }
+
+  .nb-resultats {
+    color: var(--encre-2);
+  }
+
+  .nb-resultats strong {
+    color: var(--encre);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actifs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .actifs :global(button) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    padding: 0 8px 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent-doux);
+    color: var(--accent-fort);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .actifs :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  .actifs :global(.tout-effacer) {
+    background: none;
+    color: var(--encre-3);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ---------- fiches ---------- */
+
+  .fiches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fiche {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--trait);
+    border-radius: var(--rayon);
+    background: var(--carte);
+    transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  }
+
+  .fiche::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: var(--teinte);
+  }
+
+  .fiche:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre-forte);
+    border-color: color-mix(in srgb, var(--teinte) 40%, var(--trait));
+  }
+
+  .fiche a {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 168px;
+    padding: 20px 56px 16px 20px;
+    text-decoration: none;
+  }
+
+  .fiche-kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teinte);
+  }
+
+  .fiche-type {
+    color: var(--encre-3);
+  }
+
+  .fiche-titre {
+    margin: 10px 0 18px;
+    font-size: 1.3125rem;
+    font-weight: 560;
+    line-height: 1.22;
+  }
+
+  .precision {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--encre-2);
+  }
+
+  .fiche-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+    margin-top: auto;
+    font-size: 0.8125rem;
+    color: var(--encre-3);
+  }
+
+  .fav {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--encre-3);
+  }
+
+  .fav:hover {
+    background: var(--fond-2);
+    color: var(--accent);
+  }
+
+  .fav :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .fav[aria-pressed='true'] {
+    color: var(--accent);
+  }
+
+  .fav[aria-pressed='true'] :global(.coeur) {
+    fill: currentColor;
+  }
+
+  @media (max-width: 560px) {
+    .fiche a {
+      min-height: 0;
+      padding: 18px 52px 14px 18px;
+    }
+    .fiche-titre {
+      margin: 8px 0 12px;
+      font-size: 1.25rem;
+    }
+  }
+
+  .fiche-lettre {
+    position: absolute;
+    right: -4px;
+    bottom: -38px;
+    font-family: var(--serif);
+    font-size: 132px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--teinte);
+    opacity: 0.09;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ---------- sommaire ---------- */
+
+  .sommaire {
+    columns: 2 340px;
+    column-gap: 56px;
+  }
+
+  .sommaire-lettre {
+    break-inside: avoid;
+    margin-bottom: 26px;
+  }
+
+  .sommaire-lettre h3 {
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--trait);
+    font-size: 1.75rem;
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .sommaire ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sommaire a {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 0;
+    text-decoration: none;
+  }
+
+  .sommaire a:hover .sommaire-titre {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .sommaire-titre {
+    font-family: var(--serif);
+    font-size: 1.0625rem;
+  }
+
+  .pointilles {
+    flex: 1;
+    min-width: 16px;
+    border-bottom: 1.5px dotted var(--trait-2);
+    transform: translateY(-4px);
+  }
+
+  .sommaire-cat {
+    font-size: 0.75rem;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .vide {
+    padding: 64px 0;
+    text-align: center;
+    color: var(--encre-2);
+  }
+
+  .vide-titre {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    color: var(--encre);
+  }
+
+  .vide .bouton {
+    margin-top: 18px;
+  }
+
+  /* ---------- panneau des filtres ---------- */
+
+  .panneau {
+    width: min(460px, 100vw);
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background: var(--fond);
+    color: var(--encre);
+    box-shadow: var(--ombre-forte);
+  }
+
+  .panneau::backdrop {
+    background: rgb(30 20 10 / 35%);
+    backdrop-filter: blur(2px);
+  }
+
+  .panneau[open] {
+    animation: glisse 0.22s ease-out;
+  }
+
+  @keyframes glisse {
+    from {
+      transform: translateX(30px);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .panneau {
+      width: 100vw;
+      height: 88dvh;
+      margin: auto 0 0;
+      border-radius: 20px 20px 0 0;
+    }
+    .panneau[open] {
+      animation-name: monte;
+    }
+    @keyframes monte {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+    }
+  }
+
+  .panneau-contenu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .panneau-tete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--trait);
+  }
+
+  .panneau-tete h2 {
+    font-size: 1.5rem;
+  }
+
+  .panneau-corps {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 20px 24px;
+  }
+
+  .panneau fieldset {
+    margin: 0;
+    padding: 18px 0 4px;
+    border: 0;
+  }
+
+  .panneau legend {
+    padding: 0;
+    margin-bottom: 10px;
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .aide {
+    margin: -4px 0 10px;
+    font-size: 0.8125rem;
+    color: var(--encre-3);
+  }
+
+  .puces {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .puces .puce :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .puces .puce[disabled] {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .panneau-pied {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--trait);
+  }
+
+  .panneau-pied .bouton-principal {
+    flex: 1;
+    justify-content: center;
+  }
+</style>
+
+<script>
+  import { basculerFavori, lireFavoris } from '../scripts/favoris';
+  import { initialiserCarnet } from '../scripts/carnet';
+
+  initialiserCarnet();
+
+  // cœurs des fiches
+  const majCoeurs = () => {
+    const favoris = new Set(lireFavoris());
+    document.querySelectorAll<HTMLButtonElement>('.fav').forEach((b) => {
+      b.setAttribute('aria-pressed', String(favoris.has(b.dataset.slug!)));
+    });
+  };
+  majCoeurs();
+  window.addEventListener('favoris', majCoeurs);
+  document.getElementById('fiches')!.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.fav');
+    if (b) basculerFavori(b.dataset.slug!);
+  });
+</script>

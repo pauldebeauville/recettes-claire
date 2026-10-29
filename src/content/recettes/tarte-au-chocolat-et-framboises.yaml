@@ -1,0 +1,53 @@
+titre: Tarte au chocolat et framboises
+type: sucré
+categories:
+- dessert
+vedettes:
+- chocolat
+- fruits
+ordre: 127
+ingredients:
+- groupe: Pour la pâte sablée chocolat
+- 'Farine BIO : 225 g'
+- 'Beurre : 125 g'
+- 'Sucre : 110 g'
+- 'Cacao en poudre : 15 g'
+- 'Jaune d’œuf : 1'
+- 'Blanc d’œuf (si nécessaire) : 1'
+- 'Levure chimique : 1 pincée'
+- 'Sel : 1 pincée'
+- groupe: Garniture
+- 'Chocolat noir pâtissier : 2700 g'
+- 'Crème liquide entière : 30 cl'
+- 'Framboises : 6 barquettes'
+- 'Groseilles : 1 barquette'
+- 'Sucre glace (pour décorer) : 1 c. à soupe'
+preparation:
+- titre: Préparer la pâte sablée au chocolat
+  texte:
+  - Mélanger le beurre et le sucre.
+  - Ajouter le jaune d’œuf, puis bien mélanger.
+  - Ajouter ensuite les poudres (farine BIO, cacao, levure chimique et sel).
+  - Mélanger jusqu’à obtenir une pâte homogène.
+  - Si la pâte est trop sèche, ajouter un blanc d’œuf pour ajuster la consistance.
+  - Réserver dans du film plastique, à plat, pendant 2 heures au frais.
+- titre: Cuisson de la pâte
+  texte:
+  - Étaler la pâte à 3-4 mm d’épaisseur. Foncer un moule à tarte et piquer la pâte avec une fourchette.
+  - Lester avec des poids de cuisson
+  - Cuire à 160°C pendant 20 minutes, en retirant les poids 5 minutes avant la fin de la cuisson.
+  - Laisser refroidir.
+- titre: Préparer la ganache au chocolat
+  texte:
+  - Faire chauffer la crème liquide jusqu’à ébullition.
+  - Verser la crème chaude sur le chocolat noir pâtissier en morceaux. Mélanger délicatement jusqu’à obtenir une texture lisse.
+- titre: Montage de la tarte
+  texte:
+  - Verser la crème bouillante sur le chocolat coupé en morceaux et mélanger très vivement avec le fouet, puis verser dans le fond de tarte cuit.
+  - Laisser prendre au frais pendant toute une après-midi.
+- titre: Décoration et finition
+  texte:
+  - Disposer harmonieusement les 6 barquettes de framboises sur la ganache bien prise.
+  - Ajouter des groseilles pour une touche colorée et acidulée.
+  - Saupoudrer de sucre glace juste avant de servir pour une finition élégante.
+source: Carnet sucré, p. 8-9

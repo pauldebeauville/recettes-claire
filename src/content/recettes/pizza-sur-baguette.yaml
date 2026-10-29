@@ -1,0 +1,37 @@
+titre: Pizza sur baguette
+type: salé
+categories:
+- plat
+- apéritif
+vedettes:
+- fromage
+ordre: 79
+portions: Pour 4 personnes
+ingredients:
+- 1 baguette coupée en tronçons
+- 4 tomates (ou tomates pelées en boîte)
+- 1 fromage de chèvre ou mozzarella (enlevez la croûte du chèvre si utilisé)
+- 1 c. à soupe d’origan
+- 1 échalote ou 1 oignon
+- 1 gousse d’ail hachée
+- 1 c. à soupe d’huile d’olive
+- 50 g de gruyère râpé ou tranches de raclette
+- Sel, poivre
+preparation:
+- titre: Préparez la baguette
+  texte:
+  - Coupez la baguette en tronçons. Faites-les légèrement toaster au four pendant environ 2 minutes sans garniture pour qu’ils soient croustillants.
+- titre: Préparez les tomates
+  texte:
+  - Pelez les tomates si elles sont fraîches, puis écrasez-les ou utilisez des tomates pelées en boîte. Mélangez avec un peu de sel, de poivre, d’origan, et l’ail haché.
+- titre: Ajoutez les garnitures
+  texte:
+  - Étalez une fine couche d’huile d’olive sur chaque tronçon de baguette.
+  - Ajoutez les tomates écrasées.
+  - Disposez ensuite des rondelles d’échalote ou d’oignon.
+  - Déposez des morceaux de chèvre (sans croûte) ou de mozzarella.
+  - Parsemez de gruyère râpé ou placez une tranche de raclette sur le dessus.
+- titre: Cuisson
+  texte:
+  - Faites cuire au four (chaleur tournante) à température moyenne jusqu’à ce que le fromage soit bien fondu et légèrement doré (environ 10 à 15 minutes).
+source: Carnet salé, p. 87

@@ -1,0 +1,45 @@
+titre: Tagliatelles de Concombre au Saumon Fumé
+type: salé
+categories:
+- entrée
+vedettes:
+- saumon
+- légumes
+ordre: 16
+portions: Pour 4 personnes
+temps:
+- label: Temps de préparation
+  valeur: 15 minutes
+ingredients:
+- 1 concombre
+- 300 g de cœur de filet de saumon fumé
+- 3 c. à soupe d’huile d’olive
+- Jus de ½ citron vert
+- 1 bouquet de cerfeuil
+- Sel, poivre
+preparation:
+- titre: Préparer le concombre
+  texte:
+  - Lavez le concombre et coupez-le en deux dans la longueur.
+  - Retirez les graines au centre à l’aide d’une cuillère.
+  - À l’aide d’un couteau économe, découpez le concombre en fines lamelles pour former des tagliatelles.
+- titre: Préparer le saumon
+  texte:
+  - Émincez le saumon fumé en fines lamelles ou petits morceaux.
+- titre: Préparer la vinaigrette
+  texte:
+  - Dans un bol, mélangez le jus de citron vert, une pincée de sel et de poivre.
+  - Ajoutez l’huile d’olive et émulsionnez à la fourchette.
+- titre: Assembler le plat
+  texte:
+  - Disposez les tagliatelles de concombre et le saumon dans un plat ou des assiettes individuelles.
+  - Versez la vinaigrette par-dessus et mélangez délicatement.
+- titre: Décoration et service
+  texte:
+  - Décorez avec des pluches de cerfeuil.
+  - Servez frais en entrée légère ou en accompagnement.
+notes:
+- titre: Astuce
+  texte:
+  - Pour une version plus économique, remplacez le cœur de filet de saumon fumé par des tranches classiques coupées en lanières.
+source: Carnet salé, p. 16

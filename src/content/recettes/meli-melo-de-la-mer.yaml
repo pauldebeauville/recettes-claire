@@ -1,0 +1,51 @@
+titre: Méli-Mélo de la Mer
+type: salé
+categories:
+- plat
+vedettes:
+- poisson
+ordre: 6
+portions: Pour 4 personnes
+ingredients:
+- 2 échalotes
+- 1 gousse d’ail
+- 2,5 dl de fumet de poisson (préparé avec de l’eau et du bouillon de poisson)
+- 1 dl de vin blanc sec
+- 30 g de beurre
+- 3 dl de crème fraîche liquide
+- 1 c. à soupe de fécule (maïzena ou autre)
+- 'Poissons fermes au choix : saumon, cabillaud, lotte (en filets)'
+- Sel, poivre
+- Amandes grillées (facultatif)
+preparation:
+- titre: Préparer la sauce
+  texte:
+  - Hachez finement les échalotes.
+  - Faites revenir les échalotes dans le beurre chaud, sans colorer.
+  - Ajoutez la gousse d’ail écrasée.
+  - Incorporez le vin blanc et le fumet de poisson.
+  - Laissez réduire de moitié à feu moyen.
+- titre: Épaissir la sauce
+  texte:
+  - Ajoutez la crème fraîche liquide.
+  - Diluez une grande cuillère de fécule dans un peu d’eau froide, puis incorporez-la à la sauce.
+  - Mélangez bien et laissez cuire quelques minutes jusqu’à ce que la sauce devienne onctueuse.
+  - Salez et poivrez selon votre goût.
+- titre: Préparer les poissons
+  texte:
+  - Choisissez différents poissons fermes (saumon, lotte, cabillaud, etc.) et coupez-les en filets ou en morceaux.
+  - Faites cuire les poissons à la vapeur ou au four, en veillant à ne pas les surcuire.
+- titre: Assembler le plat
+  texte:
+  - Déposez les morceaux de poisson dans la sauce chaude juste avant de servir.
+  - Mélangez délicatement pour bien les enrober.
+- titre: Service
+  texte:
+  - Servez le méli-mélo dans des assiettes creuses.
+  - Parsemez d’amandes grillées pour une touche croquante, si désiré.
+  - Accompagnez de riz blanc ou de légumes vapeur, si souhaité.
+notes:
+- titre: Astuce
+  texte:
+  - Ajoutez une cuillère à soupe de ciboulette fraîche hachée pour une touche de fraîcheur au moment de servir.
+source: Carnet salé, p. 6

@@ -1,0 +1,39 @@
+titre: Œufs durs à l'indienne
+type: salé
+categories:
+- plat
+vedettes:
+- œufs
+- légumes
+ordre: 120
+portions: Pour 4 personnes
+temps:
+- label: Préparation
+  valeur: 25 minutes
+- label: Cuisson
+  valeur: 25 minutes
+ingredients:
+- 600 g d'épinards frais
+- 2 tomates
+- 1 oignon
+- 2 gousses d'ail
+- 8 œufs
+- 10 cl de crème liquide
+- 1 cuillère à soupe de curry en poudre
+- 2 cuillères à soupe d'huile
+- Graines de nigelle (facultatif)
+- Sel, poivre
+preparation:
+- titre: Préparer les légumes
+  texte:
+  - Pelez et émincez l'ail et l'oignon. Faites chauffer 2 cuillères à soupe d'huile dans une sauteuse. Ajoutez l'ail, l'oignon, du sel et du poivre. Mélangez 3 minutes. Ajoutez le curry et faites cuire encore 2 minutes sans cesser de mélanger.
+- titre: Cuire les tomates
+  texte:
+  - Rincez les tomates et concassez-les. Ajoutez-les dans la sauteuse avec 10 cl d'eau. Couvrez et laissez mijoter 15 minutes.
+- titre: Cuire les œufs
+  texte:
+  - Faites cuire les œufs 8 minutes dans de l'eau bouillante. Rafraîchissez-les et écalez-les.
+- titre: Assembler
+  texte:
+  - Mixez la sauce, ajoutez-y les œufs durs et les épinards. Faites réchauffer le tout. Parsemez de graines de nigelle (si vous le souhaitez).
+source: Carnet salé, p. 132

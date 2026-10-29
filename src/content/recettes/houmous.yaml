@@ -1,0 +1,37 @@
+titre: Houmous
+type: salé
+categories:
+- apéritif
+- sauce
+vedettes:
+- légumes
+ordre: 100
+versions:
+- nom: Version 1
+  ingredients:
+  - 250 g de pois chiches cuits
+  - 1/2 citron
+  - 3 cuillères à soupe de cumin ou graines de fenouil
+  - 3 cuillères à soupe d'huile d'olive
+  - Sauce d'ail
+  preparation:
+  - Mélanger tous les ingrédients dans un mixeur.
+  - Ajouter de l'eau si nécessaire pour obtenir la consistance désirée.
+  source: Carnet salé, p. 110
+- nom: Version 2
+  ingredients:
+  - 250 g de pois chiches
+  - 1/2 citron
+  - 1 cuillère à soupe de cumin ou graines de fenouil
+  - 3 cuillères à soupe d'huile d'olive
+  - 1 gousse d'ail
+  preparation:
+  - Cuire les pois chiches (si non en boîte) ou rincer ceux en boîte.
+  - Presser le citron et ajouter le jus dans un mixeur.
+  - Ajouter les pois chiches, l'ail, le cumin ou les graines de fenouil, et l'huile d'olive.
+  - Mixer jusqu'à obtenir une texture lisse.
+  - Rectifier l'assaisonnement avec du sel si nécessaire, et ajuster la texture avec un peu d'eau si vous souhaitez un houmous plus lisse.
+  notes:
+  - texte:
+    - Servez avec du pain pita ou des légumes croquants pour tremper.
+  source: Carnet salé, p. 120

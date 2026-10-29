@@ -1,0 +1,287 @@
+/* Mode cuisine plein écran et minuteurs (éléments créés par le script de la fiche). */
+
+.sans-defilement,
+.sans-defilement body {
+  overflow: hidden;
+}
+
+.cuisine {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  background: var(--fond);
+  animation: apparait 0.2s ease-out;
+}
+
+@keyframes apparait {
+  from {
+    opacity: 0;
+  }
+}
+
+.cuisine-tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(12px, env(safe-area-inset-top)) var(--gouttiere) 12px;
+}
+
+.cuisine-titre {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cuisine-outils {
+  display: flex;
+  gap: 8px;
+  flex: none;
+}
+
+.cuisine-progression {
+  height: 4px;
+  background: var(--trait);
+}
+
+.cuisine-progression span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.cuisine-scene {
+  overflow-y: auto;
+  padding: clamp(24px, 6vh, 64px) var(--gouttiere);
+  touch-action: pan-y;
+}
+
+.cuisine-scene > * {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.cuisine-etape {
+  color: var(--accent);
+}
+
+.cuisine-texte {
+  margin-top: 18px;
+  font-size: clamp(1.375rem, 3.4vw, 2.125rem);
+  line-height: 1.45;
+}
+
+.cuisine-texte h3 {
+  margin-bottom: 14px;
+  font-family: var(--serif);
+  font-size: 1.15em;
+  font-weight: 600;
+}
+
+.cuisine-texte ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cuisine-texte li {
+  position: relative;
+  padding-left: 1.1em;
+}
+
+.cuisine-texte li + li,
+.cuisine-texte p + p {
+  margin-top: 0.6em;
+}
+
+.cuisine-texte li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.32em;
+  height: 0.32em;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.cuisine-texte .minuteur {
+  font-size: 0.8em;
+  padding: 2px 12px 2px 8px;
+}
+
+.cuisine-texte .minuteur svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.cuisine-ingredients {
+  position: fixed;
+  top: 72px;
+  right: var(--gouttiere);
+  bottom: 96px;
+  z-index: 2;
+  width: min(380px, calc(100vw - 2 * var(--gouttiere)));
+  overflow-y: auto;
+  padding: 18px 20px;
+  border: 1px solid var(--trait);
+  border-radius: 18px;
+  background: var(--carte);
+  box-shadow: var(--ombre-forte);
+}
+
+.cuisine-ingredients ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cuisine-ingredients li:not(.groupe) {
+  border-bottom: 1px solid var(--trait);
+}
+
+.cuisine-ingredients label {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.cuisine-ingredients input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.cuisine-ingredients input:checked + span {
+  color: var(--encre-3);
+  text-decoration: line-through;
+}
+
+.cuisine-ingredients .groupe {
+  margin-top: 12px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.cuisine-ingredients .q {
+  font-weight: 650;
+}
+
+.cuisine-pied {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px var(--gouttiere) max(14px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--trait);
+}
+
+.cuisine-pied .bouton {
+  min-height: 54px;
+  padding: 0 24px;
+  font-size: 1.0625rem;
+}
+
+.cuisine-pied .bouton-principal {
+  flex: 1;
+  max-width: 320px;
+  justify-content: center;
+}
+
+.cuisine-pied .bouton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- minuteurs ---------- */
+
+.minuteurs {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(340px, calc(100vw - 32px));
+}
+
+.cuisine ~ .minuteurs {
+  right: auto;
+  left: 16px;
+  bottom: 96px;
+}
+
+.minuteur-carte {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 16px;
+  background: var(--encre);
+  color: var(--fond);
+  box-shadow: var(--ombre-forte);
+  animation: apparait 0.2s ease-out;
+}
+
+.minuteur-carte.en-pause .m-temps {
+  opacity: 0.55;
+}
+
+.minuteur-carte.termine {
+  background: var(--accent);
+  color: var(--sur-accent);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(1.02);
+  }
+}
+
+.m-temps {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.m-nom {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  opacity: 0.8;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.minuteur-carte button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 12%);
+  color: inherit;
+}
+
+.minuteur-carte button svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media print {
+  .minuteurs,
+  .cuisine {
+    display: none !important;
+  }
+}

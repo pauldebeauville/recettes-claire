@@ -1,0 +1,41 @@
+titre: Trio de crêpes gourmandes
+type: salé
+categories:
+- plat
+vedettes:
+- œufs
+ordre: 82
+portions: Pour 3 personnes
+ingredients:
+- 3 crêpes (1 par personne)
+- 1 tranche de jambon
+- Gruyère râpé
+- 1 œuf au plat
+- 1 tranche de saumon fumé
+- 2 c. à soupe de crème fraîche
+- 1 tomate (coupée en rondelles)
+- 50 g de chèvre frais
+preparation:
+- titre: Crêpe 1
+  texte:
+  - Jambon, gruyère et œuf au plat
+  - Disposez une tranche de jambon sur la crêpe.
+  - Parsemez de gruyère râpé.
+  - Faites cuire un œuf au plat et placez-le au centre de la crêpe.
+  - Pliez ou roulez la crêpe et réchauffez légèrement si nécessaire.
+- titre: Crêpe 2
+  texte:
+  - Saumon fumé et crème fraîche
+  - Étalez une cuillère de crème fraîche sur la crêpe.
+  - Disposez une tranche de saumon fumé par-dessus.
+  - Roulez ou pliez la crêpe délicatement.
+- titre: Crêpe 3
+  texte:
+  - Tomates et chèvre
+  - Étalez des rondelles de tomate sur la crêpe.
+  - Ajoutez des morceaux de chèvre frais.
+  - Roulez ou pliez la crêpe et réchauffez légèrement au besoin.
+notes:
+- texte:
+  - Servir immédiatement.
+source: Carnet salé, p. 90

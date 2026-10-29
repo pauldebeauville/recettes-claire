@@ -1,0 +1,47 @@
+titre: Bœuf Bourguignon
+type: salé
+categories:
+- plat
+vedettes:
+- viande
+ordre: 53
+portions: Pour 4 personnes
+ingredients:
+- 1 kg de bœuf à braiser (type macreuse ou collier)
+- 2 carottes
+- 1 oignon
+- 2 gousses d'ail
+- 1 bouquet garni
+- 75 cl de vin de Bourgogne
+- 40 cl de fond de veau
+- groupe: Pour la garniture
+- 100 g de lardons
+- 200 g d'oignons grelots
+- 600 g de pommes de terre
+- 150 g de champignons de Paris
+- 10 g de beurre doux pour les oignons et 15 g pour les champignons
+- 5 g de sucre
+preparation:
+- titre: Marinade
+  texte:
+  - Préparez la garniture aromatique en coupant les carottes en tronçons, en épluchant l'oignon et en ajoutant l'ail et le bouquet garni.
+  - Dans un saladier ou une grande boîte en plastique, déposez la viande coupée en gros cubes, ajoutez le vin et la garniture aromatique.
+  - Laissez mariner au frais une nuit. Égouttez, conservez la marinade séparée de la garniture.
+- titre: Cuisson du bœuf
+  texte:
+  - Séchez les morceaux de viande avec un essuie-tout.
+  - Faites chauffer une sauteuse, déposez les morceaux de viande pour les cuire très rapidement, ajoutez la garniture, saupoudrez de farine, mélangez.
+  - Ajoutez le vin et le fond de veau. Mélangez, salez légèrement et laissez cuire à couvert, feu doux pendant 2 heures.
+  - Pour le fond de veau, vous pouvez le trouver au supermarché avec les bouillons en cubes (attention ils sont souvent salés).
+- titre: Préparation des légumes et garniture
+  texte:
+  - Plongez les oignons grelots dans un saladier d'eau pendant 5 minutes pour retirer plus facilement la peau.
+  - Faites chauffer le beurre dans une poêle, ajoutez les oignons le sucre, une pincée de sel, mélangez. Ajoutez un peu d'eau pour recouvrir les oignons, l'eau doit être à mi-hauteur. Couvrez et laissez cuire 10 minutes. Enlevez le couvercle et poursuivez la cuisson pour une évaporation totale de l'eau et une légère coloration des oignons (pas trop caramélisés).
+  - Préparez les champignons en les passant rapidement sous un filet d'eau froide, coupez une partie du pied et ensuite coupez-les en 4. Faites les revenir dans une poêle avec un morceau de beurre. Réservez.
+  - Faites chauffer une petite casserole d'eau et faites blanchir les lardons 2 minutes, égouttez-les et faites les sauter ensuite dans une poêle.
+- titre: Assemblage et service
+  texte:
+  - Quand le bœuf bourguignon est prêt et que la sauce est bien épaisse, ajoutez les champignons et les lardons, gardez les oignons pour le service.
+  - Épluchez les pommes de terre et faites les cuire dans de l'eau salée.
+  - Dans chaque assiette, déposez les pommes de terre, des oignons et un peu de bœuf bourguignon.
+source: Carnet salé, p. 57-58
