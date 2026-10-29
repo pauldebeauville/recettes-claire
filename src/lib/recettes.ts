@@ -2,7 +2,10 @@ import type { CollectionEntry } from 'astro:content';
 
 export type Recette = CollectionEntry<'recettes'>;
 type Data = Recette['data'];
-export type Corps = Omit<Data, 'titre' | 'type' | 'categories' | 'vedettes' | 'ordre' | 'versions'> & { nom?: string };
+export type Corps = Omit<Data, 'titre' | 'type' | 'categories' | 'vedettes' | 'ordre' | 'versions'> & {
+  nom?: string;
+  titre?: string;
+};
 export type Etape = NonNullable<Corps['preparation']>[number];
 
 /** Adresse interne qui tient compte du sous-dossier GitHub Pages. */

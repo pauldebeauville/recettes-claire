@@ -1,4 +1,4 @@
-titre: Purée de patate douce
+titre: Purée de Patate Douce
 type: salé
 categories:
 - accompagnement
@@ -7,6 +7,7 @@ vedettes:
 ordre: 93
 versions:
 - nom: Version 1
+  titre: Purée de Patate Douce
   portions: Pour 2 personnes
   ingredients:
   - 2 patates douces
@@ -21,6 +22,7 @@ versions:
   - Ajouter du beurre et du sel au goût.
   source: Carnet salé, p. 102
 - nom: Version 2
+  titre: Purée de patates douces
   portions: Pour 5 portions
   ingredients:
   - 800 g de patates douces

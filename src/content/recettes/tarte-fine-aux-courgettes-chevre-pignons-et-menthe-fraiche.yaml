@@ -26,6 +26,7 @@ preparation:
 - Faites dorer les pignons de pin dans une poêle à sec jusqu’à ce qu’ils soient légèrement colorés. Réservez.
 - Enfournez la tarte pendant 20 à 25 minutes, jusqu’à ce que la pâte soit bien dorée et que les courgettes soient légèrement colorées.
 - section: Finition
+  suite: true
 - Lorsque la tarte est cuite, émiettez le chèvre frais (ou 1/2 Petit Billy) sur le dessus en retirant la croûte.
 - Répartissez les pignons dorés et les feuilles de menthe fraîche ciselées sur la tarte.
 - Ajoutez quelques touches de pesto sur les morceaux de chèvre pour rehausser les saveurs.

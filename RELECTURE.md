@@ -1,18 +1,18 @@
 # À relire
 
-Les deux carnets PDF ont été repris automatiquement, mot pour mot. Un contrôle compare chaque mot des PDF à celui des fiches : aucun mot perdu, aucun ajouté, à part les intitulés « Ingrédients » et « Préparation » et les numéros d’étapes. Voici ce que j’ai corrigé, et ce qu’il vaut mieux vérifier.
+Les deux carnets PDF ont été repris automatiquement, mot pour mot. Un contrôle compare chaque mot des PDF (28 923 mots) à ceux des fiches : aucun mot n'est perdu ni ajouté. Seule la mise en forme change : majuscules, retours à la ligne, deux-points en fin de titre, intitulés « Ingrédients » et « Préparation ».
 
 ## Ce que j’ai corrigé
 
-- **Salade Mangue, Avocat et Mozzarella** (p. 52) : dans le PDF, ses 4 dernières étapes (couper la mozzarella, les herbes, l’huile d’olive, servir) avaient glissé en bas de la page 53, sous la *Souris d’agneau confite*. Je les ai remises dans la salade.
-- **Clafoutis aux courgettes, jambon cru, feta et pignons de pin** : présent deux fois (p. 85 et 86). Les deux pages sont identiques sauf la phrase finale. J’ai gardé la p. 85 : « Servez chaud ou tiède avec une salade verte… ».
-- **Recettes portant le même nom** : regroupées sur une seule page, avec deux onglets « Version 1 / Version 2 » : Rillettes aux deux saumons (p. 9 et 109), Carpaccio de bœuf (p. 43 et 44), Chili con carne (p. 65 et 66), Pâte à crêpes (carnet salé p. 67 et carnet sucré p. 11), Pâte à tarte à l’épeautre (p. 71 et 92), Purée de patate douce (p. 102 et 130), Houmous (p. 110 et 120).
-- **Mise en forme seulement** : « RECETTE DE FOIE GRAS » écrit « Recette de foie gras » ; « Donnay Hay » corrigé en « Donna Hay » ; « (pour 4 personnes) » sorti des titres pour devenir le nombre de portions.
+- **Salade Mangue, Avocat et Mozzarella** (p. 52) : dans le PDF, ses 4 dernières étapes (couper la mozzarella, les herbes, l’huile d’olive, servir) avaient glissé en bas de la page 53, sous la *Souris d’agneau confite*. Je les ai remises dans la salade. C'est la seule modification de contenu.
+- **Recettes en double ou portant le même nom** : regroupées sur une seule page, avec des onglets « Version 1 / Version 2 ». Chaque version garde son texte et son titre d’origine : Rillettes aux Deux Saumons (p. 9 et 109), Carpaccio de Boeuf (p. 43 et 44), Clafoutis aux courgettes, jambon cru, feta et pignons de pin (p. 85 et 86, identiques sauf la phrase finale), Chili con Carne (p. 65 et 66), Pâte à crêpes (carnet salé p. 67 et carnet sucré p. 11), Pâte à tarte à l’épeautre (p. 71 et 92), Purée de Patate Douce (p. 102 et 130), Houmous (p. 110 et 120).
+- **Mise en forme seulement** : « RECETTE DE FOIE GRAS » est écrit « Recette de foie gras » ; « (pour 4 personnes) » est sorti des titres pour devenir le nombre de portions.
 
 ## À vérifier
 
 - **Pêches à la crème de macaron** : la liste dit « Sucre vanillé : 1 sachet ou en poudre (50 g) », mais l’étape 4 parle de « 6 g de sucre en poudre et 2 sachets de sucre vanillé ».
 - **Nathalie Beauvois / Beauvais** : le nom s’écrit « Beauvois » pour la Lotte et « Beauvais » pour la Meringue.
+- **« Donnay Hay »** (Gâteau au chocolat fondant, carnet sucré p. 17) : laissé tel qu’écrit. L’autrice culinaire australienne s’écrit Donna Hay.
 - **29 recettes sans nombre de personnes** (sauces, houmous, pâtes de base…) : le site propose alors de multiplier la recette (× ½, × 2…).
 - **Le classement ci-dessous**, surtout les recettes à cheval entre deux catégories.
 
@@ -30,7 +30,7 @@ Les catégories et ingrédients vedettes servent aux filtres. Ils ne figurent pa
 | 6 | Méli-Mélo de la Mer | salé | plat | poisson | Pour 4 personnes | salé, p. 6 |
 | 7 | Saumon Mariné | salé | entrée | saumon | Pour 4 personnes | salé, p. 7 |
 | 8 | Cordon Bleu de Saumon | salé | plat | saumon | Pour 4 personnes | salé, p. 8 |
-| 9 | Rillettes aux deux saumons *(2 versions)* | salé | apéritif, entrée | saumon | Pour 6 personnes | salé, p. 9 ; salé, p. 109 |
+| 9 | Rillettes aux Deux Saumons *(2 versions)* | salé | apéritif, entrée | saumon | Pour 6 personnes | salé, p. 9 ; salé, p. 109 |
 | 10 | Tartare de Saumon | salé | entrée | saumon | Pour 4 à 5 personnes (entrée) | salé, p. 10 |
 | 11 | Carpaccio de Merlan | salé | entrée | poisson | Pour 5 personnes | salé, p. 11 |
 | 12 | Pavés de Biche aux Myrtilles | salé | plat | viande | — | salé, p. 12 |
@@ -99,7 +99,7 @@ Les catégories et ingrédients vedettes servent aux filtres. Ils ne figurent pa
 | 75 | Gratin de pommes de terre, lardons et poireaux | salé | plat | légumes | Pour 6 personnes | salé, p. 82 |
 | 76 | Tourte au reblochon (ou camembert) | salé | plat | fromage | Pour 4 personnes | salé, p. 83 |
 | 77 | Salade de pâtes fraîches au melon, chèvre mariné et poivrons grillés | salé | plat | fromage, fruits | Pour 4 personnes | salé, p. 84 |
-| 78 | Clafoutis aux courgettes, jambon cru, feta et pignons de pin | salé | plat | légumes, fromage | Pour 6 personnes | salé, p. 85 |
+| 78 | Clafoutis aux courgettes, jambon cru, feta et pignons de pin *(2 versions)* | salé | plat | légumes, fromage | Pour 6 personnes | salé, p. 85 ; salé, p. 86 |
 | 79 | Pizza sur baguette | salé | plat, apéritif | fromage | Pour 4 personnes | salé, p. 87 |
 | 80 | Œufs brouillés, lardons et mozzarella sur baguette | salé | plat | œufs | Pour 2 à 3 personnes | salé, p. 88 |
 | 81 | Toasts œufs brouillés et saumon fumé | salé | entrée | œufs, saumon | — | salé, p. 89 |
@@ -114,7 +114,7 @@ Les catégories et ingrédients vedettes servent aux filtres. Ils ne figurent pa
 | 90 | Sauce Pesto (ou Pistou) | salé | sauce | — | — | salé, p. 99 |
 | 91 | Sauce au Bleu et Pistaches | salé | sauce | fromage | — | salé, p. 100 |
 | 92 | Mousse de Potiron | salé | accompagnement | légumes | Pour 4 personnes | salé, p. 101 |
-| 93 | Purée de patate douce *(2 versions)* | salé | accompagnement | légumes | Pour 2 personnes | salé, p. 102 ; salé, p. 130 |
+| 93 | Purée de Patate Douce *(2 versions)* | salé | accompagnement | légumes | Pour 2 personnes | salé, p. 102 ; salé, p. 130 |
 | 94 | Fondue de Poireaux | salé | accompagnement | légumes | Pour 6 personnes | salé, p. 103 |
 | 95 | Gratin de Pommes de Terre | salé | accompagnement | légumes | Pour 4 portions | salé, p. 104 |
 | 96 | Gratin de Pommes de Terre et Patates Douces | salé | accompagnement | légumes | Pour 4 personnes | salé, p. 105 |
@@ -155,7 +155,7 @@ Les catégories et ingrédients vedettes servent aux filtres. Ils ne figurent pa
 | 131 | Glace au marron | sucré | dessert | — | Pour 5 personnes | sucré, p. 14 |
 | 132 | Meringue Nathalie Beauvais | sucré | dessert | — | — | sucré, p. 15 |
 | 133 | Mi-tarte mi-gâteau aux fraises ou framboises | sucré | dessert | fruits | Pour 8 personnes | sucré, p. 16 |
-| 134 | Gâteau au Chocolat Fondant de Donna Hay | sucré | dessert | chocolat | Pour 6 personnes | sucré, p. 17 |
+| 134 | Gâteau au Chocolat Fondant de Donnay Hay | sucré | dessert | chocolat | Pour 6 personnes | sucré, p. 17 |
 | 135 | Crumble aux Fruits Rouges | sucré | dessert | fruits | Pour 4 personnes | sucré, p. 18 |
 | 136 | Crumble aux Quetsches et Spéculoos ou Mirabelles | sucré | dessert | fruits | Pour 6/8 personnes | sucré, p. 19 |
 | 137 | Crumble Express Abricots / Spéculoos | sucré | dessert | fruits | Pour 4 personnes | sucré, p. 20 |

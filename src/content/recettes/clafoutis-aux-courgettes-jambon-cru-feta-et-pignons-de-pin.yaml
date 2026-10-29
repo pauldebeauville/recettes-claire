@@ -6,38 +6,78 @@ vedettes:
 - légumes
 - fromage
 ordre: 78
-portions: Pour 6 personnes
-ingredients:
-- 4 œufs
-- 75 g de farine
-- 50 cl de crème fraîche liquide
-- 100 g de parmesan râpé
-- 100 g de feta ou de chèvre frais (type Petit Billy)
-- 80 g de jambon cru en lanières (ou lardons fumés)
-- 2 courgettes
-- 1 c. à soupe d’huile d’olive
-- 20 g de pignons de pin
-preparation:
-- titre: Préparez les pignons et les lardons ou le jambon
-  texte:
-  - Faites griller les pignons de pin à sec dans une poêle jusqu’à ce qu’ils soient légèrement dorés. Réservez.
-  - Si vous utilisez des lardons, faites-les revenir dans une poêle sans matière grasse jusqu’à ce qu’ils soient dorés. Réservez.
-- Préchauffez le four à 160 °C (chaleur tournante).
-- titre: Préparez les courgettes
-  texte:
-  - Lavez les courgettes, puis taillez-les en fines rondelles ou en lanières.
-  - Faites-les revenir à feu moyen dans une poêle avec 1 c. à soupe d’huile d’olive pendant 4 à 5 minutes. Réservez.
-- titre: Préparez la pâte
-  texte:
-  - Dans un saladier, battez les œufs. Ajoutez progressivement la farine et la crème pour obtenir une pâte homogène.
-  - Incorporez le parmesan râpé, la feta émiettée (ou le chèvre frais), et mélangez bien.
-- titre: Assemblez le clafoutis
-  texte:
-  - Dans un plat à gratin huilé, disposez les morceaux de jambon cru (ou les lardons fumés), les courgettes, et versez la préparation par-dessus.
-  - Parsemez de pignons de pin grillés sur le dessus.
-- Faites cuire au four pendant exactement 25 minutes, jusqu’à ce que le clafoutis soit légèrement doré et bien pris.
-notes:
-- titre: Conseil
-  texte:
-  - Servez chaud ou tiède avec une salade verte pour un repas équilibré.
-source: Carnet salé, p. 85
+versions:
+- nom: Version 1
+  titre: Clafoutis aux courgettes, jambon cru, feta et pignons de pin
+  portions: Pour 6 personnes
+  ingredients:
+  - 4 œufs
+  - 75 g de farine
+  - 50 cl de crème fraîche liquide
+  - 100 g de parmesan râpé
+  - 100 g de feta ou de chèvre frais (type Petit Billy)
+  - 80 g de jambon cru en lanières (ou lardons fumés)
+  - 2 courgettes
+  - 1 c. à soupe d’huile d’olive
+  - 20 g de pignons de pin
+  preparation:
+  - titre: Préparez les pignons et les lardons ou le jambon
+    texte:
+    - Faites griller les pignons de pin à sec dans une poêle jusqu’à ce qu’ils soient légèrement dorés. Réservez.
+    - Si vous utilisez des lardons, faites-les revenir dans une poêle sans matière grasse jusqu’à ce qu’ils soient dorés. Réservez.
+  - Préchauffez le four à 160 °C (chaleur tournante).
+  - titre: Préparez les courgettes
+    texte:
+    - Lavez les courgettes, puis taillez-les en fines rondelles ou en lanières.
+    - Faites-les revenir à feu moyen dans une poêle avec 1 c. à soupe d’huile d’olive pendant 4 à 5 minutes. Réservez.
+  - titre: Préparez la pâte
+    texte:
+    - Dans un saladier, battez les œufs. Ajoutez progressivement la farine et la crème pour obtenir une pâte homogène.
+    - Incorporez le parmesan râpé, la feta émiettée (ou le chèvre frais), et mélangez bien.
+  - titre: Assemblez le clafoutis
+    texte:
+    - Dans un plat à gratin huilé, disposez les morceaux de jambon cru (ou les lardons fumés), les courgettes, et versez la préparation par-dessus.
+    - Parsemez de pignons de pin grillés sur le dessus.
+  - Faites cuire au four pendant exactement 25 minutes, jusqu’à ce que le clafoutis soit légèrement doré et bien pris.
+  notes:
+  - titre: Conseil
+    texte:
+    - Servez chaud ou tiède avec une salade verte pour un repas équilibré.
+  source: Carnet salé, p. 85
+- nom: Version 2
+  titre: Clafoutis aux courgettes, jambon cru, feta et pignons de pin
+  portions: Pour 6 personnes
+  ingredients:
+  - 4 œufs
+  - 75 g de farine
+  - 50 cl de crème fraîche liquide
+  - 100 g de parmesan râpé
+  - 100 g de feta ou de chèvre frais (type Petit Billy)
+  - 80 g de jambon cru en lanières (ou lardons fumés)
+  - 2 courgettes
+  - 1 c. à soupe d’huile d’olive
+  - 20 g de pignons de pin
+  preparation:
+  - titre: Préparez les pignons et les lardons ou le jambon
+    texte:
+    - Faites griller les pignons de pin à sec dans une poêle jusqu’à ce qu’ils soient légèrement dorés. Réservez.
+    - Si vous utilisez des lardons, faites-les revenir dans une poêle sans matière grasse jusqu’à ce qu’ils soient dorés. Réservez.
+  - Préchauffez le four à 160 °C (chaleur tournante).
+  - titre: Préparez les courgettes
+    texte:
+    - Lavez les courgettes, puis taillez-les en fines rondelles ou en lanières.
+    - Faites-les revenir à feu moyen dans une poêle avec 1 c. à soupe d’huile d’olive pendant 4 à 5 minutes. Réservez.
+  - titre: Préparez la pâte
+    texte:
+    - Dans un saladier, battez les œufs. Ajoutez progressivement la farine et la crème pour obtenir une pâte homogène.
+    - Incorporez le parmesan râpé, la feta émiettée (ou le chèvre frais), et mélangez bien.
+  - titre: Assemblez le clafoutis
+    texte:
+    - Dans un plat à gratin huilé, disposez les morceaux de jambon cru (ou les lardons fumés), les courgettes, et versez la préparation par-dessus.
+    - Parsemez de pignons de pin grillés sur le dessus.
+  - Faites cuire au four pendant exactement 25 minutes, jusqu’à ce que le clafoutis soit légèrement doré et bien pris.
+  notes:
+  - titre: À servir
+    texte:
+    - Accompagnez ce clafoutis d’une salade verte pour un repas équilibré.
+  source: Carnet salé, p. 86

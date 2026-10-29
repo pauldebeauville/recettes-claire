@@ -7,7 +7,8 @@ const ingredient = z.union([z.string(), z.object({ groupe: z.string() })]);
 
 const etape = z.union([
   z.string(),
-  z.object({ section: z.string() }),
+  // suite: true quand la numérotation des étapes continue après ce sous-titre (sinon elle repart à 1)
+  z.object({ section: z.string(), suite: z.boolean().optional() }),
   z.object({ titre: z.string().optional(), texte: z.array(z.string()) }),
 ]);
 
@@ -33,7 +34,7 @@ const recettes = defineCollection({
       vedettes: z.array(z.enum(Object.keys(VEDETTES) as [string, ...string[]])).optional(),
       ordre: z.number().optional(),
       ...corps,
-      versions: z.array(z.object({ nom: z.string(), ...corps })).optional(),
+      versions: z.array(z.object({ nom: z.string(), titre: z.string().optional(), ...corps })).optional(),
     })
     .superRefine((r, ctx) => {
       const parts = r.versions ?? [r];

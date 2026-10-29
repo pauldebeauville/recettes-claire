@@ -1,4 +1,4 @@
-titre: Rillettes aux deux saumons
+titre: Rillettes aux Deux Saumons
 type: salé
 categories:
 - apéritif
@@ -8,6 +8,7 @@ vedettes:
 ordre: 9
 versions:
 - nom: Version 1
+  titre: Rillettes aux Deux Saumons
   portions: Pour 6 personnes
   temps:
   - label: Temps de préparation
@@ -46,6 +47,7 @@ versions:
     - Accompagnez ces rillettes d’un verre de Pouilly-Fuissé (blanc de Bourgogne) pour une harmonie parfaite.
   source: Carnet salé, p. 9
 - nom: Version 2
+  titre: Rillettes aux 2 Saumons
   ingredients:
   - 150 g de saumon fumé
   - 300 g de saumon frais

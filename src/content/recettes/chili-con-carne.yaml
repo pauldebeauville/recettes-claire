@@ -7,6 +7,7 @@ vedettes:
 ordre: 59
 versions:
 - nom: Version 1
+  titre: Chili con Carne
   portions: Pour 6 personnes
   ingredients:
   - 100 g de steak haché par personne (soit 600 g au total)
@@ -27,6 +28,7 @@ versions:
     - Vous pouvez ajouter 1 c. à café de chili en poudre ou 2 c. à café de cumin en graines pour plus de saveur.
   source: Carnet salé, p. 65
 - nom: Version 2
+  titre: Chili con Carne
   portions: Pour 4 personnes
   ingredients:
   - 100 g de poivron rouge en morceaux

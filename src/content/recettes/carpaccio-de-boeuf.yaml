@@ -8,6 +8,7 @@ vedettes:
 ordre: 40
 versions:
 - nom: Version 1
+  titre: Carpaccio de Boeuf
   portions: Pour 2 personnes
   ingredients:
   - 1 paquet de carpaccio de bœuf
@@ -25,6 +26,7 @@ versions:
     - Cette recette s’accompagne d’une salade de courgettes et de fromage de chèvre.
   source: Carnet salé, p. 43
 - nom: Version 2
+  titre: Carpaccio de bœuf
   portions: Pour 2 personnes
   ingredients:
   - 1 paquet de carpaccio de bœuf

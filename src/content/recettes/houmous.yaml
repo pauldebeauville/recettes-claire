@@ -8,6 +8,7 @@ vedettes:
 ordre: 100
 versions:
 - nom: Version 1
+  titre: Houmous
   ingredients:
   - 250 g de pois chiches cuits
   - 1/2 citron
@@ -19,6 +20,7 @@ versions:
   - Ajouter de l'eau si nécessaire pour obtenir la consistance désirée.
   source: Carnet salé, p. 110
 - nom: Version 2
+  titre: Houmous
   ingredients:
   - 250 g de pois chiches
   - 1/2 citron

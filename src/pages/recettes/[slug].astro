@@ -12,6 +12,7 @@ import {
   lienRecette,
   lignesIngredients,
   lirePortions,
+  normaliser,
   typesDe,
   versionsDe,
   type Corps,
@@ -42,12 +43,12 @@ const cat = CATEGORIES[d.categories[0]];
 const thermomix = estThermomix(d);
 const avance = aLAvance(d);
 
-// numérotation des étapes : elle repart à 1 à chaque partie, comme dans le carnet
+// numérotation des étapes, comme dans le carnet : elle repart à 1 à chaque partie, sauf « suite: true »
 function etapes(c: Corps) {
   let n = 0;
   return (c.preparation ?? []).map((e) => {
     if (typeof e !== 'string' && 'section' in e) {
-      n = 0;
+      if (!e.suite) n = 0;
       return { section: e.section };
     }
     n += 1;
@@ -155,6 +156,7 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
             data-moule={moule(v) ? '1' : ''}
             data-tmx={/thermomix/i.test(JSON.stringify(v)) ? '1' : ''}
           >
+            {v.titre && normaliser(v.titre) !== normaliser(d.titre) && <h2 class="titre-version">{v.titre}</h2>}
             {versions.length > 1 && v.intro?.length && (
               <div class="intro">
                 {v.intro.map((l) => (
@@ -450,6 +452,12 @@ const description = `${cat.label} · ${versions[0].portions ?? 'Recette'} · ${l
 
   .version > .intro {
     margin: 0 0 18px;
+  }
+
+  .titre-version {
+    margin: 0 0 18px;
+    font-size: 1.5rem;
+    font-weight: 560;
   }
 
   .temps {

@@ -9,6 +9,7 @@ vedettes:
 ordre: 60
 versions:
 - nom: Version 1
+  titre: Pâte à crêpes
   portions: Pour 4 personnes (environ 12 crêpes moyennes)
   ingredients:
   - 150 g de farine
@@ -30,6 +31,7 @@ versions:
     - Pour des crêpes sucrées, ajouter une cuillère de sucre dans la pâte.
   source: Carnet salé, p. 67
 - nom: Version 2
+  titre: Pâte à crêpes
   portions: Pour 4 personnes (12 crêpes)
   ingredients:
   - 'Farine : 150 g'
